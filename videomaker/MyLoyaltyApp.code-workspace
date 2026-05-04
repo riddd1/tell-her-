@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../homerpage/MyLoyaltyApp"
+		},
+		{
+			"path": "../telr-dashboard"
+		},
+		{
+			"path": "."
+		}
+	],
+	"settings": {}
+}
