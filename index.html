@@ -687,7 +687,7 @@ function selectPay(type){['card','cash','bank'].forEach(t=>document.getElementBy
 let upsellAdded=false;
 function toggleUpsell(){upsellAdded=!upsellAdded;const r=document.getElementById('up-radio');r.style.background=upsellAdded?'var(--pink)':'transparent';r.style.borderColor=upsellAdded?'var(--pink)':'rgba(247,37,133,.4)';const btn=document.getElementById('pay-btn');if(btn)btn.textContent=upsellAdded?'PAY $35':'PAY $25'}
 
-const API_BASE='';
+const API_BASE='https://telr-tests-production.up.railway.app';
 function getUserId(){let id=localStorage.getItem('tellher_uid');if(!id){id='u_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);localStorage.setItem('tellher_uid',id)}return id}
 function completeOrder(){localStorage.setItem('tellher_pending_uid',getUserId());const ref=localStorage.getItem('tellher_ref');if(ref)localStorage.setItem('tellher_pending_ref',ref);const base='https://www.creem.io/test/payment/';const url=upsellAdded?base+'prod_HmsI3PQcWpYDi1MvUEG7q':base+'prod_HmsI3PQcWpYDi1MvUEG7q';window.location.href=url;}
 function submitOrder(){const uid=getUserId();localStorage.setItem('tellher_pending_uid',uid);const ref=localStorage.getItem('tellher_ref');if(ref)localStorage.setItem('tellher_pending_ref',ref);const successUrl=encodeURIComponent('https://tellher.co/success?uid='+uid);const prod=upsellAdded?'prod_5Qa2LurOV4vC3hxEjkSd6S':'prod_SWjG3moiVsIaA3ufRZIsB';window.location.href='https://www.creem.io/payment/'+prod+'?success_url='+successUrl;}
