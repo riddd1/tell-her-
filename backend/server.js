@@ -433,6 +433,13 @@ app.post('/affiliate/click', async (req, res) => {
   try {
     const check = await pool.query('SELECT id FROM affiliates WHERE code = $1', [affiliateCode]);
     if (check.rows.length === 0) return res.json({ success: false });
+    if (userId) {
+      const dup = await pool.query(
+        'SELECT id FROM affiliate_clicks WHERE affiliate_code = $1 AND user_id = $2',
+        [affiliateCode, userId]
+      );
+      if (dup.rows.length > 0) return res.json({ success: true });
+    }
     const id = Date.now().toString();
     await pool.query(
       'INSERT INTO affiliate_clicks (id, affiliate_code, user_id, clicked_at) VALUES ($1, $2, $3, NOW())',
@@ -628,7 +635,7 @@ app.get('/success', async (req, res) => {
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({ userId: uid, refCode: ref })
   }).catch(() => {});
-  window.location.href = '/?payment=success&uid=' + uid + '#login';
+  window.location.href = 'https://tell-her-production.up.railway.app/?payment=success#login';
 </script>
 </body></html>`);
 });
