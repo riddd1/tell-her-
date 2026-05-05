@@ -659,7 +659,7 @@ app.get('/success', async (req, res) => {
 <script>
   const uid = localStorage.getItem('tellher_pending_uid') || '';
   localStorage.removeItem('tellher_pending_uid');
-  window.location.href = '/tell-her.html?payment=success&uid=' + uid + '#login';
+  window.location.href = '/?payment=success&uid=' + uid + '#login';
 </script>
 </body></html>`);
 
