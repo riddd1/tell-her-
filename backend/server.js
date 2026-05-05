@@ -548,17 +548,47 @@ app.post('/admin/affiliate/delete', async (req, res) => {
 
 // ── Payment Confirm ───────────────────────────────────
 app.post('/payment/confirm', async (req, res) => {
-  const { userId } = req.body;
-  if (!userId) return res.status(400).json({ error: 'userId required' });
+  const { userId, refCode } = req.body;
+  if (!userId) return res.json({ success: false });
   try {
     await pool.query(
       'UPDATE user_profiles SET paid = true, updated_at = NOW() WHERE user_id = $1',
       [userId]
     );
+    if (refCode) {
+      const check = await pool.query('SELECT id FROM affiliates WHERE code = $1', [refCode]);
+      if (check.rows.length > 0) {
+        const saleId = Date.now().toString();
+        await pool.query(
+          'INSERT INTO affiliate_sales (id, affiliate_code, user_id, amount, created_at) VALUES ($1, $2, $3, $4, NOW())',
+          [saleId, refCode, userId, 5]
+        );
+      }
+    }
+    const result = await pool.query(
+      'SELECT user_name, email FROM user_profiles WHERE user_id = $1',
+      [userId]
+    );
+    const user = result.rows[0];
+    if (user && user.email) {
+      const token = require('crypto').randomBytes(32).toString('hex');
+      await pool.query(
+        'INSERT INTO magic_links (token, email, user_id, created_at, used) VALUES ($1, $2, $3, NOW(), false)',
+        [token, user.email, userId]
+      );
+      const appUrl = process.env.APP_URL || 'https://telr-tests-production.up.railway.app';
+      const link = appUrl + '/magic?token=' + token;
+      await resend.emails.send({
+        from: 'Tell Her <hello@tellher.co>',
+        to: user.email,
+        subject: 'Your Tell Her conversation is ready',
+        html: '<div style="background:#08080a;padding:40px;font-family:sans-serif;text-align:center"><p style="font-family:Georgia,serif;font-style:italic;font-size:1.5rem;color:#f5f5f7">Tell Her<span style="color:#f72585">.</span></p><p style="color:#888;margin-bottom:28px">Payment confirmed. Click below to open your conversation.</p><a href="' + link + '" style="background:#f72585;color:#fff;padding:16px 36px;border-radius:14px;text-decoration:none;font-weight:600">Open my conversation</a></div>',
+      });
+    }
     res.json({ success: true });
   } catch (e) {
     console.error('Payment confirm error:', e);
-    res.status(500).json({ error: 'Failed to confirm payment' });
+    res.status(500).json({ error: e.message });
   }
 });
 
@@ -586,83 +616,21 @@ app.post('/webhooks/creem', async (req, res) => {
 
 // ── Payment Success ───────────────────────────────────
 app.get('/success', async (req, res) => {
-  const userId = req.query.uid || '';
-
-  try {
-    if (userId) {
-      await pool.query(
-        'UPDATE user_profiles SET paid = true, updated_at = NOW() WHERE user_id = $1',
-        [userId]
-      );
-
-      // Record affiliate sale if user came from affiliate link
-      const refResult = await pool.query(
-        'SELECT his_handle FROM user_profiles WHERE user_id = $1',
-        [userId]
-      );
-      const refCode = refResult.rows[0]?.his_handle;
-      if (refCode) {
-        const saleId = Date.now().toString();
-        await pool.query(
-          'INSERT INTO affiliate_sales (id, affiliate_code, user_id, amount, created_at) VALUES ($1, $2, $3, $4, NOW())',
-          [saleId, refCode, userId, 5]
-        );
-        console.log('Affiliate sale recorded for:', refCode);
-      }
-
-      const result = await pool.query(
-        'SELECT user_name, email FROM user_profiles WHERE user_id = $1',
-        [userId]
-      );
-      const user = result.rows[0];
-      if (user && user.email) {
-        const token = crypto.randomBytes(32).toString('hex');
-        await pool.query(
-          'INSERT INTO magic_links (token, email, user_id, created_at, used) VALUES ($1, $2, $3, NOW(), false)',
-          [token, user.email, userId]
-        );
-        const appUrl = process.env.APP_URL || 'http://localhost:3000';
-        const link = `${appUrl}/magic?token=${token}`;
-        await resend.emails.send({
-          from: 'Tell Her <hello@tellher.co>',
-          to: user.email,
-          subject: 'Your Tell Her conversation is ready',
-          html: `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#08080a;font-family:'DM Sans',system-ui,sans-serif">
-            <table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:48px 24px">
-            <table width="100%" style="max-width:480px;background:#101013;border-radius:16px;padding:40px;border:1px solid rgba(247,37,133,0.15)">
-            <tr><td align="center" style="padding-bottom:20px">
-              <p style="font-family:Georgia,serif;font-style:italic;font-size:1.5rem;color:#f5f5f7;margin:0">Tell Her<span style="color:#f72585">.</span></p>
-            </td></tr>
-            <tr><td style="padding-bottom:16px">
-              <p style="font-family:Georgia,serif;font-style:italic;font-size:1.3rem;color:#f5f5f7;margin:0">Hey ${user.user_name || 'there'}, your conversation is ready.</p>
-            </td></tr>
-            <tr><td style="padding-bottom:24px">
-              <p style="font-size:.9rem;color:#888893;line-height:1.6;margin:0">Payment confirmed. Click the button below to open your conversation. This link expires in 15 minutes.</p>
-            </td></tr>
-            <tr><td align="center" style="padding-bottom:32px">
-              <a href="${link}" style="display:inline-block;background:#f72585;color:#fff;font-size:.9rem;font-weight:600;padding:16px 36px;border-radius:14px;text-decoration:none;letter-spacing:.5px">Open my conversation</a>
-            </td></tr>
-            <tr><td align="center">
-              <p style="font-size:.75rem;color:#2a2a35;margin:0">Tell Her. Private. Anonymous. Just the truth.</p>
-            </td></tr>
-            </table></td></tr></table>
-          </body></html>`,
-        });
-      }
-    }
-  } catch (e) {
-    console.error('Success page error:', e);
-  }
-
   res.send(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Tell Her</title></head>
 <body>
 <script>
   const uid = localStorage.getItem('tellher_pending_uid') || '';
+  const ref = localStorage.getItem('tellher_pending_ref') || '';
   localStorage.removeItem('tellher_pending_uid');
+  localStorage.removeItem('tellher_pending_ref');
+  fetch('/payment/confirm', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({ userId: uid, refCode: ref })
+  }).catch(() => {});
   window.location.href = '/?payment=success&uid=' + uid + '#login';
 </script>
 </body></html>`);
-
 });
 
 // ── User Profile Get ──────────────────────────────────
