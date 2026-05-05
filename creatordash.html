@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Tell Her · Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<style>
+:root{--bg:#08080a;--pink:#f72585;--pinkl:#ff4da6;--card:#101013;--card2:#16161a;--inp:#1a1a1f;--txt:#f5f5f7;--sub:#888893;--bdr:rgba(247,37,133,0.18);--green:#22c55e;--red:#ef4444}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-serif;color:var(--txt);-webkit-font-smoothing:antialiased}
+.screen{display:none;min-height:100svh}
+.screen.active{display:block}
+
+/* ── LOGIN ── */
+#s-login{display:flex;align-items:center;justify-content:center;padding:24px}
+#s-login.active{display:flex}
+.login-card{background:var(--card);border:1px solid var(--bdr);border-radius:20px;padding:40px 32px;width:100%;max-width:360px;text-align:center}
+.login-logo{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:2rem;color:var(--txt);margin-bottom:4px}
+.login-logo span{color:var(--pink)}
+.login-sub{font-size:.78rem;color:var(--sub);margin-bottom:28px}
+.f-group{position:relative;margin-bottom:14px;text-align:left}
+.f-label{position:absolute;top:50%;left:14px;transform:translateY(-50%);font-size:.85rem;color:var(--sub);pointer-events:none;transition:all .2s}
+.f-label.floating{top:10px;transform:none;font-size:.62rem;color:var(--pink);letter-spacing:.5px;text-transform:uppercase}
+.f-input{width:100%;background:var(--inp);border:1.5px solid rgba(255,255,255,.07);border-radius:12px;padding:22px 14px 8px;font-size:.9rem;font-family:'DM Sans',sans-serif;color:var(--txt);outline:none;transition:border-color .2s}
+.f-input:focus{border-color:var(--pink)}
+.btn-main{display:block;width:100%;background:var(--pink);color:#fff;font-size:.88rem;font-weight:600;padding:16px;border-radius:12px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;letter-spacing:.5px;text-transform:uppercase}
+.btn-main:hover{background:var(--pinkl)}
+.err-msg{color:var(--red);font-size:.8rem;margin-top:12px;display:none}
+
+/* ── SHARED NAV ── */
+.dash-nav{background:rgba(8,8,10,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;padding:15px 24px;position:sticky;top:0;z-index:10}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.35rem;color:var(--txt)}
+.nav-logo span{color:var(--pink)}
+.nav-badge{font-size:.62rem;font-weight:700;padding:4px 10px;border-radius:100px;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bdr);color:var(--pink);background:rgba(247,37,133,.08)}
+.btn-ghost{background:none;border:1px solid rgba(255,255,255,.1);color:var(--sub);font-size:.72rem;font-weight:600;padding:7px 14px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.btn-ghost:hover{border-color:var(--pink);color:var(--pink)}
+
+/* ── SHARED BODY ── */
+.dash-body{max-width:780px;margin:0 auto;padding:28px 20px 80px}
+
+/* ── STATS ── */
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:28px}
+.stat-card{background:var(--card);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:18px 12px;text-align:center}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--pink);line-height:1}
+.stat-lbl{font-size:.64rem;color:var(--sub);margin-top:5px;text-transform:uppercase;letter-spacing:.8px;font-weight:600}
+
+/* ── SECTION ── */
+.section-hd{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.section-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--txt)}
+.btn-sm{background:var(--pink);color:#fff;font-size:.72rem;font-weight:600;padding:7px 14px;border-radius:100px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;display:inline-flex;align-items:center;gap:5px}
+.btn-sm:hover{background:var(--pinkl)}
+
+/* ── CREATE FORM ── */
+.create-form{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:18px;margin-bottom:14px;display:none}
+.create-form.open{display:block}
+.create-row{display:flex;gap:10px;align-items:flex-end}
+.create-row .f-group{flex:1;margin-bottom:0}
+.btn-create{background:var(--pink);color:#fff;font-size:.85rem;font-weight:600;padding:14px 18px;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;flex-shrink:0}
+
+/* ── SUCCESS CARD ── */
+.success-card{background:var(--card);border:1px solid rgba(34,197,94,.2);border-radius:14px;padding:18px;margin-bottom:14px;display:none}
+.success-card.open{display:block}
+.success-title{font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--green);font-weight:700;margin-bottom:12px}
+.cred-row{display:flex;align-items:center;justify-content:space-between;background:var(--inp);border-radius:10px;padding:11px 13px;margin-bottom:8px;gap:10px}
+.cred-label{font-size:.62rem;color:var(--sub);text-transform:uppercase;letter-spacing:.8px;margin-bottom:2px}
+.cred-val{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;color:var(--txt)}
+.btn-copy{background:none;border:1px solid rgba(247,37,133,.3);color:var(--pink);font-size:.68rem;font-weight:600;padding:5px 11px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;flex-shrink:0}
+.btn-copy.copied{border-color:var(--green);color:var(--green)}
+
+/* ── AFFILIATE CARDS ── */
+.aff-card{background:var(--card);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:18px;margin-bottom:10px}
+.aff-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;gap:10px}
+.aff-name{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;color:var(--txt)}
+.btn-red{background:none;border:1px solid rgba(239,68,68,.3);color:var(--red);font-size:.7rem;font-weight:600;padding:5px 11px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;flex-shrink:0}
+.btn-red:hover{background:rgba(239,68,68,.08)}
+.aff-creds{display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap}
+.cred-pill{background:var(--inp);border-radius:8px;padding:5px 11px}
+.cred-pill span{color:var(--sub);font-size:.6rem;display:block;text-transform:uppercase;letter-spacing:.5px}
+.cred-pill strong{color:var(--txt);font-family:'Cormorant Garamond',serif;font-size:.95rem}
+.aff-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
+.aff-stat{background:var(--card2);border-radius:10px;padding:9px;text-align:center}
+.aff-stat-num{font-family:'Cormorant Garamond',serif;font-size:1.2rem;font-weight:700;color:var(--pink)}
+.aff-stat-lbl{font-size:.6rem;color:var(--sub);text-transform:uppercase;letter-spacing:.5px}
+.empty-state{text-align:center;padding:28px;color:var(--sub);font-size:.85rem;background:var(--card);border-radius:14px}
+
+/* ── AFFILIATE USER SCREEN ── */
+.aff-link-card{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:22px;margin-bottom:22px}
+.aff-link-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--pink);font-weight:700;margin-bottom:8px}
+.aff-link-url{font-size:.88rem;color:var(--sub);word-break:break-all;margin-bottom:13px;line-height:1.5}
+.aff-link-url strong{color:var(--txt)}
+.divider{height:1px;background:linear-gradient(to right,transparent,rgba(247,37,133,.2),transparent);margin:24px 0}
+.script-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--pink);color:#fff;font-size:.88rem;font-weight:600;padding:17px;border-radius:13px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;box-shadow:0 8px 28px rgba(247,37,133,.28);letter-spacing:.5px;text-transform:uppercase}
+.script-btn:hover{background:var(--pinkl);transform:translateY(-1px)}
+
+/* ── CREATOR CHAT SCREEN ── */
+#s-creator{display:none;height:100svh;flex-direction:column}
+#s-creator.active{display:flex}
+.creator-body{flex:1;overflow-y:auto;padding:.5rem 1rem 2rem}
+
+/* Conv cards */
+.conv-card{background:var(--card);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:13px;margin-bottom:9px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color .15s}
+.conv-card:hover{border-color:rgba(247,37,133,.25)}
+.conv-card.unread{border-color:rgba(247,37,133,.2)}
+.conv-av{width:42px;height:42px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;color:#fff;flex-shrink:0}
+.conv-info{flex:1;min-width:0}
+.conv-name{font-size:.88rem;font-weight:700;color:var(--txt);margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conv-preview{font-size:.76rem;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.conv-preview.bold{font-weight:600;color:var(--txt)}
+.conv-meta{text-align:right;flex-shrink:0}
+.conv-time{font-size:.68rem;color:var(--sub);margin-bottom:4px}
+.conv-badge{background:var(--red);color:#fff;font-size:.6rem;font-weight:700;width:18px;height:18px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-left:auto}
+
+/* Thread */
+#s-thread{display:none;height:100svh;flex-direction:column}
+#s-thread.active{display:flex}
+.thread-nav{background:rgba(8,8,10,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--bdr);display:flex;align-items:center;gap:10px;padding:12px 18px;padding-top:calc(12px + env(safe-area-inset-top));flex-shrink:0}
+.back-btn{width:34px;height:34px;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.7);cursor:pointer;border-radius:9px;font-size:1.1rem;flex-shrink:0;transition:background .15s}
+.back-btn:active{background:rgba(255,255,255,.1)}
+.thread-info{flex:1;min-width:0}
+.thread-info .t-name{font-size:.9rem;font-weight:700;color:#fff}
+.thread-info .t-sub{font-size:.68rem;color:var(--sub);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msgs-area{flex:1;overflow-y:auto;padding:12px 14px 8px;display:flex;flex-direction:column;gap:6px}
+.msg-row{display:flex;align-items:flex-end;gap:7px}
+.msg-row.user{flex-direction:row}
+.msg-row.tester{flex-direction:row-reverse}
+.msg-av{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:#fff;flex-shrink:0}
+.msg-av.u{background:#6b6b8a}
+.msg-av.t{background:var(--pink)}
+.msg-bubble{max-width:75%;padding:9px 13px;border-radius:16px;font-size:.86rem;line-height:1.5;word-break:break-word}
+.msg-row.user .msg-bubble{background:var(--card2);color:var(--txt);border-radius:16px 16px 16px 4px}
+.msg-row.tester .msg-bubble{background:var(--pink);color:#fff;border-radius:16px 16px 4px 16px}
+.msg-img{max-width:180px;border-radius:10px;cursor:pointer;display:block}
+.msg-time{font-size:.6rem;color:var(--sub);margin-top:2px;padding:0 2px}
+.msg-row.tester .msg-time{text-align:right}
+.date-lbl{text-align:center;font-size:.68rem;color:var(--sub);margin:4px 0;font-weight:500}
+.reply-bar{background:rgba(8,8,10,.95);border-top:1px solid var(--bdr);padding:8px 12px;padding-bottom:calc(8px + env(safe-area-inset-bottom));display:flex;align-items:flex-end;gap:8px;flex-shrink:0}
+.reply-wrap{flex:1;background:var(--inp);border:1.5px solid transparent;border-radius:20px;padding:8px 12px;display:flex;align-items:flex-end;gap:6px;transition:border-color .2s}
+.reply-wrap:focus-within{border-color:rgba(247,37,133,.3)}
+.reply-input{flex:1;background:transparent;border:none;outline:none;color:var(--txt);font-size:.9rem;font-family:'DM Sans',sans-serif;resize:none;max-height:100px;min-height:22px;line-height:1.4}
+.reply-input::placeholder{color:var(--sub)}
+.send-btn{width:38px;height:38px;border-radius:50%;background:var(--pink);border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;transition:opacity .2s}
+.send-btn:active{opacity:.8}
+.send-btn:disabled{opacity:.35}
+.attach-label{width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--sub);flex-shrink:0;align-self:center}
+
+@media(max-width:480px){
+  .stats-row{grid-template-columns:1fr 1fr}
+  .stats-row .stat-card:last-child{grid-column:span 2}
+  .dash-body{padding:20px 14px 80px}
+  .login-card{padding:32px 20px}
+  .create-row{flex-direction:column}
+  .btn-create{width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══════════════════════════════════════ -->
+<div id="s-login" class="screen active">
+  <div class="login-card">
+    <div class="login-logo">Tell Her<span>.</span></div>
+    <p class="login-sub">Enter your password</p>
+    <div class="f-group">
+      <input class="f-input" id="login-pass" type="password" placeholder=" ">
+      <label class="f-label" for="login-pass">Password</label>
+    </div>
+    <button class="btn-main" onclick="doLogin()">Enter</button>
+    <p class="err-msg" id="login-err">Invalid password. Try again.</p>
+  </div>
+</div>
+
+<!-- ══ ADMIN ══════════════════════════════════════ -->
+<div id="s-admin" class="screen">
+  <div class="dash-nav">
+    <div class="nav-logo">Tell Her<span>.</span></div>
+    <div class="nav-badge">Admin</div>
+    <button class="btn-ghost" onclick="doLogout()">Log out</button>
+  </div>
+  <div class="dash-body">
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num" id="a-total">—</div><div class="stat-lbl">Total Users</div></div>
+      <div class="stat-card"><div class="stat-num" id="a-paid">—</div><div class="stat-lbl">Paid</div></div>
+      <div class="stat-card"><div class="stat-num" id="a-rev">—</div><div class="stat-lbl">Revenue</div></div>
+    </div>
+    <div class="section-hd">
+      <div class="section-title">Affiliates</div>
+      <button class="btn-sm" onclick="toggleCreateForm()"><i data-lucide="plus" style="width:13px;height:13px"></i> Create</button>
+    </div>
+    <div class="create-form" id="create-form">
+      <div class="create-row">
+        <div class="f-group"><input class="f-input" id="new-aff-name" type="text" placeholder=" "><label class="f-label" for="new-aff-name">Affiliate name</label></div>
+        <button class="btn-create" onclick="createAffiliate()">Create</button>
+      </div>
+    </div>
+    <div class="success-card" id="success-card">
+      <div class="success-title">Affiliate created</div>
+      <div class="cred-row"><div><div class="cred-label">Password</div><div class="cred-val" id="new-pass-out">—</div></div><button class="btn-copy" onclick="copyText('new-pass-out',this)">Copy</button></div>
+      <div class="cred-row"><div><div class="cred-label">Link</div><div class="cred-val" id="new-link-out">—</div></div><button class="btn-copy" onclick="copyText('new-link-out',this)">Copy</button></div>
+    </div>
+    <div id="aff-list"></div>
+  </div>
+</div>
+
+<!-- ══ AFFILIATE USER ══════════════════════════════ -->
+<div id="s-affiliate" class="screen">
+  <div class="dash-nav">
+    <div class="nav-logo" id="aff-nav-name">Tell Her<span>.</span></div>
+    <div class="nav-badge" style="color:var(--sub);background:none">Affiliate</div>
+    <button class="btn-ghost" onclick="doLogout()">Log out</button>
+  </div>
+  <div class="dash-body">
+    <div class="aff-link-card">
+      <div class="aff-link-lbl">Your referral link</div>
+      <div class="aff-link-url" id="aff-link-text">—</div>
+      <button class="btn-sm" id="aff-copy-btn" onclick="copyAffLink()" style="width:100%;justify-content:center"><i data-lucide="copy" style="width:13px;height:13px"></i> Copy link</button>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num" id="aff-clicks">—</div><div class="stat-lbl">Clicks</div></div>
+      <div class="stat-card"><div class="stat-num" id="aff-sales">—</div><div class="stat-lbl">Sales</div></div>
+      <div class="stat-card"><div class="stat-num" id="aff-earn">—</div><div class="stat-lbl">Earnings</div></div>
+    </div>
+    <div class="divider"></div>
+    <button class="script-btn" onclick="window.open('/videomaker', '_blank')">
+      <i data-lucide="pen-line" style="width:17px;height:17px"></i> Open Script Maker
+    </button>
+  </div>
+</div>
+
+<!-- ══ CREATOR — CONVERSATION LIST ═══════════════════ -->
+<div id="s-creator" class="screen">
+  <div class="dash-nav">
+    <div class="nav-logo">Tell Her<span>.</span></div>
+    <div class="nav-badge">Creator</div>
+    <div style="display:flex;align-items:center;gap:8px">
+      <button class="btn-ghost" onclick="refreshCreator()" title="Refresh"><i data-lucide="refresh-cw" style="width:13px;height:13px"></i></button>
+      <button class="btn-ghost" onclick="doLogout()">Log out</button>
+    </div>
+  </div>
+  <div class="dash-body" style="padding-top:16px">
+    <div class="stats-row" style="margin-bottom:18px">
+      <div class="stat-card"><div class="stat-num" id="c-total">—</div><div class="stat-lbl">Chats</div></div>
+      <div class="stat-card"><div class="stat-num" id="c-unread">—</div><div class="stat-lbl">Unread</div></div>
+      <div class="stat-card"><div class="stat-num" id="c-today">—</div><div class="stat-lbl">Today</div></div>
+    </div>
+    <div id="conv-list"><div class="empty-state">Loading conversations...</div></div>
+  </div>
+</div>
+
+<!-- ══ CREATOR — THREAD ══════════════════════════════ -->
+<div id="s-thread" class="screen">
+  <div class="thread-nav">
+    <div class="back-btn" onclick="backToCreator()"><i data-lucide="chevron-left" style="width:20px;height:20px"></i></div>
+    <div class="thread-info">
+      <div class="t-name" id="t-name">—</div>
+      <div class="t-sub" id="t-sub">—</div>
+    </div>
+    <label class="attach-label" for="img-attach" title="Send image"><i data-lucide="image" style="width:18px;height:18px"></i></label>
+    <input type="file" id="img-attach" accept="image/*" style="display:none" onchange="handleImgAttach(event)">
+  </div>
+  <div class="msgs-area" id="msgs-area"></div>
+  <div class="reply-bar">
+    <div class="reply-wrap">
+      <textarea class="reply-input" id="reply-input" placeholder="Reply as Emily..." rows="1" oninput="autoResizeReply(this)" onkeydown="replyKey(event)"></textarea>
+    </div>
+    <button class="send-btn" id="send-btn" onclick="sendReply()"><i data-lucide="arrow-up" style="width:15px;height:15px"></i></button>
+  </div>
+</div>
+
+<script>
+const API = '';
+let adminPassword = '';
+let creatorCode = '';
+let currentAffLink = '';
+let activeConv = null;
+let pollTimer = null;
+let convStore = [];
+
+const AV_COLORS = ['#f72585','#7c3aed','#3b82f6','#10b981','#f59e0b','#ec4899','#8b5cf6','#ef4444'];
+function avColor(s){ let h=0; for(let i=0;i<s.length;i++) h=(h*31+s.charCodeAt(i))&0xffffff; return AV_COLORS[Math.abs(h)%AV_COLORS.length]; }
+function escH(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function timeAgo(ts){ const m=Math.floor((Date.now()-new Date(ts))/60000); if(m<1)return 'now'; if(m<60)return m+'m'; const h=Math.floor(m/60); if(h<24)return h+'h'; return Math.floor(h/24)+'d'; }
+
+/* ── Float labels ── */
+document.querySelectorAll('.f-input').forEach(inp=>{
+  const lbl=inp.nextElementSibling;
+  inp.addEventListener('focus',()=>lbl&&lbl.classList.add('floating'));
+  inp.addEventListener('blur',()=>{ if(lbl&&!inp.value) lbl.classList.remove('floating'); });
+});
+
+/* ── Screen ── */
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+
+/* ── Login ── */
+async function doLogin(){
+  const pass = document.getElementById('login-pass').value.trim();
+  const err = document.getElementById('login-err');
+  err.style.display='none';
+  if(!pass){ err.textContent='Password required.'; err.style.display='block'; return; }
+
+  let reachable = false;
+
+  // Admin
+  try{
+    const r = await fetch(`${API}/admin/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pass})});
+    reachable = true;
+    if(r.ok){ adminPassword=pass; showScreen('s-admin'); loadAdminStats(); return; }
+  }catch(_){}
+
+  // Affiliate
+  try{
+    const r = await fetch(`${API}/affiliate/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pass})});
+    reachable = true;
+    if(r.ok){ const d=await r.json(); showAffScreen(d); return; }
+  }catch(_){}
+
+  if(!reachable){
+    err.textContent='Cannot reach server. Check your connection.';
+  } else {
+    err.textContent='Invalid password. Try again.';
+  }
+  err.style.display='block';
+}
+
+document.getElementById('login-pass').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
+
+function doLogout(){
+  adminPassword=''; creatorCode=''; currentAffLink=''; activeConv=null;
+  clearInterval(pollTimer);
+  document.getElementById('login-pass').value='';
+  document.querySelectorAll('.f-label').forEach(l=>l.classList.remove('floating'));
+  document.getElementById('success-card').classList.remove('open');
+  document.getElementById('create-form').classList.remove('open');
+  showScreen('s-login');
+}
+
+/* ══ ADMIN ══════════════════════════════════════════ */
+async function loadAdminStats(){
+  try{
+    const r=await fetch(`${API}/admin/stats`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:adminPassword})});
+    const d=await r.json();
+    document.getElementById('a-total').textContent=d.totalUsers??'—';
+    document.getElementById('a-paid').textContent=d.paidUsers??'—';
+    document.getElementById('a-rev').textContent=d.revenue!=null?'$'+d.revenue:'—';
+    renderAffList(d.affiliates||[]);
+  }catch(_){}
+}
+
+function renderAffList(affs){
+  const el=document.getElementById('aff-list');
+  if(!affs.length){ el.innerHTML='<div class="empty-state">No affiliates yet.</div>'; return; }
+  el.innerHTML=affs.map(a=>`
+    <div class="aff-card">
+      <div class="aff-top">
+        <div class="aff-name">${escH(a.name)}</div>
+        <button class="btn-red" onclick="deleteAff('${escH(a.code)}')">Delete</button>
+      </div>
+      <div class="aff-creds">
+        <div class="cred-pill"><span>Password</span><strong>${escH(a.password)}</strong></div>
+        <div class="cred-pill"><span>Link</span><strong>tellher.co/?ref=${escH(a.password)}</strong></div>
+      </div>
+      <div class="aff-stats">
+        <div class="aff-stat"><div class="aff-stat-num">${a.clicks}</div><div class="aff-stat-lbl">Clicks</div></div>
+        <div class="aff-stat"><div class="aff-stat-num">${a.sales}</div><div class="aff-stat-lbl">Sales</div></div>
+        <div class="aff-stat"><div class="aff-stat-num">$${a.earnings}</div><div class="aff-stat-lbl">Earned</div></div>
+      </div>
+    </div>`).join('');
+  lucide.createIcons();
+}
+
+function toggleCreateForm(){
+  const f=document.getElementById('create-form');
+  f.classList.toggle('open');
+  if(f.classList.contains('open')){ document.getElementById('success-card').classList.remove('open'); setTimeout(()=>document.getElementById('new-aff-name').focus(),50); }
+}
+
+async function createAffiliate(){
+  const name=document.getElementById('new-aff-name').value.trim(); if(!name)return;
+  try{
+    const r=await fetch(`${API}/admin/affiliate/create`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:adminPassword,name})});
+    const d=await r.json();
+    if(d.success){
+      document.getElementById('new-pass-out').textContent=d.password;
+      document.getElementById('new-link-out').textContent=`tellher.co/?ref=${d.password}`;
+      document.getElementById('success-card').classList.add('open');
+      document.getElementById('create-form').classList.remove('open');
+      document.getElementById('new-aff-name').value='';
+      loadAdminStats();
+    }
+  }catch(_){}
+}
+document.getElementById('new-aff-name').addEventListener('keydown',e=>{ if(e.key==='Enter') createAffiliate(); });
+
+async function deleteAff(code){
+  if(!confirm(`Delete "${code}"?`))return;
+  try{ await fetch(`${API}/admin/affiliate/delete`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:adminPassword,code})}); loadAdminStats(); }catch(_){}
+}
+
+/* ══ AFFILIATE USER ═════════════════════════════════ */
+function showAffScreen(d){
+  currentAffLink=`https://tellher.co/?ref=${d.code}`;
+  document.getElementById('aff-nav-name').innerHTML=`${escH(d.name)}<span style="color:var(--pink)">.</span>`;
+  document.getElementById('aff-link-text').innerHTML=`<strong>${escH(currentAffLink)}</strong>`;
+  document.getElementById('aff-clicks').textContent=d.clicks;
+  document.getElementById('aff-sales').textContent=d.sales;
+  document.getElementById('aff-earn').textContent='$'+d.earnings;
+  showScreen('s-affiliate');
+}
+
+function copyAffLink(){
+  navigator.clipboard.writeText(currentAffLink).catch(()=>{});
+  const btn=document.getElementById('aff-copy-btn');
+  btn.innerHTML='<i data-lucide="check" style="width:13px;height:13px"></i> Copied!'; lucide.createIcons();
+  setTimeout(()=>{ btn.innerHTML='<i data-lucide="copy" style="width:13px;height:13px"></i> Copy link'; lucide.createIcons(); },2000);
+}
+
+/* ══ CREATOR ════════════════════════════════════════ */
+async function loadCreator(){
+  try{
+    const r=await fetch(`${API}/creator/all-conversations`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({creatorCode})});
+    const d=await r.json();
+    renderConvs(d.conversations||[]);
+  }catch(_){}
+}
+
+function refreshCreator(){ loadCreator(); }
+
+function renderConvs(convs){
+  const el=document.getElementById('conv-list');
+  const totalUnread=convs.reduce((a,c)=>a+(c.unreadCount||0),0);
+  const today=convs.filter(c=>c.lastMessage?.timestamp&&new Date(c.lastMessage.timestamp).toDateString()===new Date().toDateString()).length;
+  document.getElementById('c-total').textContent=convs.length;
+  document.getElementById('c-unread').textContent=totalUnread;
+  document.getElementById('c-today').textContent=today;
+  if(!convs.length){ el.innerHTML='<div class="empty-state">No conversations yet.</div>'; return; }
+  convStore=convs;
+  el.innerHTML=convs.map((c,i)=>{
+    const name=(c.userName&&c.userName!==c.userId&&c.userName.trim())?c.userName:c.userId.slice(0,8)+'...';
+    const unread=c.unreadCount||0;
+    const preview=c.lastMessage?.content||'';
+    const isTester=c.lastMessage?.role==='tester';
+    return`<div class="conv-card ${unread>0?'unread':''}" data-idx="${i}">
+      <div class="conv-av" style="background:${avColor(c.userId)}">${name[0].toUpperCase()}</div>
+      <div class="conv-info">
+        <div class="conv-name">${escH(name)}</div>
+        <div class="conv-preview ${unread>0&&!isTester?'bold':''}">${isTester?'↩ ':''}${escH(preview.slice(0,50))||'—'}</div>
+      </div>
+      <div class="conv-meta">
+        <div class="conv-time">${c.lastMessage?.timestamp?timeAgo(c.lastMessage.timestamp):''}</div>
+        ${unread>0?`<div class="conv-badge">${unread}</div>`:''}
+      </div>
+    </div>`;
+  }).join('');
+  lucide.createIcons();
+}
+
+document.getElementById('conv-list').addEventListener('click',e=>{
+  const card=e.target.closest('.conv-card'); if(!card)return;
+  const idx=parseInt(card.dataset.idx);
+  if(!isNaN(idx)&&convStore[idx]) openThread(convStore[idx]);
+});
+
+function openThread(conv){
+  activeConv=conv;
+  const name=(conv.userName&&conv.userName!==conv.userId&&conv.userName.trim())?conv.userName:conv.userId.slice(0,8)+'...';
+  document.getElementById('t-name').textContent=name;
+  document.getElementById('t-sub').textContent=conv.hisHandle?`@${conv.hisHandle} · ${conv.hisPlatform||''}`:conv.userId;
+  document.getElementById('msgs-area').innerHTML='<div class="empty-state" style="background:none">Loading...</div>';
+  document.getElementById('reply-input').value='';
+  showScreen('s-thread');
+  loadThread();
+}
+
+async function loadThread(){
+  if(!activeConv)return;
+  try{
+    const r=await fetch(`${API}/creator/conversation`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({creatorCode,userId:activeConv.userId,testerId:activeConv.testerId})});
+    const d=await r.json();
+    renderMsgs(d.messages||[]);
+    loadCreator();
+  }catch(_){}
+}
+
+function renderMsgs(msgs){
+  const area=document.getElementById('msgs-area');
+  if(!msgs.length){ area.innerHTML='<div class="empty-state" style="background:none">No messages yet.</div>'; return; }
+  let html=''; let lastDate='';
+  msgs.forEach(m=>{
+    const d=new Date(m.timestamp);
+    const ds=d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+    if(ds!==lastDate){ html+=`<div class="date-lbl">${ds}</div>`; lastDate=ds; }
+    const t=d.toLocaleTimeString('en-US',{hour:'numeric',minute:'2-digit'});
+    const isUser=m.role==='user';
+    const content=m.type==='image'?`<img class="msg-img" src="${escH(m.content)}" onclick="window.open('${escH(m.content)}')">`:`${escH(m.content).replace(/\n/g,'<br>')}`;
+    html+=`<div class="msg-row ${isUser?'user':'tester'}">
+      <div class="msg-av ${isUser?'u':'t'}">${isUser?(activeConv?.userName?.[0]||'U').toUpperCase():'E'}</div>
+      <div><div class="msg-bubble">${content}</div><div class="msg-time">${t}</div></div>
+    </div>`;
+  });
+  area.innerHTML=html;
+  area.scrollTop=area.scrollHeight;
+}
+
+async function sendReply(){
+  if(!activeConv)return;
+  const input=document.getElementById('reply-input');
+  const text=input.value.trim(); if(!text)return;
+  const btn=document.getElementById('send-btn'); btn.disabled=true;
+  input.value=''; input.style.height='';
+  try{
+    await fetch(`${API}/creator/reply`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({creatorCode,userId:activeConv.userId,testerId:activeConv.testerId,content:text,type:'text'})});
+    await loadThread();
+  }catch(_){}
+  btn.disabled=false;
+}
+
+async function handleImgAttach(e){
+  const file=e.target.files[0]; if(!file||!activeConv)return;
+  const reader=new FileReader();
+  reader.onload=async ev=>{
+    const base64=ev.target.result.split(',')[1];
+    try{
+      const up=await fetch(`${API}/upload-image`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({base64Image:base64})});
+      const ud=await up.json();
+      if(ud.url){
+        await fetch(`${API}/creator/reply`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({creatorCode,userId:activeConv.userId,testerId:activeConv.testerId,content:ud.url,type:'image'})});
+        await loadThread();
+      }
+    }catch(_){}
+  };
+  reader.readAsDataURL(file);
+  e.target.value='';
+}
+
+function replyKey(e){ if(e.key==='Enter'&&!e.shiftKey){ e.preventDefault(); sendReply(); } }
+function autoResizeReply(el){ el.style.height=''; el.style.height=Math.min(el.scrollHeight,100)+'px'; }
+function backToCreator(){ showScreen('s-creator'); activeConv=null; loadCreator(); }
+
+function startPoll(){ clearInterval(pollTimer); pollTimer=setInterval(()=>{ if(document.getElementById('s-creator').classList.contains('active')) loadCreator(); if(document.getElementById('s-thread').classList.contains('active')) loadThread(); },5000); }
+
+/* ── Copy util ── */
+function copyText(id,btn){
+  const text=document.getElementById(id).textContent;
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).catch(()=>fallbackCopy(text));
+  } else { fallbackCopy(text); }
+  btn.textContent='Copied!'; btn.classList.add('copied');
+  setTimeout(()=>{ btn.textContent='Copy'; btn.classList.remove('copied'); },2000);
+}
+function fallbackCopy(text){
+  const ta=document.createElement('textarea');
+  ta.value=text; ta.style.position='fixed'; ta.style.opacity='0';
+  document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+  document.body.removeChild(ta);
+}
+
+document.addEventListener('DOMContentLoaded',()=>{ lucide.createIcons(); });
+</script>
+</body>
+</html>

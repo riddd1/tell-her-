@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no">
+<title>Tell Her · Affiliate</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08080a;--pink:#f72585;--pinkl:#ff4da6;--card:#101013;--card2:#16161a;--inp:#1a1a1f;--txt:#f5f5f7;--sub:#888893;--bdr:rgba(247,37,133,0.18);--green:#22c55e;--red:#ef4444}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-serif;color:var(--txt);-webkit-font-smoothing:antialiased}
+
+.screen{display:none;min-height:100svh}
+.screen.active{display:block}
+
+/* LOGIN */
+#s-login{display:flex;align-items:center;justify-content:center;padding:24px;min-height:100svh}
+#s-login.active{display:flex}
+.login-card{background:var(--card);border:1px solid var(--bdr);border-radius:20px;padding:40px 32px;width:100%;max-width:360px;text-align:center}
+.login-logo{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:2rem;color:var(--txt);margin-bottom:4px}
+.login-logo span{color:var(--pink)}
+.login-sub{font-size:.78rem;color:var(--sub);margin-bottom:28px}
+.f-group{position:relative;margin-bottom:14px;text-align:left}
+.f-label{position:absolute;top:50%;left:14px;transform:translateY(-50%);font-size:.85rem;color:var(--sub);pointer-events:none;transition:all .2s}
+.f-label.floating{top:10px;transform:none;font-size:.62rem;color:var(--pink);letter-spacing:.5px;text-transform:uppercase}
+.f-input{width:100%;background:var(--inp);border:1.5px solid rgba(255,255,255,.07);border-radius:12px;padding:22px 14px 8px;font-size:.9rem;font-family:'DM Sans',sans-serif;color:var(--txt);outline:none;transition:border-color .2s}
+.f-input:focus{border-color:var(--pink)}
+.btn-main{display:block;width:100%;background:var(--pink);color:#fff;font-size:.88rem;font-weight:600;padding:16px;border-radius:12px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;letter-spacing:.5px;text-transform:uppercase}
+.btn-main:hover{background:var(--pinkl)}
+.err-msg{color:var(--red);font-size:.8rem;margin-top:12px;display:none}
+
+/* NAV */
+.dash-nav{background:rgba(8,8,10,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;padding:15px 24px;position:sticky;top:0;z-index:10}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.35rem;color:var(--txt)}
+.nav-logo span{color:var(--pink)}
+.nav-badge{font-size:.62rem;font-weight:700;padding:4px 10px;border-radius:100px;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bdr);color:var(--pink);background:rgba(247,37,133,.08)}
+.btn-ghost{background:none;border:1px solid rgba(255,255,255,.1);color:var(--sub);font-size:.72rem;font-weight:600;padding:7px 14px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.btn-ghost:hover{border-color:var(--pink);color:var(--pink)}
+
+/* DASHBOARD */
+.dash-body{max-width:600px;margin:0 auto;padding:28px 20px 80px}
+
+.link-card{background:var(--card);border:1px solid var(--bdr);border-radius:16px;padding:24px;margin-bottom:20px}
+.link-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--pink);font-weight:700;margin-bottom:8px}
+.link-url{font-size:.9rem;color:var(--sub);word-break:break-all;margin-bottom:14px;line-height:1.6}
+.link-url strong{color:var(--txt);font-weight:600}
+.btn-copy{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:var(--pink);color:#fff;font-size:.85rem;font-weight:600;padding:14px;border-radius:11px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;letter-spacing:.3px}
+.btn-copy:hover{background:var(--pinkl)}
+.btn-copy.copied{background:var(--green)}
+
+.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.stat-card{background:var(--card);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:18px 12px;text-align:center}
+.stat-num{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--pink);line-height:1}
+.stat-lbl{font-size:.64rem;color:var(--sub);margin-top:5px;text-transform:uppercase;letter-spacing:.8px;font-weight:600}
+
+.divider{height:1px;background:linear-gradient(to right,transparent,rgba(247,37,133,.2),transparent);margin:8px 0 20px}
+
+.script-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--card);color:var(--txt);font-size:.88rem;font-weight:600;padding:17px;border-radius:13px;border:1px solid var(--bdr);cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;letter-spacing:.3px}
+.script-btn:hover{border-color:var(--pink);color:var(--pink)}
+
+@media(max-width:480px){
+  .stats-row{grid-template-columns:1fr 1fr}
+  .stats-row .stat-card:last-child{grid-column:span 2}
+  .dash-body{padding:20px 14px 80px}
+  .login-card{padding:32px 20px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="s-login" class="screen active">
+  <div class="login-card">
+    <div class="login-logo">Tell Her<span>.</span></div>
+    <p class="login-sub">Affiliate access</p>
+    <div class="f-group">
+      <input class="f-input" id="login-pass" type="password" placeholder=" ">
+      <label class="f-label" for="login-pass">Your password</label>
+    </div>
+    <button class="btn-main" onclick="doLogin()">Enter</button>
+    <p class="err-msg" id="login-err">Invalid password. Try again.</p>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="s-dash" class="screen">
+  <div class="dash-nav">
+    <div class="nav-logo" id="nav-name">Tell Her<span>.</span></div>
+    <div class="nav-badge">Affiliate</div>
+    <button class="btn-ghost" onclick="doLogout()">Log out</button>
+  </div>
+  <div class="dash-body">
+
+    <div class="link-card">
+      <div class="link-lbl">Your referral link</div>
+      <div class="link-url" id="link-display">—</div>
+      <button class="btn-copy" id="copy-btn" onclick="copyLink()">Copy link</button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num" id="stat-clicks">—</div><div class="stat-lbl">Clicks</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-sales">—</div><div class="stat-lbl">Sales</div></div>
+      <div class="stat-card"><div class="stat-num" id="stat-earn">—</div><div class="stat-lbl">Earned</div></div>
+    </div>
+
+    <div class="divider"></div>
+
+    <button class="script-btn" onclick="window.open('./fake ig ss/scriptmaker (1).html','_blank')">
+      Open Script Maker
+    </button>
+
+  </div>
+</div>
+
+<script>
+const API = (window.location.hostname === 'localhost' || window.location.protocol === 'file:')
+  ? 'http://localhost:3000'
+  : window.location.origin;
+
+let affLink = '';
+
+document.querySelectorAll('.f-input').forEach(inp => {
+  const lbl = inp.nextElementSibling;
+  inp.addEventListener('focus', () => lbl && lbl.classList.add('floating'));
+  inp.addEventListener('blur', () => { if (lbl && !inp.value) lbl.classList.remove('floating'); });
+});
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+
+async function doLogin() {
+  const pass = document.getElementById('login-pass').value.trim();
+  const err = document.getElementById('login-err');
+  err.style.display = 'none';
+  if (!pass) { err.textContent = 'Password required.'; err.style.display = 'block'; return; }
+
+  try {
+    const r = await fetch(`${API}/affiliate/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pass }),
+    });
+    if (r.ok) {
+      const d = await r.json();
+      loadDash(d);
+      return;
+    }
+    err.textContent = 'Invalid password. Try again.';
+    err.style.display = 'block';
+  } catch (_) {
+    err.textContent = 'Cannot reach server. Check your connection.';
+    err.style.display = 'block';
+  }
+}
+
+document.getElementById('login-pass').addEventListener('keydown', e => {
+  if (e.key === 'Enter') doLogin();
+});
+
+function loadDash(d) {
+  affLink = `https://tellher.co/?ref=${d.code}`;
+  document.getElementById('nav-name').innerHTML = `${d.name}<span style="color:var(--pink)">.</span>`;
+  document.getElementById('link-display').innerHTML = `<strong>${affLink}</strong>`;
+  document.getElementById('stat-clicks').textContent = d.clicks;
+  document.getElementById('stat-sales').textContent = d.sales;
+  document.getElementById('stat-earn').textContent = '$' + d.earnings;
+  showScreen('s-dash');
+}
+
+function copyLink() {
+  const btn = document.getElementById('copy-btn');
+  const copy = text => {
+    const ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+  };
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(affLink).catch(() => copy(affLink));
+  } else { copy(affLink); }
+  btn.textContent = 'Copied!'; btn.classList.add('copied');
+  setTimeout(() => { btn.textContent = 'Copy link'; btn.classList.remove('copied'); }, 2000);
+}
+
+function doLogout() {
+  affLink = '';
+  document.getElementById('login-pass').value = '';
+  document.querySelectorAll('.f-label').forEach(l => l.classList.remove('floating'));
+  showScreen('s-login');
+}
+</script>
+</body>
+</html>
