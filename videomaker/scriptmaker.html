@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Script Maker — DM Studio</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@keyframes gradientShift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0a0a;color:#fff;min-height:100vh;font-size:13px;overflow:hidden;animation:fadeIn .35s ease}
+.topbar{display:flex;align-items:center;gap:10px;padding:10px 18px;border-bottom:1px solid rgba(255,255,255,0.07);background:#0a0a0a;position:sticky;top:0;z-index:100;height:46px}
+.logo-wrap{display:flex;align-items:center;gap:9px}
+.logo-mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,#f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 2px 10px rgba(220,39,67,0.35)}
+.logo-mark svg{width:14px;height:14px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.logo{font-size:14px;font-weight:800;color:#fff;letter-spacing:-.3px;line-height:1.1}
+.logo-sub{font-size:9px;color:rgba(255,255,255,0.3);font-weight:500;letter-spacing:.6px;text-transform:uppercase}
+.topbar-tabs{display:flex;gap:2px;margin-left:6px}
+.t-tab{display:inline-flex;align-items:center;gap:5px;padding:4px 11px;font-size:11px;font-weight:700;border-radius:5px;cursor:pointer;border:1px solid rgba(255,255,255,0.12);background:none;color:rgba(255,255,255,0.4);transition:all .15s;font-family:inherit}
+.t-tab svg{width:11px;height:11px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.t-tab:hover{color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.22)}
+.t-tab.active{border-color:#e8a87c;color:#e8a87c;background:rgba(232,168,124,0.08)}
+.t-tab.active:hover{color:#e8a87c}
+.main{display:grid;grid-template-columns:290px 1fr;height:calc(100vh - 46px)}
+.lp{padding:14px;overflow-y:auto;border-right:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;gap:14px}
+.sec-title{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:#e8a87c;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
+.sec-title svg{width:10px;height:10px;flex-shrink:0;fill:none;stroke:#e8a87c;stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;opacity:.8}
+.platform-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.platform-pill{padding:9px 10px;font-size:11.5px;font-weight:600;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.65);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:7px;font-family:inherit;text-align:left}
+.platform-pill svg{width:14px;height:14px;flex-shrink:0;fill:currentColor}
+.platform-pill:hover{border-color:rgba(232,168,124,0.35);background:rgba(232,168,124,0.06);color:rgba(255,255,255,0.9)}
+.platform-pill.active{border-color:#e8a87c;background:rgba(232,168,124,0.12);color:#e8a87c}
+.spacer{flex:1}
+.gbtn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;border:none;color:#fff;border-radius:12px;padding:13px;font-size:13px;font-weight:700;letter-spacing:.15px;cursor:pointer;transition:all .22s;will-change:transform;font-family:inherit;background:linear-gradient(270deg,#e8a87c,#c45c8a,#8b5cf6,#c45c8a,#e8a87c);background-size:300% 300%;animation:gradientShift 5s ease infinite}
+.gbtn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(232,168,124,0.3);animation:gradientShift 2s ease infinite;opacity:.94}
+.gbtn:disabled{opacity:.5;cursor:not-allowed;transform:none;box-shadow:none}
+.gbtn svg{width:13px;height:13px;flex-shrink:0;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.gbtn .spinner{width:13px;height:13px;border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;display:none}
+.gbtn.loading .spinner{display:block}
+.gbtn.loading .gbtn-icon{display:none}
+.rp{padding:18px 22px;display:flex;flex-direction:column;gap:12px;overflow:hidden}
+.rp-header{display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.rp-header-left{display:flex;align-items:center;gap:9px}
+.status-dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.18);transition:all .2s}
+.status-dot.ready{background:#e8a87c;box-shadow:0 0 8px rgba(232,168,124,0.7)}
+.status-dot.loading{background:#f5a623;animation:pulse 1s ease-in-out infinite}
+.status-dot.error{background:#e05555}
+.rp-label{font-size:10px;font-weight:700;color:rgba(255,255,255,0.5);text-transform:uppercase;letter-spacing:.7px}
+.action-btns{display:flex;gap:6px}
+.act-btn{padding:5px 11px;font-size:10.5px;font-weight:600;border-radius:6px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.6);cursor:pointer;transition:all .15s;font-family:inherit}
+.act-btn:hover{border-color:rgba(255,255,255,0.22);color:#fff;background:rgba(255,255,255,0.08)}
+.act-btn.primary{border-color:rgba(232,168,124,0.4);color:#e8a87c;background:rgba(232,168,124,0.08)}
+.act-btn.primary:hover{border-color:#e8a87c;background:rgba(232,168,124,0.16)}
+.output-box{flex:1;background:#111;border:1px solid rgba(255,255,255,0.08);border-radius:11px;padding:18px 20px;font-family:'SF Mono',Consolas,Menlo,monospace;font-size:12.5px;line-height:1.7;color:#f0f0f0;white-space:pre-wrap;overflow-y:auto;position:relative;transition:border-color .2s;min-height:0}
+.output-box.placeholder::before{content:attr(data-placeholder);color:rgba(255,255,255,0.3);font-size:13px;font-family:inherit;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;width:78%;line-height:1.6;pointer-events:none;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.output-box.placeholder{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif}
+.status-bar{display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.status-text{font-size:11px;color:rgba(255,255,255,0.4)}
+.char-count{font-size:11px;color:rgba(255,255,255,0.4);font-family:'SF Mono',Consolas,Menlo,monospace}
+.char-count.warn{color:#f5a623}
+.char-count.over{color:#e05555}
+.history-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;flex-shrink:0;min-height:24px}
+.history-strip:empty{display:none}
+.history-chip{flex-shrink:0;font-size:10.5px;padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);cursor:pointer;transition:all .15s;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:rgba(255,255,255,0.03)}
+.history-chip:hover{border-color:rgba(232,168,124,0.4);color:#e8a87c;background:rgba(232,168,124,0.06)}
+.toast{position:fixed;bottom:20px;right:20px;background:linear-gradient(90deg,#e8a87c,#c45c8a);color:#fff;font-size:12px;font-weight:600;padding:10px 18px;border-radius:8px;transform:translateY(80px);opacity:0;transition:all .25s cubic-bezier(.34,1.56,.64,1);pointer-events:none;z-index:1000;box-shadow:0 8px 24px rgba(0,0,0,0.4)}
+.toast.show{transform:translateY(0);opacity:1}
+::-webkit-scrollbar{width:6px;height:6px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,255,255,0.2)}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="logo-wrap">
+    <div class="logo-mark">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </div>
+    <div>
+      <div class="logo">DM Studio</div>
+      <div class="logo-sub">Script Maker</div>
+    </div>
+  </div>
+  <div class="topbar-tabs">
+    <button class="t-tab" onclick="location.href='index.html#builder'">
+      <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      Builder
+    </button>
+    <button class="t-tab" onclick="location.href='index.html#code'">
+      <svg viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+      Script
+    </button>
+    <button class="t-tab" onclick="location.href='index.html#stash'">
+      <svg viewBox="0 0 24 24"><polyline points="21 8 21 21 3 21 3 8"/><rect x="1" y="3" width="22" height="5"/><line x1="10" y1="12" x2="14" y2="12"/></svg>
+      Stash
+    </button>
+    <button class="t-tab active">
+      <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+      Script Maker
+    </button>
+  </div>
+</div>
+<div class="main">
+  <div class="lp">
+    <div>
+      <div class="sec-title">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15 15 0 0 1 0 20M12 2a15 15 0 0 0 0 20"/></svg>
+        Social Media
+      </div>
+      <div class="platform-grid" id="platformGroup">
+        <button class="platform-pill active" data-val="instagram">
+          <svg viewBox="0 0 24 24"><path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2c1.66 0 3 1.34 3 3v10c0 1.66-1.34 3-3 3H7c-1.66 0-3-1.34-3-3V7c0-1.66 1.34-3 3-3h10zm-5 3a5 5 0 100 10 5 5 0 000-10zm0 2a3 3 0 110 6 3 3 0 010-6zm5.5-2.5a1 1 0 100 2 1 1 0 000-2z"/></svg>
+          Instagram
+        </button>
+        <button class="platform-pill" data-val="tiktok">
+          <svg viewBox="0 0 24 24"><path d="M19.6 6.3a4.6 4.6 0 01-3.4-1.5 4.6 4.6 0 01-1.1-3H12v13.4a2.6 2.6 0 11-2.6-2.6h.4V9.4a5.4 5.4 0 00-.4 0 5.6 5.6 0 105.6 5.6V9.7a7.6 7.6 0 004.6 1.6V8.5a4.6 4.6 0 010-2.2z"/></svg>
+          TikTok
+        </button>
+        <button class="platform-pill" data-val="snapchat">
+          <svg viewBox="0 0 24 24"><path d="M12 1.5c-3 0-5.6 1.7-6.4 4.6-.3 1.1-.2 2.7-.1 4 0 .3.1.7.1 1l-.6.2c-.4.2-.9.3-1.4.3-.6 0-1.1.4-1.1 1 0 .5.4 1 1 1.2.4.2 1 .3 1.6.4-.1.4-.4.8-.7 1.2-.7.7-1.6 1.1-2.4 1.5 0 .6.6 1 1.2 1.2.6.2 1.3.3 1.9.3.1.4.4.8.8 1 .4.2.8.3 1.3.4.5 0 1 0 1.5.2.4.1.8.4 1.2.7.4.3.9.6 1.4.7.5.2 1 .2 1.6.2.6 0 1.1 0 1.6-.2.5-.1 1-.4 1.4-.7.4-.3.8-.6 1.2-.7.5-.2 1-.2 1.5-.2.5 0 .9-.2 1.3-.4.4-.2.6-.6.8-1 .6 0 1.3-.1 1.9-.3.6-.2 1.2-.6 1.2-1.2-.8-.4-1.7-.8-2.4-1.5-.3-.4-.6-.8-.7-1.2.6-.1 1.2-.2 1.6-.4.6-.2 1-.7 1-1.2 0-.6-.5-1-1.1-1-.5 0-1-.1-1.4-.3l-.6-.2c0-.3.1-.7.1-1 .1-1.3.2-2.9-.1-4-.8-2.9-3.4-4.6-6.4-4.6z"/></svg>
+          Snapchat
+        </button>
+        <button class="platform-pill" data-val="facebook">
+          <svg viewBox="0 0 24 24"><path d="M22 12c0-5.5-4.5-10-10-10S2 6.5 2 12c0 5 3.7 9.1 8.4 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7C18.3 21.1 22 17 22 12z"/></svg>
+          Facebook
+        </button>
+        <button class="platform-pill" data-val="youtube">
+          <svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 00.5 6.2C0 8 0 12 0 12s0 4 .5 5.8a3 3 0 002.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 002.1-2.1C24 16 24 12 24 12s0-4-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg>
+          YouTube
+        </button>
+        <button class="platform-pill" data-val="twitter">
+          <svg viewBox="0 0 24 24"><path d="M18.2 2H22l-7.6 8.7L23.4 22h-7L11 15.1 4.6 22H1l8.1-9.3L.7 2h7.2l4.9 6.4L18.2 2zm-1.3 18h2L7.3 4H5.2l11.7 16z"/></svg>
+          Twitter / X
+        </button>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div>
+      <div class="sec-title">
+        <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Story Reply
+      </div>
+      <textarea id="storyReplyInput" placeholder='what did your friend say? (e.g. "he parks down the street 🙃")' style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:9px 11px;color:#fff;font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;resize:none;outline:none;height:60px;line-height:1.5;transition:border-color .15s" onfocus="this.style.borderColor='rgba(232,168,124,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'"></textarea>
+    </div>
+    <button class="gbtn" id="genBtn" onclick="generateScript()">
+      <div class="spinner"></div>
+      <svg class="gbtn-icon" viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      <span class="gbtn-text">Generate Script</span>
+    </button>
+  </div>
+  <div class="rp">
+    <div class="rp-header">
+      <div class="rp-header-left">
+        <div class="status-dot" id="statusDot"></div>
+        <div class="rp-label">Output</div>
+      </div>
+      <div class="action-btns">
+        <button class="act-btn" onclick="clearOutput()">Clear</button>
+        <button class="act-btn primary" onclick="copyScript()">Copy Script</button>
+        <button class="act-btn primary" id="importBtn" onclick="importToBuilder()">Import to Builder</button>
+      </div>
+    </div>
+    <div class="output-box placeholder" id="outputBox"
+      data-placeholder="Pick a social media platform on the left and hit Generate Script.&#10;&#10;Every script is unique — slow drip reveals, natural texting, meme captions that judge his lines."></div>
+    <div class="status-bar">
+      <div class="status-text" id="statusText">Ready</div>
+      <div class="char-count" id="charCount">0 / 5000</div>
+    </div>
+    <div class="history-strip" id="historyStrip"></div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+  document.querySelectorAll('.platform-grid').forEach(group => {
+    group.querySelectorAll('.platform-pill').forEach(pill => {
+      pill.addEventListener('click', () => {
+        group.querySelectorAll('.platform-pill').forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+      });
+    });
+  });
+
+  function getPlatform() {
+    return document.querySelector('#platformGroup .platform-pill.active').dataset.val;
+  }
+
+  function buildPrompt(platform, storyReply) {
+    if (platform === 'tiktok') {
+      return buildTikTokPrompt(storyReply);
+    }
+    return buildInstagramPrompt(storyReply);
+  }
+function buildTikTokPrompt(platform, storyReply) {
+    const hooks = [
+      "test him pls he got a second phone and said it's for work 😐",
+      "test him pls he started going to the gym at 11pm 🙃",
+      "test him pls he changed his lock screen to a default wallpaper 😐",
+      "test him pls he comes home smelling like perfume 🙃",
+      "test him pls he deleted his instagram search history 😐",
+      "test him pls he stopped posting me 3 months ago 🙃",
+      "test him pls he leaves the room to take calls now 😐",
+      "test him pls he started using a password on his phone for the first time 🙃",
+      "test him pls his location is always off now 😐",
+      "test him pls he started caring about how he looks when he goes out alone 🙃",
+      "test him pls he gets defensive when i ask simple questions 😐",
+      "test him pls he came home with a hickey and said it was from a seatbelt 🙃",
+      "test him pls he has a contact saved as a man's name but the texts come in at 2am 😐",
+      "test him pls he started tilting his phone away when i walk past 🙃",
+      "test him pls he cleared his call log for the first time ever 😐",
+      "test him pls he goes out every other weekend and never says where 🙃",
+      "test him pls he has a second instagram i wasn't supposed to find 😐",
+      "test him pls he bought new cologne and hides it in his car 🙃",
+      "test him pls he started deleting his messages every night before bed 😐",
+      "test him pls his ring finger has a tan line and he says it's from a ring he lost 🙃"
+    ];
+
+    const defaultHook = hooks[Math.floor(Math.random() * hooks.length)];
+    const storyLine = storyReply ? `1) ${storyReply}` : `1) ${defaultHook}`;
+
+    return `You are a viral social media script writer. You write fake Instagram DM loyalty test scripts where a girl (the tester) slides into a guy's DMs pretending to be a stranger, and through casual innocent conversation he slowly reveals he is cheating on or manipulating his girlfriend. Every script must feel completely real — written by a human, not AI. The audience must not be able to tell it was generated.
+
+Output ONLY the raw script. No stage directions. No brackets. No placeholder text like [mutual] or [name]. No commentary. No caption blocks at the end. No explanations. Just the script starting with **IMAGE 1**.
+
+EXACT FORMAT:
+**IMAGE 1**
+2) STORY_REPLY:
+${storyLine}
+2) [her short casual reply]
+-b-
+**IMAGE 2**
+2) [her opening line]
+2) [her second line]
+1) [his reply]
+1) [his second line]
+-b-
+...continue...
+-b-
+-m-
+Caption: "his exact words" [emoji outside quotes]
+-b-
+...continue until kill line. End immediately after his kill line. Nothing after it.
+
+FORMAT RULES — never break these:
+- 6 to 10 images total. Never fewer than 6. Never more than 10.
+- Every image must have exactly 3 to 4 lines of dialogue. Never 2. Never 5. Never 6.
+- Every single line of dialogue must be SHORT. Maximum 8 words per line. If a thought is longer than 8 words split it across two separate lines.
+- Good line length examples: "lmaoo yeah i do everything myself" / "took a while to figure it out" / "she doesn't really ask much ngl"
+- Bad line length examples: "my situation at home makes it a bit more complicated to just disappear so it's easier when it's just me" — WAY too long, never write lines like this
+- 1) = his lines (left gray bubble). 2) = her lines (right purple bubble)
+- -b- on its own line between every image every single time. Never double -b- with nothing between them.
+- -m- then Caption: for memes — placed immediately after his most revealing or suspicious line
+- 3 to 4 memes per script
+- Meme caption format exactly: Caption: "his exact words" emoji — emoji goes OUTSIDE the closing quote, never inside
+- Meme captions must quote or closely reference HIS exact words and mock him from the tester's POV. Short, funny, devastating.
+- Good meme examples: "easier that way 🤡" / "some nights 🤨" / "she trusts me 😬💀" / "been 4 years 😂" / "a MUSE 🤨" / "technically 🤡💀" / "her MOM 😬" / "might as well let her finish 💀"
+- Bad meme examples: "he is so suspicious 🤨" / "wow he really said that" / "this is wild 💀" — too vague, not funny, don't quote him specifically
+- Script ends immediately after his kill line. She does NOT respond after it. No seen text. No wrap up.
+- Natural conversation flow — not strict alternating 2)/1)/2)/1) every single line. Group lines naturally like real texting.
+
+CONTENT RULES — never break these:
+- She uses natural emojis throughout: 😏 👀 😭 😅 😇 💀 😐 🙃 etc
+- He uses casual lowercase texting: lmaoo, nah, ight, idk, wbu, fr, honestly, ngl, kinda, yeah, bet
+- HE brings up the girlfriend himself — she NEVER says "ur girl" or "wifey" or reveals she knows about a girlfriend BEFORE he mentions someone first. She only asks innocent follow up questions after HE mentions someone.
+- She NEVER confronts him. NEVER says "so you're cheating". NEVER sounds like an interrogation. Always stays curious, playful, casual, slightly flirty.
+- She was NEVER physically present anywhere — she can only reference things visible on his PUBLIC page or things HE tells her in the conversation. She cannot say "i saw you with someone" or "i noticed you somewhere" — she was not there.
+- Every script must prove HE is the one cheating or manipulating — never a story about someone else, never a general attitude, always HIM specifically.
+- Scenarios must be universal — understood by anyone worldwide. No specific city names. No country-specific references. No American-only culture.
+- Hook must be plausible from his public page only: page came up on suggested, tagged in a post she saw, story she replied to, explore page, mutual follows him — NEVER dating apps, NEVER "i was there and saw you".
+- Every script must have a completely different hook, setting, scenario, manipulation style and kill line. Never repeat premises.
+
+THE SLOW DRIP STRUCTURE:
+- Image 1: story reply + her casual reply
+- Image 2: she slides in with a natural opener based on something visible on his public page
+- Images 3-4: normal small talk, he seems completely normal, no red flags yet
+- Image 5: first ambiguous line from him — could mean anything, audience starts to wonder — first meme goes here
+- Images 6-8: her innocent questions pull one more layer out each time, he keeps revealing without realising
+- Final image: the kill line. One line so casually devastating it makes two people watching grab each other. Cut immediately.
+
+THE KILL LINE — most important part of the script:
+- One short line he drops completely casually, like it's nothing
+- Delivered in his lowercase casual voice — never dramatic, never a confession
+- So manipulative or revealing that the audience gasps even though he said it like it was nothing
+- The audience does the math — he never openly admits cheating
+- Great kill line examples: "she thinks shes wearing me down" / "might as well let her finish" / "the ring i lost was my way out 😅" / "they think its just work 😅" / "easier that way" / "she does a lot for me rn" / "technically they are 😅" / "my girl thinks i'm at the gym" / "she just doesn't ask much" / "i'd feel worse if she actually tried"
+- Cut immediately after it. Nothing after. Script over.
+
+MANIPULATION STYLES — pick one per script, rotate every time, never repeat the same style twice in a row:
+- The "keeps things separate" guy — has a whole hidden system, different people for different parts of his life
+- The "she thinks it's work" guy — uses work as cover, his partner never questions it
+- The "nobody needs to know" guy — casually assumes secrecy without being asked
+- The "it's complicated" guy — downplays the relationship, makes his girlfriend sound like a situation
+- The "she does a lot for me" guy — stays for convenience, keeps someone else on the side
+- The "we just get each other" guy — emotionally justifies the other person
+- The "she's been wearing me down" guy — lets girlfriend believe she's making progress while he has zero intention
+- The "technically" guy — reframes everything so it doesn't sound like cheating even though it clearly is
+
+HOOK VARIETY — rotate every time, never repeat:
+- His page came up on her explore or suggested
+- She replied to one of his stories — something visible publicly like food, travel, a sunset
+- She saw a post he was tagged in
+- A mutual follows him and she noticed his page
+- She liked one of his posts and decided to say something
+
+STORY REPLY VARIETY — her response to her friend must vary every time, never repeat:
+- "girll say less starting now 💀"
+- "okie 🫶"
+- "bet 🫶"
+- "say less 🫶"
+- "omg say less, what's his page"
+- "im on it 😈"
+- "already on it 🫶"
+- "oh he's cooked 🫶"
+
+Platform context: ${platform}
+Story reply from her friend: "${storyReply || defaultHook}"
+
+Generate the script now. Start with **IMAGE 1**. Raw script only. Nothing else before or after it.`;
+  }
+
+  function buildInstagramPrompt(storyReply) {
+    const storyLine = storyReply
+      ? `1) ${storyReply}`
+      : `1) [Write the girlfriend's hook message to her friend. Two parts: (1) a varied "test" phrase — always different, never the same wording twice. Examples of the energy: "help me test my man" / "can u test him for me" / "i need u to check on my man" / "do me a favour and test him" / "slide in his dms and test him" / "can u loyalty check this man" / "test this man for me" / "i need eyes on my man" — completely free, rotate the phrasing every single time. (2) then ONE specific suspicious thing she noticed about him — short, real, casual. End with a single emoji matching the feeling 😐 🙃 🥺. The full message should read like a real text between friends. Never copy the topic or wording from any example in this prompt.]`;
+
+    return `You are a viral social media script writer. Write fake Instagram DM loyalty test scripts. Output ONLY the raw script. No stage directions, no brackets, no commentary, no caption block at the end. Just the script.
+
+CRITICAL RULES:
+
+UNIQUENESS: Every script is its own world. Different man, different situation, different hook, different setting, different manipulation, different kill line, different everything. Nothing carries over between scripts. Like a TV show — every episode completely standalone, but same voice and same quality every time.
+
+RHYTHM: Every line pulls the reader into the next. Each line drops a crumb, raises a question, or reveals something small. No filler. No line sits still.
+
+FORMAT:
+**IMAGE 1**
+2) STORY_REPLY:
+${storyLine}
+2) [short punchy reaction — 1 to 3 words + 🫶]
+-b-
+**IMAGE 2**
+[her opener lines, each starting with 2)]
+[his response lines, each starting with 1)]
+-b-
+...and so on. End immediately after the kill line.
+
+FORMAT RULES:
+- EVERY single dialogue line MUST start with either 1) or 2). No exceptions. Not a single line of dialogue can appear without its prefix. 1) = him. 2) = her. Always.
+- No apostrophes ever. Write: hes / shes / doesnt / thats / im / ur / u / wouldnt / havent
+- No specific names for people. No specific city names. Keep everything universal.
+- 7 to 10 images total
+- 2 to 4 lines per image. Vary the count — never uniform
+- Every line SHORT. One thought. Max 8 words. Split longer thoughts across two lines.
+- Group his lines together, her lines together. Never strict 2)/1)/2)/1) alternation.
+- -b- on its own line between every image
+- Memes go at the END of an image, right before the -b-. Never in the middle of a conversation exchange.
+- Meme format: -m- then on the next line: Caption: "his exact words" emoji. ONE word in ALL CAPS. Max 5 words. Emoji after the closing quote, never inside it.
+- Meme captions quote HIS words only — never her reaction or interpretation of the situation.
+- ONE meme per image maximum. Never two memes inside the same image.
+- 3 to 4 memes total across the whole script. Mid-script only — never on the final image.
+- Script ends clean on his kill line. She does not respond after it.
+
+HIS CHARACTER:
+- Evasive, never explanatory. Drops crumbs, never the full picture.
+- Sounds like he is flirting and bragging — not confessing.
+- Never explains WHY or HOW. Short vague answers that make her ask more.
+- WRONG: "nobody gets hurt if nobody knows" / "i keep my worlds separate" — too direct, too much
+- RIGHT: "depends" / "some things u just dont share" / "it helps the situation" — short, vague, pulls her in
+- Audience figures it out before she does. That is what keeps them watching.
+
+HER CHARACTER:
+- Innocent and curious. Never interrogating.
+- Never references a girlfriend or says "ur girl" until AFTER he has mentioned someone himself.
+- Occasionally says "sir" alone on its own line when genuinely shocked.
+- Uses CAPS on one key word when reacting: "a SCHEDULE??" / "TWO years??"
+
+THE OPENER (Image 2):
+- She needs a believable natural reason to DM him. It can be anything — a sighting, a mutual connection, something on his page, a friend who mentioned him, anything creative.
+- Different every script. Not always a sighting. Not always 2 lines. Whatever the scenario needs.
+
+THE KILL LINE:
+- His final 1 to 3 lines. Casual. Devastating. Like it means nothing to him.
+- Always shows what SHE (the unaware partner) believes while completely clueless.
+- No meme. Hard cut after it.
+
+STRUCTURE:
+- Images 1-2: hook + opener, he gets comfortable
+- Images 3-4: small talk, seems normal
+- Images 5-7: she pulls layers out one question at a time, memes land here
+- Second to last: he says something so casually wrong viewers react before the kill even lands
+- Final image: kill line. Done.
+
+Platform: ${platform}
+Story reply: "${storyReply || 'test him pls something feels off 😐'}"
+
+Output the raw script only. Start with **IMAGE 1**. No other text.`;
+  }
+
+  const history = [];
+
+
+  async function generateScript() {
+    const btn = document.getElementById('genBtn');
+    const outputBox = document.getElementById('outputBox');
+    const statusDot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+    const platform = getPlatform();
+    const storyReply = document.getElementById('storyReplyInput').value.trim();
+
+    btn.disabled = true;
+    btn.classList.add('loading');
+    btn.querySelector('.gbtn-text').textContent = 'Generating...';
+    outputBox.textContent = '';
+    outputBox.classList.remove('placeholder');
+    statusDot.className = 'status-dot loading';
+    statusText.textContent = 'Cooking...';
+    updateCharCount('');
+
+    try {
+      const response = await fetch('/ai/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: buildPrompt(platform, storyReply) }),
+      });
+
+      const data = await response.json();
+      const text = (data.content?.map(b => b.text || '').join('') || '').trim();
+      if (!text) throw new Error('empty');
+
+      outputBox.textContent = text;
+      statusDot.className = 'status-dot ready';
+      statusText.textContent = 'Done — copy and paste into your generator';
+      updateCharCount(text);
+      addToHistory(text, storyReply);
+    } catch (err) {
+      outputBox.classList.add('placeholder');
+      outputBox.dataset.placeholder = 'Something went wrong. Check your API key and try again.';
+      statusDot.className = 'status-dot error';
+      statusText.textContent = 'Error — try again';
+    } finally {
+      btn.disabled = false;
+      btn.classList.remove('loading');
+      btn.querySelector('.gbtn-text').textContent = 'Generate Script';
+    }
+  }
+
+  function updateCharCount(text) {
+    const el = document.getElementById('charCount');
+    const len = text.length;
+    el.textContent = `${len} / 5000`;
+    el.className = 'char-count' + (len > 5000 ? ' over' : len > 1200 ? ' warn' : '');
+  }
+
+  function addToHistory(text, storyReply) {
+    const preview = storyReply ? storyReply.slice(0, 40) : text.slice(0, 40);
+    history.unshift({ text, preview });
+    if (history.length > 6) history.pop();
+    renderHistory();
+  }
+
+  function renderHistory() {
+    const strip = document.getElementById('historyStrip');
+    strip.innerHTML = history.map((h, i) =>
+      `<div class="history-chip" onclick="loadHistory(${i})" title="${h.preview.replace(/"/g,'&quot;')}">${h.preview}…</div>`
+    ).join('');
+  }
+
+  function loadHistory(i) {
+    const text = history[i].text;
+    document.getElementById('outputBox').textContent = text;
+    document.getElementById('outputBox').classList.remove('placeholder');
+    updateCharCount(text);
+    document.getElementById('statusDot').className = 'status-dot ready';
+    document.getElementById('statusText').textContent = 'Loaded from history';
+  }
+
+  function copyScript() {
+    const box = document.getElementById('outputBox');
+    if (box.classList.contains('placeholder') || !box.textContent.trim()) return;
+    navigator.clipboard.writeText(box.textContent).then(() => showToast('Copied to clipboard ✓'));
+  }
+
+  function clearOutput() {
+    const box = document.getElementById('outputBox');
+    box.textContent = '';
+    box.classList.add('placeholder');
+    box.dataset.placeholder = 'Pick a social media platform on the left and hit Generate Script.\n\nEvery script is unique — slow drip reveals, natural texting, meme captions that judge his lines.';
+    document.getElementById('statusDot').className = 'status-dot';
+    document.getElementById('statusText').textContent = 'Ready';
+    updateCharCount('');
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 1800);
+  }
+
+  function importToBuilder() {
+    const box = document.getElementById('outputBox');
+    if (box.classList.contains('placeholder') || !box.textContent.trim()) {
+      showToast('Generate a script first');
+      return;
+    }
+    const converted = convertScriptToBuilderFormat(box.textContent.trim());
+    localStorage.setItem('dmstudio_import', converted);
+    location.href = 'index.html';
+  }
+
+  function convertScriptToBuilderFormat(text) {
+    const lines = text.split('\n');
+    const result = [];
+    let pastFirst = false;
+    for (const rawLine of lines) {
+      const line = rawLine.trim();
+      if (!line) continue;
+      if (/^\*\*IMAGE \d+\*\*/.test(line)) {
+        if (pastFirst) result.push('-b-');
+        pastFirst = true;
+        continue;
+      }
+      const herMatch = line.match(/^Her:\s*(.+)/i);
+      if (herMatch) { result.push(`2) ${herMatch[1]}`); continue; }
+      const himMatch = line.match(/^Him:\s*(.+)/i);
+      if (himMatch) { result.push(`1) ${himMatch[1]}`); continue; }
+      const memeMatch = line.match(/^(?:🎬\s*)?MEME:\s*(.+)/i);
+      if (memeMatch) { result.push('-m-'); result.push(`Caption: "${memeMatch[1]}"`); continue; }
+      if (/^[12]\)\s|^REACT:|^SEEN:|^-[bm]-$|^Caption:/i.test(line)) { result.push(line); continue; }
+    }
+    return result.join('\n');
+  }
+</script>
+</body>
+</html>
