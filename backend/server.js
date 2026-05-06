@@ -629,12 +629,13 @@ app.post('/payment/confirm', async (req, res) => {
 app.post('/webhooks/creem', async (req, res) => {
   try {
     const event = req.body;
-    console.log('Creem webhook received:', event.type, JSON.stringify(event.data));
-    if (event.type === 'checkout.completed' || event.type === 'order.completed') {
-      const email = event.data?.customer?.email || event.data?.email;
+    console.log('Webhook payload:', JSON.stringify(req.body));
+    const eventType = event.eventType || event.type;
+    if (eventType === 'checkout.completed' || eventType === 'order.completed') {
+      const email = event.object?.customer?.email || event.data?.customer?.email || event.data?.email;
       if (email) {
         const userResult = await pool.query(
-          'SELECT user_id, his_handle FROM user_profiles WHERE LOWER(email) = LOWER($1)',
+          'SELECT user_id, his_handle, user_name FROM user_profiles WHERE LOWER(email) = LOWER($1)',
           [email]
         );
         if (userResult.rows.length > 0) {
@@ -657,6 +658,20 @@ app.post('/webhooks/creem', async (req, res) => {
               console.log('Affiliate sale recorded for:', refCode);
             }
           }
+          const token = crypto.randomBytes(32).toString('hex');
+          await pool.query(
+            'INSERT INTO magic_links (token, email, user_id, created_at, used) VALUES ($1, $2, $3, NOW(), false)',
+            [token, email, userId]
+          );
+          const appUrl = process.env.APP_URL || 'https://telr-tests-production.up.railway.app';
+          const link = appUrl + '/magic?token=' + token;
+          await resend.emails.send({
+            from: 'Tell Her <hello@tellher.co>',
+            to: email,
+            subject: 'Your Tell Her conversation is ready',
+            html: '<div style="background:#08080a;padding:40px;font-family:sans-serif;text-align:center"><p style="font-family:Georgia,serif;font-style:italic;font-size:1.5rem;color:#f5f5f7">Tell Her<span style="color:#f72585">.</span></p><p style="color:#888;margin-bottom:28px">Payment confirmed. Click below to open your conversation.</p><a href="' + link + '" style="background:#f72585;color:#fff;padding:16px 36px;border-radius:14px;text-decoration:none;font-weight:600">Open my conversation</a></div>',
+          });
+          console.log('Magic link email sent to:', email);
         } else {
           console.log('No user found for email:', email);
         }
