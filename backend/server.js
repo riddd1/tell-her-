@@ -629,15 +629,37 @@ app.post('/payment/confirm', async (req, res) => {
 app.post('/webhooks/creem', async (req, res) => {
   try {
     const event = req.body;
-    console.log('Creem webhook received:', event.type);
+    console.log('Creem webhook received:', event.type, JSON.stringify(event.data));
     if (event.type === 'checkout.completed' || event.type === 'order.completed') {
       const email = event.data?.customer?.email || event.data?.email;
       if (email) {
-        await pool.query(
-          'UPDATE user_profiles SET paid = true, updated_at = NOW() WHERE LOWER(email) = LOWER($1)',
+        const userResult = await pool.query(
+          'SELECT user_id, his_handle FROM user_profiles WHERE LOWER(email) = LOWER($1)',
           [email]
         );
-        console.log('Marked as paid:', email);
+        if (userResult.rows.length > 0) {
+          const user = userResult.rows[0];
+          const userId = user.user_id;
+          const refCode = user.his_handle;
+          await pool.query(
+            'UPDATE user_profiles SET paid = true, updated_at = NOW() WHERE user_id = $1',
+            [userId]
+          );
+          console.log('Marked as paid:', email, userId);
+          if (refCode) {
+            const check = await pool.query('SELECT id FROM affiliates WHERE code = $1', [refCode]);
+            if (check.rows.length > 0) {
+              const saleId = Date.now().toString();
+              await pool.query(
+                'INSERT INTO affiliate_sales (id, affiliate_code, user_id, amount, created_at) VALUES ($1, $2, $3, $4, NOW())',
+                [saleId, refCode, userId, 5]
+              );
+              console.log('Affiliate sale recorded for:', refCode);
+            }
+          }
+        } else {
+          console.log('No user found for email:', email);
+        }
       }
     }
     res.json({ received: true });
