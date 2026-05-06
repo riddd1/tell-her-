@@ -721,7 +721,7 @@ app.get('/success', async (req, res) => {
     }
   }
 
-  res.redirect('https://www.tellher.co/?payment=success#login');
+  res.redirect('https://telr-tests-production.up.railway.app/?payment=success#login');
 });
 
 // ── User Profile Get ──────────────────────────────────
