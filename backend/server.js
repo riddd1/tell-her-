@@ -649,21 +649,54 @@ app.post('/webhooks/creem', async (req, res) => {
 
 // ── Payment Success ───────────────────────────────────
 app.get('/success', async (req, res) => {
-  res.send(`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Tell Her</title></head>
-<body>
-<script>
-  const uid = localStorage.getItem('tellher_pending_uid') || '';
-  const ref = localStorage.getItem('tellher_pending_ref') || '';
-  localStorage.removeItem('tellher_pending_uid');
-  localStorage.removeItem('tellher_pending_ref');
-  fetch('/payment/confirm', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({ userId: uid, refCode: ref })
-  }).catch(() => {});
-  window.location.href = 'https://tell-her-production.up.railway.app/?payment=success#login';
-</script>
-</body></html>`);
+  const userId = req.query.uid || '';
+  const refCode = req.query.ref || '';
+
+  console.log('Success route called:', { userId, refCode });
+
+  if (userId) {
+    try {
+      await pool.query(
+        'UPDATE user_profiles SET paid = true, updated_at = NOW() WHERE user_id = $1',
+        [userId]
+      );
+      if (refCode) {
+        const check = await pool.query('SELECT id FROM affiliates WHERE code = $1', [refCode]);
+        if (check.rows.length > 0) {
+          const saleId = Date.now().toString();
+          await pool.query(
+            'INSERT INTO affiliate_sales (id, affiliate_code, user_id, amount, created_at) VALUES ($1, $2, $3, $4, NOW()) ON CONFLICT DO NOTHING',
+            [saleId, refCode, userId, 5]
+          );
+          console.log('Affiliate sale recorded:', refCode);
+        }
+      }
+      const result = await pool.query(
+        'SELECT user_name, email FROM user_profiles WHERE user_id = $1',
+        [userId]
+      );
+      const user = result.rows[0];
+      if (user && user.email) {
+        const token = crypto.randomBytes(32).toString('hex');
+        await pool.query(
+          'INSERT INTO magic_links (token, email, user_id, created_at, used) VALUES ($1, $2, $3, NOW(), false)',
+          [token, user.email, userId]
+        );
+        const appUrl = process.env.APP_URL || 'https://telr-tests-production.up.railway.app';
+        const link = appUrl + '/magic?token=' + token;
+        await resend.emails.send({
+          from: 'Tell Her <hello@tellher.co>',
+          to: user.email,
+          subject: 'Your Tell Her conversation is ready',
+          html: '<div style="background:#08080a;padding:40px;font-family:sans-serif;text-align:center"><p style="font-family:Georgia,serif;font-style:italic;font-size:1.5rem;color:#f5f5f7">Tell Her<span style="color:#f72585">.</span></p><p style="color:#888;margin-bottom:28px">Payment confirmed. Click below to open your conversation.</p><a href="' + link + '" style="background:#f72585;color:#fff;padding:16px 36px;border-radius:14px;text-decoration:none;font-weight:600">Open my conversation</a></div>',
+        });
+      }
+    } catch (e) {
+      console.error('Success route error:', e);
+    }
+  }
+
+  res.redirect('https://tell-her-production.up.railway.app/?payment=success#login');
 });
 
 // ── User Profile Get ──────────────────────────────────
