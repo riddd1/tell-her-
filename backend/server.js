@@ -14,7 +14,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.static(path.join(__dirname, '..')));
+app.use(express.static(path.join(__dirname)));
 
 const CREATOR_MASTER_CODE = process.env.CREATOR_MASTER_CODE;
 
@@ -110,7 +110,7 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'index.html'));
+  res.json({ status: 'Lily Backend Running' });
 });
 
 app.get('/health', async (req, res) => {
@@ -629,8 +629,6 @@ app.post('/payment/confirm', async (req, res) => {
 app.post('/webhooks/creem', async (req, res) => {
   try {
     const event = req.body;
-    console.log('Creem webhook RAW body:', JSON.stringify(req.body));
-    console.log('Creem webhook headers:', JSON.stringify(req.headers));
     console.log('Creem webhook received:', event.type, JSON.stringify(event.data));
     if (event.type === 'checkout.completed' || event.type === 'order.completed') {
       const email = event.data?.customer?.email || event.data?.email;
@@ -677,7 +675,6 @@ app.get('/success', async (req, res) => {
   const refCode = req.query.ref || '';
 
   console.log('Success route called:', { userId, refCode });
-  console.log('Success route ALL query params:', JSON.stringify(req.query));
 
   if (userId) {
     try {
@@ -721,7 +718,7 @@ app.get('/success', async (req, res) => {
     }
   }
 
-  res.redirect('https://telr-tests-production.up.railway.app/?payment=success#login');
+  res.redirect('https://tell-her-production.up.railway.app/?payment=success#login');
 });
 
 // ── User Profile Get ──────────────────────────────────
@@ -766,15 +763,15 @@ app.post('/test/payment-success', async (req, res) => {
 });
 
 app.get('/dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'dashboard.html'));
+  res.sendFile(path.join(__dirname, 'dashboard.html'));
 });
 
 app.get('/creatordash', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'creatordash.html'));
+  res.sendFile(path.join(__dirname, 'creatordash.html'));
 });
 
 app.get('/videomaker', (req, res) => {
-  res.sendFile(path.join(__dirname, '..', 'videomaker', 'scriptmaker.html'));
+  res.sendFile(path.join(__dirname, 'videomaker', 'scriptmaker.html'));
 });
 
 // ── AI Proxy ──────────────────────────────────────────
