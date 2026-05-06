@@ -288,11 +288,6 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
 .login-confirm-sub{font-size:.82rem;color:var(--sub);line-height:1.6}
 .land-login-btn{background:none;border:1px solid rgba(247,37,133,.4);color:var(--pink);font-size:.72rem;font-weight:600;padding:6px 14px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;white-space:nowrap}
 .land-login-btn:hover{background:rgba(247,37,133,.08)}
-.creem-modal{position:fixed;inset:0;background:rgba(0,0,0,0.85);z-index:999;display:flex;align-items:center;justify-content:center;display:none}
-.creem-modal.active{display:flex}
-.creem-modal-inner{width:100%;max-width:500px;height:80vh;border-radius:16px;overflow:hidden;position:relative}
-.creem-modal-close{position:absolute;top:12px;right:12px;background:#f72585;color:#fff;border:none;border-radius:50%;width:32px;height:32px;font-size:1.2rem;cursor:pointer;z-index:1000;display:flex;align-items:center;justify-content:center}
-.creem-modal iframe{width:100%;height:100%;border:none}
 </style>
 </head>
 <body>
@@ -695,8 +690,7 @@ function toggleUpsell(){upsellAdded=!upsellAdded;const r=document.getElementById
 
 const API_BASE='https://telr-tests-production.up.railway.app';
 function getUserId(){let id=localStorage.getItem('tellher_uid');if(!id){id='u_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);localStorage.setItem('tellher_uid',id)}return id}
-function completeOrder(){const userId=getUserId();const ref=localStorage.getItem('tellher_ref')||'';localStorage.setItem('tellher_pending_uid',userId);localStorage.setItem('tellher_pending_ref',ref);const base='https://www.creem.io/test/payment/';const productId=upsellAdded?'prod_HmsI3PQcWpYDi1MvUEG7q':'prod_HmsI3PQcWpYDi1MvUEG7q';const url=base+productId;document.getElementById('creem-iframe').src=url;document.getElementById('creem-modal').classList.add('active');}
-function closeCreemModal(){document.getElementById('creem-modal').classList.remove('active');document.getElementById('creem-iframe').src='';}
+function completeOrder(){const userId=getUserId();const ref=localStorage.getItem('tellher_ref')||'';localStorage.setItem('tellher_pending_uid',userId);localStorage.setItem('tellher_pending_ref',ref);const base='https://www.creem.io/test/payment/';const productId=upsellAdded?'prod_HmsI3PQcWpYDi1MvUEG7q':'prod_HmsI3PQcWpYDi1MvUEG7q';window.location.href=base+productId;}
 function submitOrder(){const uid=getUserId();localStorage.setItem('tellher_pending_uid',uid);const ref=localStorage.getItem('tellher_ref');if(ref)localStorage.setItem('tellher_pending_ref',ref);const successUrl=encodeURIComponent('https://tellher.co/success?uid='+uid);const prod=upsellAdded?'prod_5Qa2LurOV4vC3hxEjkSd6S':'prod_SWjG3moiVsIaA3ufRZIsB';window.location.href='https://www.creem.io/payment/'+prod+'?success_url='+successUrl;}
 function skipToChat(){currentQ=11;showScreen('s-collect');}
 function isValidEmail(email){const re=/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;if(!re.test(email))return false;const domain=email.split('@')[1];if(domain.split('.').some(part=>part.length<2))return false;return true}
@@ -749,11 +743,5 @@ document.addEventListener('DOMContentLoaded',()=>{
   }
 });
 </script>
-<div class="creem-modal" id="creem-modal">
-  <div class="creem-modal-inner">
-    <button class="creem-modal-close" onclick="closeCreemModal()">×</button>
-    <iframe id="creem-iframe" src="" allow="payment"></iframe>
-  </div>
-</div>
 </body>
 </html>
