@@ -581,6 +581,7 @@ app.post('/admin/affiliate/delete', async (req, res) => {
 // ── Payment Confirm ───────────────────────────────────
 app.post('/payment/confirm', async (req, res) => {
   const { userId, refCode } = req.body;
+  console.log('Payment confirm called:', { userId, refCode });
   if (!userId) return res.json({ success: false });
   try {
     await pool.query(
