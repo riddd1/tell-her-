@@ -110,7 +110,7 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
 app.get('/', (req, res) => {
-  res.json({ status: 'Lily Backend Running' });
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
 app.get('/health', async (req, res) => {
@@ -629,6 +629,8 @@ app.post('/payment/confirm', async (req, res) => {
 app.post('/webhooks/creem', async (req, res) => {
   try {
     const event = req.body;
+    console.log('Creem webhook RAW body:', JSON.stringify(req.body));
+    console.log('Creem webhook headers:', JSON.stringify(req.headers));
     console.log('Creem webhook received:', event.type, JSON.stringify(event.data));
     if (event.type === 'checkout.completed' || event.type === 'order.completed') {
       const email = event.data?.customer?.email || event.data?.email;
@@ -675,6 +677,7 @@ app.get('/success', async (req, res) => {
   const refCode = req.query.ref || '';
 
   console.log('Success route called:', { userId, refCode });
+  console.log('Success route ALL query params:', JSON.stringify(req.query));
 
   if (userId) {
     try {
