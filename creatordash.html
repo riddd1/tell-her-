@@ -41,7 +41,7 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
 .dash-body{max-width:780px;margin:0 auto;padding:28px 20px 80px}
 
 /* ── STATS ── */
-.stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:28px}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:28px}
 .stat-card{background:var(--card);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:18px 12px;text-align:center}
 .stat-num{font-family:'Cormorant Garamond',serif;font-size:2rem;font-weight:700;color:var(--pink);line-height:1}
 .stat-lbl{font-size:.64rem;color:var(--sub);margin-top:5px;text-transform:uppercase;letter-spacing:.8px;font-weight:600}
@@ -147,7 +147,6 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
 
 @media(max-width:480px){
   .stats-row{grid-template-columns:1fr 1fr}
-  .stats-row .stat-card:last-child{grid-column:span 2}
   .dash-body{padding:20px 14px 80px}
   .login-card{padding:32px 20px}
   .create-row{flex-direction:column}
@@ -180,9 +179,10 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
   </div>
   <div class="dash-body">
     <div class="stats-row">
+      <div class="stat-card"><div class="stat-num" id="a-visits">—</div><div class="stat-lbl">Total Visits</div></div>
       <div class="stat-card"><div class="stat-num" id="a-total">—</div><div class="stat-lbl">Total Users</div></div>
-      <div class="stat-card"><div class="stat-num" id="a-paid">—</div><div class="stat-lbl">Paid</div></div>
-      <div class="stat-card"><div class="stat-num" id="a-rev">—</div><div class="stat-lbl">Revenue</div></div>
+      <div class="stat-card"><div class="stat-num" id="a-paid">—</div><div class="stat-lbl">Paid Users</div></div>
+      <div class="stat-card"><div class="stat-num" id="a-rev">—</div><div class="stat-lbl">Total Revenue</div></div>
     </div>
     <div class="section-hd">
       <div class="section-title">Affiliates</div>
@@ -344,6 +344,7 @@ async function loadAdminStats(){
   try{
     const r=await fetch(`${API}/admin/stats`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:adminPassword})});
     const d=await r.json();
+    document.getElementById('a-visits').textContent=d.totalVisits??'—';
     document.getElementById('a-total').textContent=d.totalUsers??'—';
     document.getElementById('a-paid').textContent=d.paidUsers??'—';
     document.getElementById('a-rev').textContent=d.revenue!=null?'$'+d.revenue:'—';

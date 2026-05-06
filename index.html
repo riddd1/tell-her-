@@ -327,6 +327,7 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
       <div class="land-trust-item"><i data-lucide="zap" style="width:13px;height:13px"></i><span>Instant</span></div>
     </div>
     <div class="land-footer">2026 Tell Her &nbsp;·&nbsp; <a href="#">Privacy</a> &nbsp;·&nbsp; <a href="#">Terms</a></div>
+    <button onclick="skipToChat()" style="background:none;border:1px dashed rgba(247,37,133,.2);color:rgba(247,37,133,.3);font-size:.65rem;padding:7px 18px;border-radius:20px;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:1px;font-weight:600;margin-top:8px;display:block;width:100%">DEV: SKIP TO CHAT</button>
   </div>
 </div>
 
@@ -691,6 +692,7 @@ const API_BASE='https://telr-tests-production.up.railway.app';
 function getUserId(){let id=localStorage.getItem('tellher_uid');if(!id){id='u_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);localStorage.setItem('tellher_uid',id)}return id}
 function completeOrder(){localStorage.setItem('tellher_pending_uid',getUserId());const ref=localStorage.getItem('tellher_ref');if(ref)localStorage.setItem('tellher_pending_ref',ref);const base='https://www.creem.io/test/payment/';const url=upsellAdded?base+'prod_HmsI3PQcWpYDi1MvUEG7q':base+'prod_HmsI3PQcWpYDi1MvUEG7q';window.location.href=url;}
 function submitOrder(){const uid=getUserId();localStorage.setItem('tellher_pending_uid',uid);const ref=localStorage.getItem('tellher_ref');if(ref)localStorage.setItem('tellher_pending_ref',ref);const successUrl=encodeURIComponent('https://tellher.co/success?uid='+uid);const prod=upsellAdded?'prod_5Qa2LurOV4vC3hxEjkSd6S':'prod_SWjG3moiVsIaA3ufRZIsB';window.location.href='https://www.creem.io/payment/'+prod+'?success_url='+successUrl;}
+function skipToChat(){selectTester('emily');showScreen('s-chat-live');}
 function isValidEmail(email){const re=/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;if(!re.test(email))return false;const domain=email.split('@')[1];if(domain.split('.').some(part=>part.length<2))return false;return true}
 async function submitCollect(){const name=document.getElementById('collect-name').value.trim();const email=document.getElementById('collect-email').value.trim();const errEl=document.getElementById('collect-email-err');if(!isValidEmail(email)){errEl.style.display='block';return}errEl.style.display='none';localStorage.setItem('tellher_name',name);localStorage.setItem('tellher_email',email);const userId=getUserId();await fetch(`${API_BASE}/user/profile`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId,userName:name,email})}).catch(()=>{});showScreen('s-results');window.scrollTo(0,0)}
 async function submitMagicLink(){const email=document.getElementById('login-email').value.trim();const errEl=document.getElementById('login-err');errEl.style.display='none';if(!email)return;try{const res=await fetch(`${API_BASE}/magic-link`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});if(!res.ok){const data=await res.json();errEl.innerHTML=(data.error||'Something went wrong.')+' <a href="#" onclick="startQuiz();return false;" style="color:#f72585;text-decoration:underline">Take the quiz</a>';errEl.style.display='block';setTimeout(()=>startQuiz(),2800);return}document.getElementById('login-form').style.display='none';document.getElementById('login-confirm').style.display='block'}catch(_){errEl.textContent='Could not reach server. Try again.';errEl.style.display='block'}}
@@ -715,6 +717,7 @@ async function handleChatImageUpload(e){const file=e.target.files[0];if(!file||!
 function backToResults(){clearInterval(chatPollTimer);showScreen('s-results')}
 
 document.addEventListener('DOMContentLoaded',()=>{
+  fetch(`${API_BASE}/track/visit`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:getUserId()})}).catch(()=>{});
   lucide.createIcons();
   updateStatusTime();
   document.querySelectorAll('.f-input').forEach(inp=>{

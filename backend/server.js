@@ -426,6 +426,26 @@ app.get('/magic', async (req, res) => {
   }
 });
 
+app.post('/track/visit', async (req, res) => {
+  const { userId } = req.body;
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS site_visits (
+        id TEXT PRIMARY KEY,
+        user_id TEXT,
+        visited_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    await pool.query(
+      'INSERT INTO site_visits (id, user_id, visited_at) VALUES ($1, $2, NOW())',
+      [Date.now().toString(), userId || null]
+    );
+    res.json({ success: true });
+  } catch (e) {
+    res.json({ success: false });
+  }
+});
+
 // ── Affiliate ─────────────────────────────────────────
 app.post('/affiliate/click', async (req, res) => {
   const { affiliateCode, userId } = req.body;
@@ -499,6 +519,9 @@ app.post('/admin/stats', async (req, res) => {
   try {
     const totalUsers = await pool.query('SELECT COUNT(*) FROM user_profiles');
     const paidUsers = await pool.query('SELECT COUNT(*) FROM user_profiles WHERE paid = true');
+    const totalVisits = await pool.query('SELECT COUNT(*) FROM site_visits').catch(() => ({ rows: [{ count: 0 }] }));
+    const totalSales = await pool.query('SELECT COUNT(*) FROM affiliate_sales');
+    const totalRevenue = parseInt(paidUsers.rows[0].count) * 25;
     const affiliates = await pool.query('SELECT * FROM affiliates ORDER BY created_at DESC');
     const affiliateStats = await Promise.all(affiliates.rows.map(async (a) => {
       const clicks = await pool.query('SELECT COUNT(*) FROM affiliate_clicks WHERE affiliate_code = $1', [a.code]);
@@ -517,7 +540,9 @@ app.post('/admin/stats', async (req, res) => {
     res.json({
       totalUsers: parseInt(totalUsers.rows[0].count),
       paidUsers: parseInt(paidUsers.rows[0].count),
-      revenue: parseInt(paidUsers.rows[0].count) * 25,
+      totalVisits: parseInt(totalVisits.rows[0].count),
+      totalSales: parseInt(totalSales.rows[0].count),
+      revenue: totalRevenue,
       affiliates: affiliateStats,
     });
   } catch (e) {
