@@ -14,7 +14,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.static(path.join(__dirname)));
+app.use(express.static(path.join(__dirname, '..')));
 
 const CREATOR_MASTER_CODE = process.env.CREATOR_MASTER_CODE;
 
@@ -110,7 +110,7 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'index.html'));
+  res.sendFile(path.join(__dirname, '..', 'index.html'));
 });
 
 app.get('/health', async (req, res) => {
@@ -766,15 +766,15 @@ app.post('/test/payment-success', async (req, res) => {
 });
 
 app.get('/dashboard', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dashboard.html'));
+  res.sendFile(path.join(__dirname, '..', 'dashboard.html'));
 });
 
 app.get('/creatordash', (req, res) => {
-  res.sendFile(path.join(__dirname, 'creatordash.html'));
+  res.sendFile(path.join(__dirname, '..', 'creatordash.html'));
 });
 
 app.get('/videomaker', (req, res) => {
-  res.sendFile(path.join(__dirname, 'videomaker', 'scriptmaker.html'));
+  res.sendFile(path.join(__dirname, '..', 'videomaker', 'scriptmaker.html'));
 });
 
 // ── AI Proxy ──────────────────────────────────────────
