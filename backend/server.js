@@ -113,6 +113,13 @@ app.get('/', (req, res) => {
   res.json({ status: 'Lily Backend Running' });
 });
 
+app.get('/config', (req, res) => {
+  res.json({
+    productId: process.env.CREEM_PRODUCT_ID,
+    productIdQuestions: process.env.CREEM_PRODUCT_ID_QUESTIONS,
+  });
+});
+
 app.get('/health', async (req, res) => {
   try {
     const result = await pool.query(`SELECT COUNT(*) as count FROM messages`);
