@@ -6,7 +6,7 @@ const crypto = require('crypto');
 const path = require('path');
 const cloudinary = require('cloudinary').v2;
 const { Pool } = require('pg');
-const { Resend } = require('resend');
+const { Resend } = require('resend'); 
 
 // Required env vars: RESEND_API_KEY, APP_URL
 const resend = new Resend(process.env.RESEND_API_KEY);
