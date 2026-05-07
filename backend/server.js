@@ -114,11 +114,10 @@ app.get('/', (req, res) => {
 });
 
 app.get('/config', (req, res) => {
-  const testMode = process.env.CREEM_TEST_MODE === 'true';
   res.json({
     productId: process.env.CREEM_PRODUCT_ID,
     productIdQuestions: process.env.CREEM_PRODUCT_ID_QUESTIONS,
-    creemBaseUrl: testMode ? 'https://www.creem.io/test/payment/' : 'https://www.creem.io/payment/',
+    creemBaseUrl: process.env.CREEM_BASE_URL,
   });
 });
 
