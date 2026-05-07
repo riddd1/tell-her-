@@ -6,6 +6,7 @@
 <title>Tell Her · Find Out The Truth</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+<script async defer src="https://js.whop.com/static/checkout/loader.js"></script>
 <style>
 :root{--bg:#08080a;--pink:#f72585;--pinkl:#ff4da6;--card:#101013;--card2:#16161a;--inp:#1a1a1f;--txt:#f5f5f7;--sub:#888893;--bdr:rgba(247,37,133,0.18);--nav:#0a0a0d}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -724,7 +725,16 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
       </div>
     </div>
 
-    <button id="pay-btn" class="complete-btn" onclick="submitOrder()">PAY $25</button>
+    <div
+  id="whop-checkout"
+  data-whop-checkout-plan-id="plan_pVRWzALypyeBH"
+  data-whop-checkout-return-url="https://telr-tests-production.up.railway.app/success"
+  data-whop-checkout-theme="dark"
+  data-whop-checkout-theme-accent-color="pink"
+  data-whop-checkout-hide-price="true"
+  data-whop-checkout-hide-tos="true"
+  style="width:100%"
+></div>
     <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px">
       <i data-lucide="lock" style="width:12px;height:12px;color:var(--sub)"></i>
       <span style="font-size:.7rem;color:var(--sub)">secure payment · results sent privately</span>
@@ -791,25 +801,25 @@ function startChat(){const c=document.getElementById('chat-msgs');c.innerHTML=''
 function toggleFaq(id){const a=document.getElementById('faq-a-'+id);const ic=document.getElementById('faq-ic-'+id);const isOpen=a.classList.contains('open');document.querySelectorAll('.faq-a').forEach(el=>el.classList.remove('open'));document.querySelectorAll('.faq-ic').forEach(el=>el.classList.remove('open'));if(!isOpen){a.classList.add('open');ic.classList.add('open')}}
 function selectPay(type){['card','cash','bank'].forEach(t=>document.getElementById('pay-'+t).classList.remove('sel'));document.getElementById('pay-'+type).classList.add('sel');document.getElementById('card-fields').style.display=(type==='card')?'flex':'none';if(type==='card')document.getElementById('card-fields').style.flexDirection='column'}
 let upsellAdded=false;
-function toggleUpsell(){upsellAdded=!upsellAdded;const r=document.getElementById('up-radio');r.style.background=upsellAdded?'var(--pink)':'transparent';r.style.borderColor=upsellAdded?'var(--pink)':'rgba(247,37,133,.4)';const btn=document.getElementById('pay-btn');if(btn)btn.textContent=upsellAdded?'PAY $35':'PAY $25'}
+function toggleUpsell(){
+  upsellAdded=!upsellAdded;
+  const r=document.getElementById('up-radio');
+  r.style.background=upsellAdded?'var(--pink)':'transparent';
+  r.style.borderColor=upsellAdded?'var(--pink)':'rgba(247,37,133,.4)';
+  const btn=document.getElementById('pay-btn');
+  if(btn)btn.textContent=upsellAdded?'PAY $35':'PAY $25';
+  const checkout=document.getElementById('whop-checkout');
+  if(checkout)checkout.setAttribute('data-whop-checkout-plan-id',upsellAdded?'plan_rm7H7MYEO6QOc':'plan_pVRWzALypyeBH');
+}
 
 const API_BASE='https://telr-tests-production.up.railway.app';
 function getUserId(){let id=localStorage.getItem('tellher_uid');if(!id){id='u_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);localStorage.setItem('tellher_uid',id)}return id}
-function completeOrder(){showScreen('s-offer');window.scrollTo(0,0);}
-async function submitOrder(){
-  const btn=document.getElementById('pay-btn');
-  btn.textContent='loading...';btn.disabled=true;
-  const uid=getUserId();
-  const ref=localStorage.getItem('tellher_ref')||'';
-  const successUrl='https://telr-tests-production.up.railway.app/success?uid='+uid+'&ref='+ref;
-  let prodId='prod_SWjG3moiVsIaA3ufRZIsB';let prodIdQ='prod_5Qa2LurOV4vC3hxEjkSd6S';
-  try{const cfg=await fetch(API_BASE+'/config').then(r=>r.json());if(cfg.productId)prodId=cfg.productId;if(cfg.productIdQuestions)prodIdQ=cfg.productIdQuestions;}catch(e){}
-  const productId=upsellAdded?prodIdQ:prodId;
-  try{
-    const res=await fetch(API_BASE+'/create-checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({productId,successUrl})});
-    const data=await res.json();
-    if(data.checkoutUrl){window.location.href=data.checkoutUrl;}else{btn.textContent=upsellAdded?'PAY $35':'PAY $25';btn.disabled=false;}
-  }catch(e){btn.textContent=upsellAdded?'PAY $35':'PAY $25';btn.disabled=false;}
+function completeOrder(){
+  const email=localStorage.getItem('tellher_email')||'';
+  const checkout=document.getElementById('whop-checkout');
+  if(checkout&&email)checkout.setAttribute('data-whop-checkout-prefill-email',email);
+  showScreen('s-offer');
+  window.scrollTo(0,0);
 }
 function skipToChat(){currentQ=11;showScreen('s-collect');}
 function isValidEmail(email){const re=/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;if(!re.test(email))return false;const domain=email.split('@')[1];if(domain.split('.').some(part=>part.length<2))return false;return true}
