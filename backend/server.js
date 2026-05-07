@@ -120,6 +120,24 @@ app.get('/config', (req, res) => {
   });
 });
 
+app.post('/create-checkout', async (req, res) => {
+  const { productId, successUrl } = req.body;
+  if (!productId || !successUrl) return res.status(400).json({ error: 'productId and successUrl required' });
+  try {
+    const response = await fetch('https://api.creem.io/v1/checkouts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'x-api-key': process.env.CREEM_API_KEY },
+      body: JSON.stringify({ product_id: productId, success_url: successUrl }),
+    });
+    const data = await response.json();
+    if (!response.ok) return res.status(response.status).json({ error: data });
+    res.json({ checkoutUrl: data.checkout_url || data.url });
+  } catch (e) {
+    console.error('create-checkout error:', e);
+    res.status(500).json({ error: 'Failed to create checkout' });
+  }
+});
+
 app.get('/health', async (req, res) => {
   try {
     const result = await pool.query(`SELECT COUNT(*) as count FROM messages`);

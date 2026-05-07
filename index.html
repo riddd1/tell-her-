@@ -796,7 +796,21 @@ function toggleUpsell(){upsellAdded=!upsellAdded;const r=document.getElementById
 const API_BASE='https://telr-tests-production.up.railway.app';
 function getUserId(){let id=localStorage.getItem('tellher_uid');if(!id){id='u_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);localStorage.setItem('tellher_uid',id)}return id}
 function completeOrder(){showScreen('s-offer');window.scrollTo(0,0);}
-function submitOrder(){window.location.href=upsellAdded?'https://whop.com/telrtests/tell-her-de/':'https://whop.com/telrtests/tell-her/';}
+async function submitOrder(){
+  const btn=document.getElementById('pay-btn');
+  btn.textContent='loading...';btn.disabled=true;
+  const uid=getUserId();
+  const ref=localStorage.getItem('tellher_ref')||'';
+  const successUrl='https://telr-tests-production.up.railway.app/success?uid='+uid+'&ref='+ref;
+  let prodId='prod_SWjG3moiVsIaA3ufRZIsB';let prodIdQ='prod_5Qa2LurOV4vC3hxEjkSd6S';
+  try{const cfg=await fetch(API_BASE+'/config').then(r=>r.json());if(cfg.productId)prodId=cfg.productId;if(cfg.productIdQuestions)prodIdQ=cfg.productIdQuestions;}catch(e){}
+  const productId=upsellAdded?prodIdQ:prodId;
+  try{
+    const res=await fetch(API_BASE+'/create-checkout',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({productId,successUrl})});
+    const data=await res.json();
+    if(data.checkoutUrl){window.location.href=data.checkoutUrl;}else{btn.textContent=upsellAdded?'PAY $35':'PAY $25';btn.disabled=false;}
+  }catch(e){btn.textContent=upsellAdded?'PAY $35':'PAY $25';btn.disabled=false;}
+}
 function skipToChat(){currentQ=11;showScreen('s-collect');}
 function isValidEmail(email){const re=/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;if(!re.test(email))return false;const domain=email.split('@')[1];if(domain.split('.').some(part=>part.length<2))return false;return true}
 async function submitCollect(){const name=document.getElementById('collect-name').value.trim();const email=document.getElementById('collect-email').value.trim();const errEl=document.getElementById('collect-email-err');if(!isValidEmail(email)){errEl.style.display='block';return}errEl.style.display='none';localStorage.setItem('tellher_name',name);localStorage.setItem('tellher_email',email);const userId=getUserId();await fetch(`${API_BASE}/user/profile`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId,userName:name,email})}).catch(()=>{});showScreen('s-results');window.scrollTo(0,0)}
