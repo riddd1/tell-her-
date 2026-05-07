@@ -117,7 +117,6 @@ app.get('/config', (req, res) => {
   res.json({
     productId: process.env.CREEM_PRODUCT_ID,
     productIdQuestions: process.env.CREEM_PRODUCT_ID_QUESTIONS,
-    creemBaseUrl: process.env.CREEM_BASE_URL,
   });
 });
 
