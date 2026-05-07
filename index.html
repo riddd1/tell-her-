@@ -806,8 +806,7 @@ function toggleUpsell(){
   const r=document.getElementById('up-radio');
   r.style.background=upsellAdded?'var(--pink)':'transparent';
   r.style.borderColor=upsellAdded?'var(--pink)':'rgba(247,37,133,.4)';
-  const btn=document.getElementById('pay-btn');
-  if(btn)btn.textContent=upsellAdded?'PAY $35':'PAY $25';
+  document.querySelector('.up-l2').textContent=upsellAdded?'added to your order':'add +$10 to my order';
   const checkout=document.getElementById('whop-checkout');
   if(checkout)checkout.setAttribute('data-whop-checkout-plan-id',upsellAdded?'plan_rm7H7MYEO6QOc':'plan_pVRWzALypyeBH');
 }
