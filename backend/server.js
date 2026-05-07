@@ -651,6 +651,31 @@ app.post('/payment/confirm', async (req, res) => {
 });
 
 // ── Creem Webhook ─────────────────────────────────────
+app.post('/webhooks/whop', async (req, res) => {
+  try {
+    const event = req.body;
+    if(event.action === 'payment.completed' || event.action === 'membership.went_valid'){
+      const email = event.data?.customer?.email || event.data?.email || event.data?.user?.email;
+      if(email){
+        const userResult = await pool.query('SELECT user_id, his_handle FROM user_profiles WHERE LOWER(email) = LOWER($1)', [email]);
+        if(userResult.rows.length > 0){
+          const { user_id, his_handle } = userResult.rows[0];
+          await pool.query('UPDATE user_profiles SET paid = true, updated_at = NOW() WHERE user_id = $1', [user_id]);
+          if(his_handle){
+            const check = await pool.query('SELECT id FROM affiliates WHERE code = $1', [his_handle]);
+            if(check.rows.length > 0){
+              await pool.query('INSERT INTO affiliate_sales (id, affiliate_code, user_id, amount, created_at) VALUES ($1, $2, $3, $4, NOW())', [Date.now().toString(), his_handle, user_id, 5]);
+            }
+          }
+        }
+      }
+    }
+    res.json({ received: true });
+  } catch(e){
+    res.json({ received: true });
+  }
+});
+
 app.post('/webhooks/creem', async (req, res) => {
   try {
     const event = req.body;

@@ -814,9 +814,16 @@ function toggleUpsell(){
 const API_BASE='https://telr-tests-production.up.railway.app';
 function getUserId(){let id=localStorage.getItem('tellher_uid');if(!id){id='u_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);localStorage.setItem('tellher_uid',id)}return id}
 function completeOrder(){
+  const uid=getUserId();
+  const ref=localStorage.getItem('tellher_ref')||'';
+  const returnUrl='https://telr-tests-production.up.railway.app/success?uid='+uid+'&ref='+ref;
   const email=localStorage.getItem('tellher_email')||'';
   const checkout=document.getElementById('whop-checkout');
-  if(checkout&&email)checkout.setAttribute('data-whop-checkout-prefill-email',email);
+  if(checkout){
+    checkout.setAttribute('data-whop-checkout-plan-id','plan_qxuEnxymdPz2X');
+    checkout.setAttribute('data-whop-checkout-return-url',returnUrl);
+    if(email)checkout.setAttribute('data-whop-checkout-prefill-email',email);
+  }
   showScreen('s-offer');
   window.scrollTo(0,0);
 }
