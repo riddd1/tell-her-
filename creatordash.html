@@ -175,7 +175,10 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
   <div class="dash-nav">
     <div class="nav-logo">Tell Her<span>.</span></div>
     <div class="nav-badge">Admin</div>
-    <button class="btn-ghost" onclick="doLogout()">Log out</button>
+    <div style="display:flex;gap:8px">
+      <button class="btn-ghost" onclick="loadAdminStats()">↻ Refresh</button>
+      <button class="btn-ghost" onclick="doLogout()">Log out</button>
+    </div>
   </div>
   <div class="dash-body">
     <div class="stats-row">
