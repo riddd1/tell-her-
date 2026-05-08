@@ -936,6 +936,29 @@ Keep it under 60 seconds when read aloud. Write naturally — like a real person
   }
 });
 
+app.post('/scripts/record', async (req, res) => {
+  const { code } = req.body;
+  if (!code) return res.status(400).json({ error: 'code required' });
+  try {
+    const aff = await pool.query('SELECT daily_script_limit FROM affiliates WHERE LOWER(code) = LOWER($1)', [code]);
+    if (aff.rows.length === 0) return res.status(404).json({ error: 'Affiliate not found' });
+    const limit = aff.rows[0].daily_script_limit ?? 10;
+    const today = await pool.query(
+      `SELECT COUNT(*) FROM script_generations WHERE LOWER(affiliate_code) = LOWER($1) AND generated_at >= NOW() - INTERVAL '1 day'`,
+      [code]
+    );
+    const used = parseInt(today.rows[0].count);
+    if (used >= limit) return res.status(429).json({ error: 'Daily limit reached', used, limit, remaining: 0 });
+    await pool.query(
+      'INSERT INTO script_generations (id, affiliate_code, generated_at) VALUES ($1, $2, NOW())',
+      [Date.now().toString(), code.toLowerCase()]
+    );
+    res.json({ success: true, used: used + 1, limit, remaining: Math.max(0, limit - used - 1) });
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to record' });
+  }
+});
+
 app.post('/admin/affiliate/update-limit', async (req, res) => {
   const { password, code, limit } = req.body;
   if (password !== process.env.ADMIN_PASSWORD) return res.status(401).json({ error: 'Unauthorized' });
@@ -965,8 +988,8 @@ app.post('/ai/generate', async (req, res) => {
         'anthropic-version': '2023-06-01',
       },
       body: JSON.stringify({
-        model: 'claude-opus-4-5',
-        max_tokens: 1024,
+        model: 'claude-sonnet-4-6',
+        max_tokens: 4096,
         system: systemPrompt || '',
         messages: [{ role: 'user', content: prompt }],
       }),
