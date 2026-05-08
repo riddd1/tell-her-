@@ -14,6 +14,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use('/videomaker', express.static(path.join(__dirname, '..', 'videomaker')));
 app.use(express.static(path.join(__dirname)));
 
 const CREATOR_MASTER_CODE = process.env.CREATOR_MASTER_CODE;
@@ -855,7 +856,6 @@ app.get('/creatordash', (req, res) => {
   res.sendFile(path.join(__dirname, 'creatordash.html'));
 });
 
-app.use('/videomaker', express.static(path.join(__dirname, '..', 'videomaker')));
 app.get('/videomaker', (req, res) => {
   res.sendFile(path.join(__dirname, '..', 'videomaker', 'index.html'));
 });
