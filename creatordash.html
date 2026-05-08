@@ -78,6 +78,13 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
 .aff-creds{display:flex;gap:7px;margin-bottom:12px;flex-wrap:wrap}
 .cred-pill{background:var(--inp);border-radius:8px;padding:5px 11px}
 .cred-pill span{color:var(--sub);font-size:.6rem;display:block;text-transform:uppercase;letter-spacing:.5px}
+.aff-limit-row{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px 12px;background:var(--inp);border-radius:10px}
+.aff-limit-label{font-size:.62rem;text-transform:uppercase;letter-spacing:.5px;color:var(--sub);font-weight:600;flex-shrink:0}
+.aff-limit-input{background:var(--card2);border:1.5px solid rgba(255,255,255,.08);border-radius:7px;padding:4px 9px;color:var(--txt);font-size:.85rem;font-family:'DM Sans',sans-serif;width:60px;text-align:center;outline:none;transition:border-color .2s}
+.aff-limit-input:focus{border-color:rgba(247,37,133,.4)}
+.btn-save-limit{background:none;border:1px solid rgba(247,37,133,.35);color:var(--pink);font-size:.65rem;font-weight:600;padding:4px 10px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;flex-shrink:0}
+.btn-save-limit:hover{background:rgba(247,37,133,.08)}
+.btn-save-limit.saved{border-color:var(--green);color:var(--green)}
 .cred-pill strong{color:var(--txt);font-family:'Cormorant Garamond',serif;font-size:.95rem}
 .aff-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
 .aff-stat{background:var(--card2);border-radius:10px;padding:9px;text-align:center}
@@ -225,7 +232,7 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
       <div class="stat-card"><div class="stat-num" id="aff-earn">—</div><div class="stat-lbl">Earnings</div></div>
     </div>
     <div class="divider"></div>
-    <button class="script-btn" onclick="window.open('/videomaker', '_blank')">
+    <button class="script-btn" onclick="window.open('/videomaker?code='+encodeURIComponent(currentAffCode), '_blank')">
       <i data-lucide="pen-line" style="width:17px;height:17px"></i> Open Script Maker
     </button>
   </div>
@@ -276,6 +283,7 @@ const API = 'https://telr-tests-production.up.railway.app';
 let adminPassword = '';
 let creatorCode = '';
 let currentAffLink = '';
+let currentAffCode = '';
 let activeConv = null;
 let pollTimer = null;
 let convStore = [];
@@ -368,6 +376,11 @@ function renderAffList(affs){
         <div class="cred-pill"><span>Password</span><strong>${escH(a.password)}</strong></div>
         <div class="cred-pill"><span>Link</span><strong>https://tell-her-production.up.railway.app/?ref=${escH(a.code)}</strong></div>
       </div>
+      <div class="aff-limit-row">
+        <span class="aff-limit-label">Scripts/day</span>
+        <input class="aff-limit-input" id="limit-${escH(a.code)}" type="number" min="1" max="999" value="${a.daily_script_limit||10}">
+        <button class="btn-save-limit" onclick="saveLimit('${escH(a.code)}')">Save</button>
+      </div>
       <div class="aff-stats">
         <div class="aff-stat"><div class="aff-stat-num">${a.clicks}</div><div class="aff-stat-lbl">Clicks</div></div>
         <div class="aff-stat"><div class="aff-stat-num">${a.sales}</div><div class="aff-stat-lbl">Sales</div></div>
@@ -375,6 +388,21 @@ function renderAffList(affs){
       </div>
     </div>`).join('');
   lucide.createIcons();
+}
+
+async function saveLimit(code){
+  const inp=document.getElementById('limit-'+code);
+  const newLimit=parseInt(inp.value);
+  if(!newLimit||newLimit<1)return;
+  try{
+    const r=await fetch(`${API}/admin/affiliate/update-limit`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:adminPassword,code,limit:newLimit})});
+    const d=await r.json();
+    if(d.success){
+      const btn=inp.nextElementSibling;
+      btn.textContent='Saved!';btn.classList.add('saved');
+      setTimeout(()=>{btn.textContent='Save';btn.classList.remove('saved');},2000);
+    }
+  }catch(_){}
 }
 
 function toggleCreateForm(){
@@ -407,6 +435,7 @@ async function deleteAff(code){
 
 /* ══ AFFILIATE USER ═════════════════════════════════ */
 function showAffScreen(d){
+  currentAffCode=d.code;
   currentAffLink=`https://tell-her-production.up.railway.app/?ref=${d.code}`;
   document.getElementById('aff-nav-name').innerHTML=`${escH(d.name)}<span style="color:var(--pink)">.</span>`;
   document.getElementById('aff-link-text').innerHTML=`<strong>${escH(currentAffLink)}</strong>`;

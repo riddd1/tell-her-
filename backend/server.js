@@ -101,6 +101,17 @@ async function initDB() {
       created_at TIMESTAMPTZ DEFAULT NOW()
     );
   `);
+  await pool.query(`
+    ALTER TABLE affiliates ADD COLUMN IF NOT EXISTS daily_script_limit INTEGER DEFAULT 10;
+  `);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS script_generations (
+      id TEXT PRIMARY KEY,
+      affiliate_code TEXT NOT NULL,
+      generated_at TIMESTAMPTZ DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS idx_script_gen_code ON script_generations(affiliate_code);
+  `);
   console.log('Database initialized');
 }
 
@@ -565,6 +576,7 @@ app.post('/admin/stats', async (req, res) => {
         name: a.name,
         code: a.code,
         password: a.password,
+        daily_script_limit: a.daily_script_limit ?? 10,
         clicks: parseInt(clicks.rows[0].count),
         sales: parseInt(sales.rows[0].count),
         earnings,
@@ -845,6 +857,100 @@ app.get('/creatordash', (req, res) => {
 
 app.get('/videomaker', (req, res) => {
   res.sendFile(path.join(__dirname, 'videomaker', 'scriptmaker.html'));
+});
+
+// ── Script Maker ──────────────────────────────────────
+app.get('/scripts/usage', async (req, res) => {
+  const { code } = req.query;
+  if (!code) return res.status(400).json({ error: 'code required' });
+  try {
+    const aff = await pool.query('SELECT daily_script_limit FROM affiliates WHERE LOWER(code) = LOWER($1)', [code]);
+    if (aff.rows.length === 0) return res.status(404).json({ error: 'Affiliate not found' });
+    const limit = aff.rows[0].daily_script_limit ?? 10;
+    const today = await pool.query(
+      `SELECT COUNT(*) FROM script_generations WHERE LOWER(affiliate_code) = LOWER($1) AND generated_at >= NOW() AT TIME ZONE 'UTC' - INTERVAL '1 day'`,
+      [code]
+    );
+    const used = parseInt(today.rows[0].count);
+    res.json({ used, limit, remaining: Math.max(0, limit - used) });
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to get usage' });
+  }
+});
+
+app.post('/scripts/generate', async (req, res) => {
+  const { code, platform, handle, goal, tone } = req.body;
+  if (!code || !platform || !goal) return res.status(400).json({ error: 'code, platform, goal required' });
+  try {
+    const aff = await pool.query('SELECT id, daily_script_limit FROM affiliates WHERE LOWER(code) = LOWER($1)', [code]);
+    if (aff.rows.length === 0) return res.status(404).json({ error: 'Affiliate not found' });
+    const limit = aff.rows[0].daily_script_limit ?? 10;
+    const today = await pool.query(
+      `SELECT COUNT(*) FROM script_generations WHERE LOWER(affiliate_code) = LOWER($1) AND generated_at >= NOW() AT TIME ZONE 'UTC' - INTERVAL '1 day'`,
+      [code]
+    );
+    const used = parseInt(today.rows[0].count);
+    if (used >= limit) {
+      return res.status(429).json({ error: 'Daily limit reached', used, limit });
+    }
+    const toneDesc = { casual: 'casual and relatable', flirty: 'playful and flirty', direct: 'direct and confident', funny: 'funny and lighthearted' }[tone] || 'natural and engaging';
+    const handleLine = handle ? `His ${platform} handle/username is @${handle}.` : '';
+    const prompt = `Write a short viral video script for a Tell Her promotion. The creator wants to talk about testing their ${platform === 'tiktok' ? 'TikTok boyfriend' : platform === 'instagram' ? 'Instagram partner' : platform + ' partner'}. ${handleLine}
+
+What to cover: ${goal}
+
+Tone: ${toneDesc}
+
+Format:
+- Hook (1-2 lines that stop scrollers)
+- Body (3-5 lines — what Tell Her is, why it's useful, personal angle)
+- CTA (1-2 lines — push them to click the link)
+
+Keep it under 60 seconds when read aloud. Write naturally — like a real person talking, not an ad. No hashtags in the script itself.`;
+
+    const aiRes = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 800,
+        messages: [{ role: 'user', content: prompt }],
+      }),
+    });
+    const aiData = await aiRes.json();
+    const script = aiData.content?.[0]?.text;
+    if (!script) throw new Error('No script returned');
+    await pool.query(
+      'INSERT INTO script_generations (id, affiliate_code, generated_at) VALUES ($1, $2, NOW())',
+      [Date.now().toString(), code.toLowerCase()]
+    );
+    const newUsed = used + 1;
+    res.json({ script, used: newUsed, limit, remaining: Math.max(0, limit - newUsed) });
+  } catch (e) {
+    console.error('Script generate error:', e);
+    res.status(500).json({ error: 'Failed to generate script' });
+  }
+});
+
+app.post('/admin/affiliate/update-limit', async (req, res) => {
+  const { password, code, limit } = req.body;
+  if (password !== process.env.ADMIN_PASSWORD) return res.status(401).json({ error: 'Unauthorized' });
+  const newLimit = parseInt(limit);
+  if (isNaN(newLimit) || newLimit < 1) return res.status(400).json({ error: 'Invalid limit' });
+  try {
+    const result = await pool.query(
+      'UPDATE affiliates SET daily_script_limit = $1 WHERE code = $2 RETURNING id',
+      [newLimit, code]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Affiliate not found' });
+    res.json({ success: true });
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to update limit' });
+  }
 });
 
 // ── AI Proxy ──────────────────────────────────────────
