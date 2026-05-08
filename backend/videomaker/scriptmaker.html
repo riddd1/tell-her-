@@ -9,115 +9,143 @@
 :root{--bg:#08080a;--pink:#f72585;--pinkl:#ff4da6;--card:#101013;--card2:#16161a;--inp:#1a1a1f;--txt:#f5f5f7;--sub:#888893;--bdr:rgba(247,37,133,0.18);--green:#22c55e;--red:#ef4444}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-serif;color:var(--txt);-webkit-font-smoothing:antialiased}
+
+/* shared */
+.screen{display:none}
+.screen.active{display:block}
 .page{max-width:600px;margin:0 auto;padding:32px 20px 80px}
-.nav{display:flex;align-items:center;gap:12px;margin-bottom:36px}
-.logo{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.45rem;color:var(--txt)}
-.logo span{color:var(--pink)}
-.badge{font-size:.6rem;font-weight:700;padding:4px 10px;border-radius:100px;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bdr);color:var(--pink);background:rgba(247,37,133,.08)}
-.usage-bar{background:var(--card);border:1px solid var(--bdr);border-radius:14px;padding:16px 20px;margin-bottom:28px;display:flex;align-items:center;justify-content:space-between;gap:12px}
-.usage-label{font-size:.72rem;text-transform:uppercase;letter-spacing:1px;color:var(--sub);font-weight:600}
-.usage-count{font-family:'Cormorant Garamond',serif;font-size:1.5rem;font-weight:700;color:var(--pink);line-height:1}
-.usage-detail{font-size:.68rem;color:var(--sub);margin-top:2px}
-.usage-pill{background:rgba(247,37,133,.1);border:1px solid var(--bdr);border-radius:100px;padding:6px 14px;font-size:.72rem;font-weight:600;color:var(--pink);white-space:nowrap}
+.dash-nav{background:rgba(8,8,10,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--bdr);display:flex;align-items:center;justify-content:space-between;padding:15px 24px;position:sticky;top:0;z-index:10}
+.nav-logo{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.35rem;color:var(--txt)}
+.nav-logo span{color:var(--pink)}
+.nav-badge{font-size:.62rem;font-weight:700;padding:4px 10px;border-radius:100px;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bdr);color:var(--pink);background:rgba(247,37,133,.08)}
+.btn-ghost{background:none;border:1px solid rgba(255,255,255,.1);color:var(--sub);font-size:.72rem;font-weight:600;padding:7px 14px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.btn-ghost:hover{border-color:var(--pink);color:var(--pink)}
+
+/* login */
+#s-login{display:none;align-items:center;justify-content:center;min-height:100svh;padding:24px}
+#s-login.active{display:flex}
+.login-card{background:var(--card);border:1px solid var(--bdr);border-radius:20px;padding:40px 32px;width:100%;max-width:360px;text-align:center}
+.login-logo{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:2rem;margin-bottom:4px}
+.login-logo span{color:var(--pink)}
+.login-sub{font-size:.78rem;color:var(--sub);margin-bottom:28px}
+.f-group{position:relative;margin-bottom:14px;text-align:left}
+.f-label{position:absolute;top:50%;left:14px;transform:translateY(-50%);font-size:.85rem;color:var(--sub);pointer-events:none;transition:all .2s}
+.f-label.floating{top:10px;transform:none;font-size:.62rem;color:var(--pink);letter-spacing:.5px;text-transform:uppercase}
+.f-input{width:100%;background:var(--inp);border:1.5px solid rgba(255,255,255,.07);border-radius:12px;padding:22px 14px 8px;font-size:.9rem;font-family:'DM Sans',sans-serif;color:var(--txt);outline:none;transition:border-color .2s}
+.f-input:focus{border-color:var(--pink)}
+.btn-main{display:block;width:100%;background:var(--pink);color:#fff;font-size:.88rem;font-weight:600;padding:16px;border-radius:12px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;letter-spacing:.5px;text-transform:uppercase}
+.btn-main:hover{background:var(--pinkl)}
+.err-msg{color:var(--red);font-size:.8rem;margin-top:12px;display:none}
+
+/* main */
+.usage-row{display:flex;align-items:center;justify-content:space-between;background:var(--card);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:14px 18px;margin-bottom:24px}
+.usage-left{font-size:.78rem;color:var(--sub)}
+.usage-left strong{color:var(--txt);font-size:.9rem}
+.usage-pill{font-size:.7rem;font-weight:700;padding:5px 13px;border-radius:100px;background:rgba(247,37,133,.1);border:1px solid var(--bdr);color:var(--pink)}
 .usage-pill.empty{background:rgba(239,68,68,.1);border-color:rgba(239,68,68,.25);color:var(--red)}
-.section-title{font-family:'Cormorant Garamond',serif;font-size:1.3rem;font-weight:700;color:var(--txt);margin-bottom:18px}
-.form-card{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:16px;padding:22px;margin-bottom:20px}
-.f-group{margin-bottom:16px}
-.f-group:last-child{margin-bottom:0}
-.f-label{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.8px;color:var(--sub);font-weight:600;margin-bottom:8px}
-.f-input,.f-select,.f-textarea{width:100%;background:var(--inp);border:1.5px solid rgba(255,255,255,.07);border-radius:10px;padding:13px 14px;font-size:.9rem;font-family:'DM Sans',sans-serif;color:var(--txt);outline:none;transition:border-color .2s;appearance:none;-webkit-appearance:none}
-.f-input:focus,.f-select:focus,.f-textarea:focus{border-color:rgba(247,37,133,.4)}
-.f-input::placeholder,.f-textarea::placeholder{color:var(--sub)}
-.f-textarea{resize:none;min-height:80px;line-height:1.5}
-.f-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;cursor:pointer}
-.f-select option{background:#1a1a1f;color:var(--txt)}
-.btn-gen{width:100%;background:var(--pink);color:#fff;font-size:.9rem;font-weight:600;padding:17px;border-radius:13px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;letter-spacing:.5px;text-transform:uppercase;box-shadow:0 8px 28px rgba(247,37,133,.28);display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px}
-.btn-gen:hover:not(:disabled){background:var(--pinkl);transform:translateY(-1px)}
-.btn-gen:disabled{opacity:.45;cursor:not-allowed;transform:none}
-.result-card{background:var(--card);border:1px solid rgba(247,37,133,.2);border-radius:16px;padding:22px;margin-top:24px;display:none}
-.result-card.show{display:block}
-.result-label{font-size:.65rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--pink);font-weight:700;margin-bottom:14px}
-.result-text{font-size:.92rem;line-height:1.7;color:var(--txt);white-space:pre-wrap;word-break:break-word}
-.result-actions{display:flex;gap:10px;margin-top:18px;flex-wrap:wrap}
-.btn-copy{background:none;border:1px solid rgba(247,37,133,.35);color:var(--pink);font-size:.78rem;font-weight:600;padding:9px 18px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;flex:1;min-width:120px;text-align:center}
-.btn-copy:hover{background:rgba(247,37,133,.08)}
+.form-group{margin-bottom:16px}
+.form-label{display:block;font-size:.68rem;text-transform:uppercase;letter-spacing:.8px;color:var(--sub);font-weight:600;margin-bottom:8px}
+.form-label em{font-style:normal;font-size:.65rem;color:rgba(136,136,147,.6);text-transform:none;letter-spacing:0}
+.form-select,.form-input,.form-textarea{width:100%;background:var(--inp);border:1.5px solid rgba(255,255,255,.07);border-radius:10px;padding:13px 14px;font-size:.9rem;font-family:'DM Sans',sans-serif;color:var(--txt);outline:none;transition:border-color .2s;appearance:none;-webkit-appearance:none}
+.form-select:focus,.form-input:focus,.form-textarea:focus{border-color:rgba(247,37,133,.4)}
+.form-input::placeholder,.form-textarea::placeholder{color:var(--sub)}
+.form-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23888' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px;cursor:pointer}
+.form-select option{background:#1a1a1f}
+.form-textarea{resize:none;min-height:78px;line-height:1.5}
+.btn-gen{width:100%;background:var(--pink);color:#fff;font-size:.88rem;font-weight:600;padding:16px;border-radius:13px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;letter-spacing:.5px;text-transform:uppercase;box-shadow:0 8px 28px rgba(247,37,133,.25);margin-top:6px;display:flex;align-items:center;justify-content:center;gap:10px}
+.btn-gen:hover:not(:disabled){background:var(--pinkl)}
+.btn-gen:disabled{opacity:.4;cursor:not-allowed}
+.gen-err{font-size:.8rem;color:var(--red);margin-top:10px;text-align:center;display:none}
+.gen-err.show{display:block}
+.result-wrap{background:var(--card);border:1px solid rgba(247,37,133,.2);border-radius:14px;padding:20px;margin-top:22px;display:none}
+.result-wrap.show{display:block}
+.result-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--pink);font-weight:700;margin-bottom:12px}
+.result-body{font-size:.9rem;line-height:1.72;color:var(--txt);white-space:pre-wrap;word-break:break-word}
+.result-btns{display:flex;gap:10px;margin-top:16px}
+.btn-copy{flex:1;background:none;border:1px solid rgba(247,37,133,.3);color:var(--pink);font-size:.78rem;font-weight:600;padding:10px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
+.btn-copy:hover{background:rgba(247,37,133,.07)}
 .btn-copy.copied{border-color:var(--green);color:var(--green)}
-.btn-regen{background:var(--pink);border:none;color:#fff;font-size:.78rem;font-weight:600;padding:9px 18px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;flex:1;min-width:120px;text-align:center}
+.btn-regen{flex:1;background:var(--pink);border:none;color:#fff;font-size:.78rem;font-weight:600;padding:10px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s}
 .btn-regen:hover{background:var(--pinkl)}
-.limit-banner{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.2);border-radius:14px;padding:18px 20px;margin-bottom:28px;text-align:center;display:none}
-.limit-banner.show{display:block}
-.limit-banner p{font-size:.88rem;color:var(--red);font-weight:500;margin-bottom:4px}
-.limit-banner small{font-size:.74rem;color:var(--sub)}
-.err-msg{font-size:.8rem;color:var(--red);margin-top:10px;text-align:center;display:none}
-.err-msg.show{display:block}
-.spinner{width:18px;height:18px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+.limit-warn{background:rgba(239,68,68,.07);border:1px solid rgba(239,68,68,.18);border-radius:12px;padding:16px 18px;margin-bottom:20px;display:none}
+.limit-warn.show{display:block}
+.limit-warn p{font-size:.85rem;color:var(--red);font-weight:500;margin-bottom:3px}
+.limit-warn small{font-size:.73rem;color:var(--sub)}
+.spinner{width:17px;height:17px;border:2.5px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
 @keyframes spin{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
-<div class="page">
-  <div class="nav">
-    <div class="logo">Tell Her<span>.</span></div>
-    <div class="badge">Script Maker</div>
-  </div>
 
-  <div class="usage-bar" id="usage-bar">
-    <div>
-      <div class="usage-label">Scripts today</div>
-      <div class="usage-count" id="usage-count">—</div>
-      <div class="usage-detail" id="usage-detail">loading...</div>
-    </div>
-    <div class="usage-pill" id="usage-pill">— left</div>
-  </div>
-
-  <div class="limit-banner" id="limit-banner">
-    <p>Daily limit reached</p>
-    <small>You've used all your scripts for today. Come back tomorrow or contact your account manager to increase your limit.</small>
-  </div>
-
-  <div class="section-title">Generate a script</div>
-
-  <div class="form-card">
+<!-- LOGIN -->
+<div id="s-login" class="screen">
+  <div class="login-card">
+    <div class="login-logo">Tell Her<span>.</span></div>
+    <p class="login-sub">Enter your affiliate password</p>
     <div class="f-group">
-      <label class="f-label">Platform</label>
-      <select class="f-select" id="platform">
+      <input class="f-input" id="sm-pass" type="password" placeholder=" ">
+      <label class="f-label" for="sm-pass">Password</label>
+    </div>
+    <button class="btn-main" onclick="smLogin()">Enter</button>
+    <p class="err-msg" id="sm-err">Invalid password. Try again.</p>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div id="s-main" class="screen">
+  <div class="dash-nav">
+    <div class="nav-logo">Tell Her<span>.</span></div>
+    <div class="nav-badge">Script Maker</div>
+    <button class="btn-ghost" onclick="smLogout()">Log out</button>
+  </div>
+  <div class="page">
+    <div class="usage-row">
+      <div class="usage-left">Scripts today — <strong id="usage-text">loading...</strong></div>
+      <div class="usage-pill" id="usage-pill">— left</div>
+    </div>
+
+    <div class="limit-warn" id="limit-warn">
+      <p>Daily limit reached</p>
+      <small>You've used all your scripts for today. Come back tomorrow, or contact your account manager to increase your limit.</small>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Platform</label>
+      <select class="form-select" id="platform">
         <option value="tiktok">TikTok</option>
         <option value="instagram">Instagram</option>
         <option value="youtube">YouTube Shorts</option>
         <option value="twitter">Twitter / X</option>
       </select>
     </div>
-    <div class="f-group">
-      <label class="f-label">His username / handle <span style="font-size:.65rem;color:var(--sub);text-transform:none;letter-spacing:0">(optional)</span></label>
-      <input class="f-input" id="handle" type="text" placeholder="e.g. username123">
+    <div class="form-group">
+      <label class="form-label">His handle <em>(optional)</em></label>
+      <input class="form-input" id="handle" type="text" placeholder="e.g. username123">
     </div>
-    <div class="f-group">
-      <label class="f-label">What's your angle? <span style="font-size:.65rem;color:var(--sub);text-transform:none;letter-spacing:0">(tell us what to cover)</span></label>
-      <textarea class="f-textarea" id="goal" placeholder="e.g. I used Tell Her to test if my boyfriend was loyal, here's what happened... / showing my followers how to test their man..."></textarea>
+    <div class="form-group">
+      <label class="form-label">Your angle <em>(what should the video cover?)</em></label>
+      <textarea class="form-textarea" id="goal" placeholder="e.g. I tested my boyfriend with Tell Her and here's what happened..."></textarea>
     </div>
-    <div class="f-group">
-      <label class="f-label">Tone</label>
-      <select class="f-select" id="tone">
+    <div class="form-group">
+      <label class="form-label">Tone</label>
+      <select class="form-select" id="tone">
         <option value="casual">Casual &amp; relatable</option>
         <option value="flirty">Playful &amp; flirty</option>
         <option value="direct">Direct &amp; confident</option>
         <option value="funny">Funny &amp; lighthearted</option>
       </select>
     </div>
-  </div>
 
-  <button class="btn-gen" id="gen-btn" onclick="generateScript()">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-    Generate Script
-  </button>
-  <p class="err-msg" id="err-msg"></p>
+    <button class="btn-gen" id="gen-btn" onclick="generate()">Generate Script</button>
+    <p class="gen-err" id="gen-err"></p>
 
-  <div class="result-card" id="result-card">
-    <div class="result-label">Your Script</div>
-    <div class="result-text" id="result-text"></div>
-    <div class="result-actions">
-      <button class="btn-copy" id="copy-btn" onclick="copyScript()">Copy script</button>
-      <button class="btn-regen" onclick="generateScript()">Regenerate</button>
+    <div class="result-wrap" id="result-wrap">
+      <div class="result-lbl">Your Script</div>
+      <div class="result-body" id="result-body"></div>
+      <div class="result-btns">
+        <button class="btn-copy" id="copy-btn" onclick="copyScript()">Copy script</button>
+        <button class="btn-regen" onclick="generate()">Regenerate</button>
+      </div>
     </div>
   </div>
 </div>
@@ -127,56 +155,76 @@ const API = 'https://telr-tests-production.up.railway.app';
 let affCode = '';
 let currentScript = '';
 
-function getCode() {
-  const params = new URLSearchParams(window.location.search);
-  const fromUrl = params.get('code');
-  if (fromUrl) { localStorage.setItem('tellher_aff_code', fromUrl); return fromUrl; }
-  return localStorage.getItem('tellher_aff_code') || '';
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+async function smLogin() {
+  const pass = document.getElementById('sm-pass').value.trim();
+  const err = document.getElementById('sm-err');
+  err.style.display = 'none';
+  if (!pass) return;
+  try {
+    const r = await fetch(`${API}/affiliate/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pass }) });
+    const d = await r.json();
+    if (r.ok && d.code) {
+      affCode = d.code;
+      localStorage.setItem('sm_aff_code', affCode);
+      showScreen('s-main');
+      loadUsage();
+    } else {
+      err.style.display = 'block';
+    }
+  } catch (_) {
+    err.textContent = 'Cannot reach server.';
+    err.style.display = 'block';
+  }
+}
+
+function smLogout() {
+  affCode = '';
+  localStorage.removeItem('sm_aff_code');
+  document.getElementById('sm-pass').value = '';
+  document.getElementById('sm-err').style.display = 'none';
+  showScreen('s-login');
 }
 
 async function loadUsage() {
-  affCode = getCode();
-  if (!affCode) {
-    document.getElementById('usage-detail').textContent = 'No affiliate code found';
-    document.getElementById('usage-pill').textContent = '— left';
-    return;
-  }
+  if (!affCode) return;
   try {
     const r = await fetch(`${API}/scripts/usage?code=${encodeURIComponent(affCode)}`);
     const d = await r.json();
-    if (!r.ok) { document.getElementById('usage-detail').textContent = d.error || 'Error'; return; }
-    updateUsageUI(d.used, d.limit, d.remaining);
-  } catch (_) {
-    document.getElementById('usage-detail').textContent = 'Could not load usage';
-  }
+    if (r.ok) updateUsage(d.used, d.limit, d.remaining);
+  } catch (_) {}
 }
 
-function updateUsageUI(used, limit, remaining) {
-  document.getElementById('usage-count').textContent = used + ' / ' + limit;
-  document.getElementById('usage-detail').textContent = 'resets every 24 hours';
+function updateUsage(used, limit, remaining) {
+  document.getElementById('usage-text').textContent = `${used} of ${limit}`;
   const pill = document.getElementById('usage-pill');
-  pill.textContent = remaining + ' left';
-  if (remaining === 0) {
+  pill.textContent = `${remaining} left`;
+  const warn = document.getElementById('limit-warn');
+  const btn = document.getElementById('gen-btn');
+  if (remaining <= 0) {
     pill.classList.add('empty');
-    document.getElementById('limit-banner').classList.add('show');
-    document.getElementById('gen-btn').disabled = true;
+    warn.classList.add('show');
+    btn.disabled = true;
   } else {
     pill.classList.remove('empty');
-    document.getElementById('limit-banner').classList.remove('show');
-    document.getElementById('gen-btn').disabled = false;
+    warn.classList.remove('show');
+    btn.disabled = false;
   }
 }
 
-async function generateScript() {
+async function generate() {
   const platform = document.getElementById('platform').value;
   const handle = document.getElementById('handle').value.trim().replace(/^@/, '');
   const goal = document.getElementById('goal').value.trim();
   const tone = document.getElementById('tone').value;
-  const errEl = document.getElementById('err-msg');
+  const errEl = document.getElementById('gen-err');
   errEl.classList.remove('show');
 
-  if (!goal) { errEl.textContent = 'Please describe your angle first.'; errEl.classList.add('show'); return; }
-  if (!affCode) { errEl.textContent = 'No affiliate code. Open this page from your dashboard.'; errEl.classList.add('show'); return; }
+  if (!goal) { errEl.textContent = 'Describe your angle first.'; errEl.classList.add('show'); return; }
 
   const btn = document.getElementById('gen-btn');
   btn.disabled = true;
@@ -191,28 +239,26 @@ async function generateScript() {
     const d = await r.json();
     if (!r.ok) {
       if (r.status === 429) {
-        document.getElementById('limit-banner').classList.add('show');
-        updateUsageUI(d.used, d.limit, 0);
-        errEl.textContent = 'Daily limit reached. Come back tomorrow.';
+        updateUsage(d.used, d.limit, 0);
       } else {
         errEl.textContent = d.error || 'Failed to generate. Try again.';
+        errEl.classList.add('show');
       }
-      errEl.classList.add('show');
     } else {
       currentScript = d.script;
-      document.getElementById('result-text').textContent = d.script;
-      document.getElementById('result-card').classList.add('show');
-      document.getElementById('result-card').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      updateUsageUI(d.used, d.limit, d.remaining);
+      document.getElementById('result-body').textContent = d.script;
+      document.getElementById('result-wrap').classList.add('show');
+      document.getElementById('result-wrap').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       document.getElementById('copy-btn').textContent = 'Copy script';
       document.getElementById('copy-btn').classList.remove('copied');
+      updateUsage(d.used, d.limit, d.remaining);
     }
   } catch (_) {
-    errEl.textContent = 'Network error. Check your connection and try again.';
+    errEl.textContent = 'Network error. Try again.';
     errEl.classList.add('show');
   }
 
-  btn.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Generate Script';
+  btn.innerHTML = 'Generate Script';
   btn.disabled = false;
   loadUsage();
 }
@@ -222,18 +268,37 @@ function copyScript() {
   navigator.clipboard.writeText(currentScript).catch(() => {
     const ta = document.createElement('textarea');
     ta.value = currentScript;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
   });
   const btn = document.getElementById('copy-btn');
-  btn.textContent = 'Copied!';
-  btn.classList.add('copied');
+  btn.textContent = 'Copied!'; btn.classList.add('copied');
   setTimeout(() => { btn.textContent = 'Copy script'; btn.classList.remove('copied'); }, 2500);
 }
 
-loadUsage();
+// init
+(function init() {
+  // check URL param first
+  const urlCode = new URLSearchParams(window.location.search).get('code');
+  if (urlCode) {
+    affCode = urlCode;
+    localStorage.setItem('sm_aff_code', urlCode);
+    showScreen('s-main');
+    loadUsage();
+    return;
+  }
+  // check localStorage
+  const stored = localStorage.getItem('sm_aff_code');
+  if (stored) {
+    affCode = stored;
+    showScreen('s-main');
+    loadUsage();
+    return;
+  }
+  // show login
+  showScreen('s-login');
+})();
+
+document.getElementById('sm-pass').addEventListener('keydown', e => { if (e.key === 'Enter') smLogin(); });
 </script>
 </body>
 </html>
