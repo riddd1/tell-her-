@@ -23,6 +23,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .t-tab:hover{color:rgba(255,255,255,0.7);border-color:rgba(255,255,255,0.22)}
 .t-tab.active{border-color:#e8a87c;color:#e8a87c;background:rgba(232,168,124,0.08)}
 .t-tab.active:hover{color:#e8a87c}
+.topbar-right{margin-left:auto;display:flex;align-items:center;gap:10px}
+.usage-info{font-size:11px;color:rgba(255,255,255,.35);font-variant-numeric:tabular-nums}
+.usage-info.warn{color:#f5a623}
+.usage-info.empty{color:#e05555}
+.logout-btn{font-size:11px;padding:4px 10px;border-radius:5px;border:1px solid rgba(255,255,255,.12);background:none;color:rgba(255,255,255,.4);cursor:pointer;font-family:inherit;transition:all .15s}
+.logout-btn:hover{border-color:rgba(255,255,255,.22);color:rgba(255,255,255,.7)}
 .main{display:grid;grid-template-columns:290px 1fr;height:calc(100vh - 46px)}
 .lp{padding:14px;overflow-y:auto;border-right:1px solid rgba(255,255,255,0.07);display:flex;flex-direction:column;gap:14px}
 .sec-title{display:flex;align-items:center;gap:5px;font-size:10px;font-weight:700;color:#e8a87c;margin-bottom:6px;text-transform:uppercase;letter-spacing:.5px}
@@ -67,6 +73,18 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .history-chip:hover{border-color:rgba(232,168,124,0.4);color:#e8a87c;background:rgba(232,168,124,0.06)}
 .toast{position:fixed;bottom:20px;right:20px;background:linear-gradient(90deg,#e8a87c,#c45c8a);color:#fff;font-size:12px;font-weight:600;padding:10px 18px;border-radius:8px;transform:translateY(80px);opacity:0;transition:all .25s cubic-bezier(.34,1.56,.64,1);pointer-events:none;z-index:1000;box-shadow:0 8px 24px rgba(0,0,0,0.4)}
 .toast.show{transform:translateY(0);opacity:1}
+/* login overlay */
+#sm-login{position:fixed;inset:0;background:#0a0a0a;z-index:500;display:flex;align-items:center;justify-content:center;animation:fadeIn .3s ease}
+.sm-login-card{width:320px;background:#111;border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:32px 28px;text-align:center}
+.sm-login-mark{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#f09433 0%,#e6683c 25%,#dc2743 50%,#cc2366 75%,#bc1888 100%);display:flex;align-items:center;justify-content:center;margin:0 auto 14px;box-shadow:0 4px 14px rgba(220,39,67,.35)}
+.sm-login-mark svg{width:17px;height:17px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.sm-login-title{font-size:15px;font-weight:800;color:#fff;letter-spacing:-.3px;margin-bottom:4px}
+.sm-login-sub{font-size:12px;color:rgba(255,255,255,.35);margin-bottom:22px}
+.sm-login-input{width:100%;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:11px 13px;color:#fff;font-size:13px;font-family:inherit;outline:none;transition:border-color .15s;margin-bottom:10px}
+.sm-login-input:focus{border-color:rgba(232,168,124,.5)}
+.sm-login-btn{width:100%;border:none;color:#fff;border-radius:9px;padding:12px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;background:linear-gradient(270deg,#e8a87c,#c45c8a,#8b5cf6,#c45c8a,#e8a87c);background-size:300% 300%;animation:gradientShift 5s ease infinite;transition:opacity .15s}
+.sm-login-btn:hover{opacity:.88}
+.sm-login-err{font-size:12px;color:#e05555;margin-top:10px;display:none}
 ::-webkit-scrollbar{width:6px;height:6px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.12);border-radius:3px}
@@ -74,6 +92,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </style>
 </head>
 <body>
+
+<!-- LOGIN GATE -->
+<div id="sm-login">
+  <div class="sm-login-card">
+    <div class="sm-login-mark">
+      <svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+    </div>
+    <div class="sm-login-title">DM Studio</div>
+    <div class="sm-login-sub">Enter your affiliate password</div>
+    <input class="sm-login-input" id="sm-pass" type="password" placeholder="Password" autocomplete="current-password">
+    <button class="sm-login-btn" onclick="smLogin()">Enter</button>
+    <div class="sm-login-err" id="sm-err">Invalid password. Try again.</div>
+  </div>
+</div>
+
 <div class="topbar">
   <div class="logo-wrap">
     <div class="logo-mark">
@@ -102,7 +135,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       Script Maker
     </button>
   </div>
+  <div class="topbar-right">
+    <span class="usage-info" id="usage-info"></span>
+    <button class="logout-btn" onclick="smLogout()">Log out</button>
+  </div>
 </div>
+
 <div class="main">
   <div class="lp">
     <div>
@@ -160,7 +198,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="action-btns">
         <button class="act-btn" onclick="clearOutput()">Clear</button>
         <button class="act-btn primary" onclick="copyScript()">Copy Script</button>
-        <button class="act-btn primary" id="importBtn" onclick="importToBuilder()">Import to Builder</button>
       </div>
     </div>
     <div class="output-box placeholder" id="outputBox"
@@ -173,54 +210,110 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
   </div>
 </div>
 <div class="toast" id="toast"></div>
+
 <script>
-  document.querySelectorAll('.platform-grid').forEach(group => {
-    group.querySelectorAll('.platform-pill').forEach(pill => {
-      pill.addEventListener('click', () => {
-        group.querySelectorAll('.platform-pill').forEach(p => p.classList.remove('active'));
-        pill.classList.add('active');
-      });
+const API = '';  // same origin — backend serves this page
+
+let affCode = '';
+const history = [];
+
+// ── Login gate ────────────────────────────────────────
+async function smLogin() {
+  const pass = document.getElementById('sm-pass').value.trim();
+  const err = document.getElementById('sm-err');
+  err.style.display = 'none';
+  if (!pass) return;
+  try {
+    const r = await fetch(`${API}/affiliate/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pass }) });
+    const d = await r.json();
+    if (r.ok && d.code) {
+      affCode = d.code;
+      localStorage.setItem('sm_aff_code', affCode);
+      document.getElementById('sm-login').style.display = 'none';
+      loadUsage();
+    } else {
+      err.style.display = 'block';
+    }
+  } catch (_) {
+    err.textContent = 'Cannot reach server.';
+    err.style.display = 'block';
+  }
+}
+
+function smLogout() {
+  affCode = '';
+  localStorage.removeItem('sm_aff_code');
+  document.getElementById('sm-pass').value = '';
+  document.getElementById('sm-err').style.display = 'none';
+  document.getElementById('sm-login').style.display = 'flex';
+}
+
+async function loadUsage() {
+  if (!affCode) return;
+  try {
+    const r = await fetch(`/scripts/usage?code=${encodeURIComponent(affCode)}`);
+    if (!r.ok) return;
+    const d = await r.json();
+    updateUsageDisplay(d.used, d.limit, d.remaining);
+  } catch (_) {}
+}
+
+function updateUsageDisplay(used, limit, remaining) {
+  const el = document.getElementById('usage-info');
+  el.textContent = `${remaining} of ${limit} scripts left today`;
+  el.className = 'usage-info' + (remaining === 0 ? ' empty' : remaining <= 2 ? ' warn' : '');
+  document.getElementById('genBtn').disabled = remaining <= 0;
+}
+
+// ── Platform pills ────────────────────────────────────
+document.querySelectorAll('.platform-grid').forEach(group => {
+  group.querySelectorAll('.platform-pill').forEach(pill => {
+    pill.addEventListener('click', () => {
+      group.querySelectorAll('.platform-pill').forEach(p => p.classList.remove('active'));
+      pill.classList.add('active');
     });
   });
+});
 
-  function getPlatform() {
-    return document.querySelector('#platformGroup .platform-pill.active').dataset.val;
-  }
+function getPlatform() {
+  return document.querySelector('#platformGroup .platform-pill.active').dataset.val;
+}
 
-  function buildPrompt(platform, storyReply) {
-    if (platform === 'tiktok') {
-      return buildTikTokPrompt(storyReply);
-    }
-    return buildInstagramPrompt(storyReply);
+function buildPrompt(platform, storyReply) {
+  if (platform === 'tiktok') {
+    return buildTikTokPrompt(platform, storyReply);
   }
+  return buildInstagramPrompt(platform, storyReply);
+}
+
 function buildTikTokPrompt(platform, storyReply) {
-    const hooks = [
-      "test him pls he got a second phone and said it's for work 😐",
-      "test him pls he started going to the gym at 11pm 🙃",
-      "test him pls he changed his lock screen to a default wallpaper 😐",
-      "test him pls he comes home smelling like perfume 🙃",
-      "test him pls he deleted his instagram search history 😐",
-      "test him pls he stopped posting me 3 months ago 🙃",
-      "test him pls he leaves the room to take calls now 😐",
-      "test him pls he started using a password on his phone for the first time 🙃",
-      "test him pls his location is always off now 😐",
-      "test him pls he started caring about how he looks when he goes out alone 🙃",
-      "test him pls he gets defensive when i ask simple questions 😐",
-      "test him pls he came home with a hickey and said it was from a seatbelt 🙃",
-      "test him pls he has a contact saved as a man's name but the texts come in at 2am 😐",
-      "test him pls he started tilting his phone away when i walk past 🙃",
-      "test him pls he cleared his call log for the first time ever 😐",
-      "test him pls he goes out every other weekend and never says where 🙃",
-      "test him pls he has a second instagram i wasn't supposed to find 😐",
-      "test him pls he bought new cologne and hides it in his car 🙃",
-      "test him pls he started deleting his messages every night before bed 😐",
-      "test him pls his ring finger has a tan line and he says it's from a ring he lost 🙃"
-    ];
+  const hooks = [
+    "test him pls he got a second phone and said it's for work 😐",
+    "test him pls he started going to the gym at 11pm 🙃",
+    "test him pls he changed his lock screen to a default wallpaper 😐",
+    "test him pls he comes home smelling like perfume 🙃",
+    "test him pls he deleted his instagram search history 😐",
+    "test him pls he stopped posting me 3 months ago 🙃",
+    "test him pls he leaves the room to take calls now 😐",
+    "test him pls he started using a password on his phone for the first time 🙃",
+    "test him pls his location is always off now 😐",
+    "test him pls he started caring about how he looks when he goes out alone 🙃",
+    "test him pls he gets defensive when i ask simple questions 😐",
+    "test him pls he came home with a hickey and said it was from a seatbelt 🙃",
+    "test him pls he has a contact saved as a man's name but the texts come in at 2am 😐",
+    "test him pls he started tilting his phone away when i walk past 🙃",
+    "test him pls he cleared his call log for the first time ever 😐",
+    "test him pls he goes out every other weekend and never says where 🙃",
+    "test him pls he has a second instagram i wasn't supposed to find 😐",
+    "test him pls he bought new cologne and hides it in his car 🙃",
+    "test him pls he started deleting his messages every night before bed 😐",
+    "test him pls his ring finger has a tan line and he says it's from a ring he lost 🙃"
+  ];
 
-    const defaultHook = hooks[Math.floor(Math.random() * hooks.length)];
-    const storyLine = storyReply ? `1) ${storyReply}` : `1) ${defaultHook}`;
+  const defaultHook = hooks[Math.floor(Math.random() * hooks.length)];
+  const storyLine = storyReply ? `1) ${storyReply}` : `1) ${defaultHook}`;
 
-    return `You are a viral social media script writer. You write fake Instagram DM loyalty test scripts where a girl (the tester) slides into a guy's DMs pretending to be a stranger, and through casual innocent conversation he slowly reveals he is cheating on or manipulating his girlfriend. Every script must feel completely real — written by a human, not AI. The audience must not be able to tell it was generated.
+  return `You are a viral social media script writer. You write fake Instagram DM loyalty test scripts where a girl (the tester) slides into a guy's DMs pretending to be a stranger, and through casual innocent conversation he slowly reveals he is cheating on or manipulating his girlfriend. Every script must feel completely real — written by a human, not AI. The audience must not be able to tell it was generated.
 
 Output ONLY the raw script. No stage directions. No brackets. No placeholder text like [mutual] or [name]. No commentary. No caption blocks at the end. No explanations. Just the script starting with **IMAGE 1**.
 
@@ -318,14 +411,14 @@ Platform context: ${platform}
 Story reply from her friend: "${storyReply || defaultHook}"
 
 Generate the script now. Start with **IMAGE 1**. Raw script only. Nothing else before or after it.`;
-  }
+}
 
-  function buildInstagramPrompt(storyReply) {
-    const storyLine = storyReply
-      ? `1) ${storyReply}`
-      : `1) [Write the girlfriend's hook message to her friend. Two parts: (1) a varied "test" phrase — always different, never the same wording twice. Examples of the energy: "help me test my man" / "can u test him for me" / "i need u to check on my man" / "do me a favour and test him" / "slide in his dms and test him" / "can u loyalty check this man" / "test this man for me" / "i need eyes on my man" — completely free, rotate the phrasing every single time. (2) then ONE specific suspicious thing she noticed about him — short, real, casual. End with a single emoji matching the feeling 😐 🙃 🥺. The full message should read like a real text between friends. Never copy the topic or wording from any example in this prompt.]`;
+function buildInstagramPrompt(platform, storyReply) {
+  const storyLine = storyReply
+    ? `1) ${storyReply}`
+    : `1) [Write the girlfriend's hook message to her friend. Two parts: (1) a varied "test" phrase — always different, never the same wording twice. Examples of the energy: "help me test my man" / "can u test him for me" / "i need u to check on my man" / "do me a favour and test him" / "slide in his dms and test him" / "can u loyalty check this man" / "test this man for me" / "i need eyes on my man" — completely free, rotate the phrasing every single time. (2) then ONE specific suspicious thing she noticed about him — short, real, casual. End with a single emoji matching the feeling 😐 🙃 🥺. The full message should read like a real text between friends. Never copy the topic or wording from any example in this prompt.]`;
 
-    return `You are a viral social media script writer. Write fake Instagram DM loyalty test scripts. Output ONLY the raw script. No stage directions, no brackets, no commentary, no caption block at the end. Just the script.
+  return `You are a viral social media script writer. Write fake Instagram DM loyalty test scripts. Output ONLY the raw script. No stage directions, no brackets, no commentary, no caption block at the end. Just the script.
 
 CRITICAL RULES:
 
@@ -395,142 +488,154 @@ Platform: ${platform}
 Story reply: "${storyReply || 'test him pls something feels off 😐'}"
 
 Output the raw script only. Start with **IMAGE 1**. No other text.`;
-  }
+}
 
-  const history = [];
+// ── Generate ──────────────────────────────────────────
+async function generateScript() {
+  const btn = document.getElementById('genBtn');
+  const outputBox = document.getElementById('outputBox');
+  const statusDot = document.getElementById('statusDot');
+  const statusText = document.getElementById('statusText');
+  const platform = getPlatform();
+  const storyReply = document.getElementById('storyReplyInput').value.trim();
 
-
-  async function generateScript() {
-    const btn = document.getElementById('genBtn');
-    const outputBox = document.getElementById('outputBox');
-    const statusDot = document.getElementById('statusDot');
-    const statusText = document.getElementById('statusText');
-    const platform = getPlatform();
-    const storyReply = document.getElementById('storyReplyInput').value.trim();
-
-    btn.disabled = true;
-    btn.classList.add('loading');
-    btn.querySelector('.gbtn-text').textContent = 'Generating...';
-    outputBox.textContent = '';
-    outputBox.classList.remove('placeholder');
-    statusDot.className = 'status-dot loading';
-    statusText.textContent = 'Cooking...';
-    updateCharCount('');
-
+  // check rate limit first
+  if (affCode) {
     try {
-      const response = await fetch('/ai/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: buildPrompt(platform, storyReply) }),
-      });
-
-      const data = await response.json();
-      const text = (data.content?.map(b => b.text || '').join('') || '').trim();
-      if (!text) throw new Error('empty');
-
-      outputBox.textContent = text;
-      statusDot.className = 'status-dot ready';
-      statusText.textContent = 'Done — copy and paste into your generator';
-      updateCharCount(text);
-      addToHistory(text, storyReply);
-    } catch (err) {
-      outputBox.classList.add('placeholder');
-      outputBox.dataset.placeholder = 'Something went wrong. Check your API key and try again.';
-      statusDot.className = 'status-dot error';
-      statusText.textContent = 'Error — try again';
-    } finally {
-      btn.disabled = false;
-      btn.classList.remove('loading');
-      btn.querySelector('.gbtn-text').textContent = 'Generate Script';
-    }
-  }
-
-  function updateCharCount(text) {
-    const el = document.getElementById('charCount');
-    const len = text.length;
-    el.textContent = `${len} / 5000`;
-    el.className = 'char-count' + (len > 5000 ? ' over' : len > 1200 ? ' warn' : '');
-  }
-
-  function addToHistory(text, storyReply) {
-    const preview = storyReply ? storyReply.slice(0, 40) : text.slice(0, 40);
-    history.unshift({ text, preview });
-    if (history.length > 6) history.pop();
-    renderHistory();
-  }
-
-  function renderHistory() {
-    const strip = document.getElementById('historyStrip');
-    strip.innerHTML = history.map((h, i) =>
-      `<div class="history-chip" onclick="loadHistory(${i})" title="${h.preview.replace(/"/g,'&quot;')}">${h.preview}…</div>`
-    ).join('');
-  }
-
-  function loadHistory(i) {
-    const text = history[i].text;
-    document.getElementById('outputBox').textContent = text;
-    document.getElementById('outputBox').classList.remove('placeholder');
-    updateCharCount(text);
-    document.getElementById('statusDot').className = 'status-dot ready';
-    document.getElementById('statusText').textContent = 'Loaded from history';
-  }
-
-  function copyScript() {
-    const box = document.getElementById('outputBox');
-    if (box.classList.contains('placeholder') || !box.textContent.trim()) return;
-    navigator.clipboard.writeText(box.textContent).then(() => showToast('Copied to clipboard ✓'));
-  }
-
-  function clearOutput() {
-    const box = document.getElementById('outputBox');
-    box.textContent = '';
-    box.classList.add('placeholder');
-    box.dataset.placeholder = 'Pick a social media platform on the left and hit Generate Script.\n\nEvery script is unique — slow drip reveals, natural texting, meme captions that judge his lines.';
-    document.getElementById('statusDot').className = 'status-dot';
-    document.getElementById('statusText').textContent = 'Ready';
-    updateCharCount('');
-  }
-
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 1800);
-  }
-
-  function importToBuilder() {
-    const box = document.getElementById('outputBox');
-    if (box.classList.contains('placeholder') || !box.textContent.trim()) {
-      showToast('Generate a script first');
-      return;
-    }
-    const converted = convertScriptToBuilderFormat(box.textContent.trim());
-    localStorage.setItem('dmstudio_import', converted);
-    location.href = 'index.html';
-  }
-
-  function convertScriptToBuilderFormat(text) {
-    const lines = text.split('\n');
-    const result = [];
-    let pastFirst = false;
-    for (const rawLine of lines) {
-      const line = rawLine.trim();
-      if (!line) continue;
-      if (/^\*\*IMAGE \d+\*\*/.test(line)) {
-        if (pastFirst) result.push('-b-');
-        pastFirst = true;
-        continue;
+      const check = await fetch(`/scripts/usage?code=${encodeURIComponent(affCode)}`);
+      const usage = await check.json();
+      if (check.ok && usage.remaining <= 0) {
+        updateUsageDisplay(usage.used, usage.limit, 0);
+        showToast('Daily limit reached — come back tomorrow');
+        return;
       }
-      const herMatch = line.match(/^Her:\s*(.+)/i);
-      if (herMatch) { result.push(`2) ${herMatch[1]}`); continue; }
-      const himMatch = line.match(/^Him:\s*(.+)/i);
-      if (himMatch) { result.push(`1) ${himMatch[1]}`); continue; }
-      const memeMatch = line.match(/^(?:🎬\s*)?MEME:\s*(.+)/i);
-      if (memeMatch) { result.push('-m-'); result.push(`Caption: "${memeMatch[1]}"`); continue; }
-      if (/^[12]\)\s|^REACT:|^SEEN:|^-[bm]-$|^Caption:/i.test(line)) { result.push(line); continue; }
-    }
-    return result.join('\n');
+    } catch (_) {}
   }
+
+  btn.disabled = true;
+  btn.classList.add('loading');
+  btn.querySelector('.gbtn-text').textContent = 'Generating...';
+  outputBox.textContent = '';
+  outputBox.classList.remove('placeholder');
+  statusDot.className = 'status-dot loading';
+  statusText.textContent = 'Cooking...';
+  updateCharCount('');
+
+  try {
+    const response = await fetch('/ai/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ prompt: buildPrompt(platform, storyReply) }),
+    });
+
+    const data = await response.json();
+    const text = (data.content?.map(b => b.text || '').join('') || '').trim();
+    if (!text) throw new Error('empty');
+
+    outputBox.textContent = text;
+    statusDot.className = 'status-dot ready';
+    statusText.textContent = 'Done — copy and paste into your generator';
+    updateCharCount(text);
+    addToHistory(text, storyReply);
+
+    // record usage
+    if (affCode) {
+      try {
+        const rec = await fetch('/scripts/record', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ code: affCode }) });
+        const rd = await rec.json();
+        if (rec.ok) updateUsageDisplay(rd.used, rd.limit, rd.remaining);
+      } catch (_) {}
+      loadUsage();
+    }
+  } catch (err) {
+    outputBox.classList.add('placeholder');
+    outputBox.dataset.placeholder = 'Something went wrong. Try again.';
+    statusDot.className = 'status-dot error';
+    statusText.textContent = 'Error — try again';
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove('loading');
+    btn.querySelector('.gbtn-text').textContent = 'Generate Script';
+  }
+}
+
+function updateCharCount(text) {
+  const el = document.getElementById('charCount');
+  const len = text.length;
+  el.textContent = `${len} / 5000`;
+  el.className = 'char-count' + (len > 5000 ? ' over' : len > 1200 ? ' warn' : '');
+}
+
+function addToHistory(text, storyReply) {
+  const preview = storyReply ? storyReply.slice(0, 40) : text.slice(0, 40);
+  history.unshift({ text, preview });
+  if (history.length > 6) history.pop();
+  renderHistory();
+}
+
+function renderHistory() {
+  const strip = document.getElementById('historyStrip');
+  strip.innerHTML = history.map((h, i) =>
+    `<div class="history-chip" onclick="loadHistory(${i})" title="${h.preview.replace(/"/g,'&quot;')}">${h.preview}…</div>`
+  ).join('');
+}
+
+function loadHistory(i) {
+  const text = history[i].text;
+  document.getElementById('outputBox').textContent = text;
+  document.getElementById('outputBox').classList.remove('placeholder');
+  updateCharCount(text);
+  document.getElementById('statusDot').className = 'status-dot ready';
+  document.getElementById('statusText').textContent = 'Loaded from history';
+}
+
+function copyScript() {
+  const box = document.getElementById('outputBox');
+  if (box.classList.contains('placeholder') || !box.textContent.trim()) return;
+  navigator.clipboard.writeText(box.textContent).then(() => showToast('Copied to clipboard ✓'));
+}
+
+function clearOutput() {
+  const box = document.getElementById('outputBox');
+  box.textContent = '';
+  box.classList.add('placeholder');
+  box.dataset.placeholder = 'Pick a social media platform on the left and hit Generate Script.\n\nEvery script is unique — slow drip reveals, natural texting, meme captions that judge his lines.';
+  document.getElementById('statusDot').className = 'status-dot';
+  document.getElementById('statusText').textContent = 'Ready';
+  updateCharCount('');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+// ── Init ──────────────────────────────────────────────
+(function init() {
+  // try URL param first
+  const urlCode = new URLSearchParams(window.location.search).get('code');
+  if (urlCode) {
+    affCode = urlCode;
+    localStorage.setItem('sm_aff_code', urlCode);
+    document.getElementById('sm-login').style.display = 'none';
+    loadUsage();
+    return;
+  }
+  // try localStorage
+  const stored = localStorage.getItem('sm_aff_code');
+  if (stored) {
+    affCode = stored;
+    document.getElementById('sm-login').style.display = 'none';
+    loadUsage();
+    return;
+  }
+  // show login
+  document.getElementById('sm-login').style.display = 'flex';
+})();
+
+document.getElementById('sm-pass').addEventListener('keydown', e => { if (e.key === 'Enter') smLogin(); });
 </script>
 </body>
 </html>

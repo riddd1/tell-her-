@@ -855,8 +855,9 @@ app.get('/creatordash', (req, res) => {
   res.sendFile(path.join(__dirname, 'creatordash.html'));
 });
 
+app.use('/videomaker', express.static(path.join(__dirname, '..', 'videomaker')));
 app.get('/videomaker', (req, res) => {
-  res.sendFile(path.join(__dirname, 'videomaker', 'scriptmaker.html'));
+  res.sendFile(path.join(__dirname, '..', 'videomaker', 'index.html'));
 });
 
 // ── Script Maker ──────────────────────────────────────
