@@ -28,6 +28,27 @@ html, body { height: 100%; font-family: 'Inter', system-ui, sans-serif; backgrou
 .screen { display: none; height: 100svh; overflow: hidden; flex-direction: column; background: var(--grad); }
 .screen.active { display: flex; }
 
+/* ── Desktop centering ── */
+@media (min-width: 700px) {
+  .screen.active {
+    align-items: center;
+    justify-content: center;
+  }
+  #s-login { align-items: center; justify-content: center; }
+  #s-main, #s-thread {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .nav-bar, .tabs-wrap, .tab-content, .thread-nav, .client-panel, .img-preview-wrap, .messages-area, .reply-bar {
+    max-width: 680px;
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .screen.active > * { width: 100%; max-width: 680px; margin-left: auto; margin-right: auto; }
+  #s-main, #s-thread { align-items: center; }
+}
+
 /* ════════════════════════════
    LOGIN SCREEN
 ════════════════════════════ */
@@ -247,6 +268,8 @@ html, body { height: 100%; font-family: 'Inter', system-ui, sans-serif; backgrou
   font-size: .8rem;
   color: var(--sub);
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   overflow: hidden;
   text-overflow: ellipsis;
 }
