@@ -413,8 +413,8 @@ html, body { height: 100%; font-family: 'Inter', system-ui, sans-serif; backgrou
   word-break: break-word;
 }
 .msg-row.user .msg-bubble {
-  background: rgba(255,255,255,.9);
-  color: var(--txt);
+  background: #1c1c2e;
+  color: #fff;
   border-radius: 18px 18px 18px 4px;
 }
 .msg-row.tester .msg-bubble {
@@ -624,9 +624,6 @@ html, body { height: 100%; font-family: 'Inter', system-ui, sans-serif; backgrou
         💬 Chats
         <span class="tab-badge" id="tab-unread-badge" style="display:none">0</span>
       </div>
-      <div class="tab" id="tab-testers" onclick="switchTab('testers')">
-        💋 Testers
-      </div>
     </div>
   </div>
 
@@ -659,12 +656,6 @@ html, body { height: 100%; font-family: 'Inter', system-ui, sans-serif; backgrou
       </div>
     </div>
 
-    <!-- Testers view -->
-    <div class="tab-view" id="view-testers">
-      <div id="tester-list">
-        <!-- Rendered by JS -->
-      </div>
-    </div>
 
   </div>
 </div>
@@ -791,7 +782,6 @@ async function doLogin() {
     document.getElementById('login-err').style.display = 'none';
     const data = await res.json();
     renderConversations(data.conversations || []);
-    renderTesters();
     showScreen('s-main');
     startPolling();
   } catch (e) {
@@ -1085,9 +1075,12 @@ function _appendThreadMsg(id, content, role) {
   const el = document.createElement('div');
   el.className = 'msg-row ' + cls;
   el.id = id;
+  const rendered = (role === 'image')
+    ? `<img class="msg-img" src="${escHtml(content)}" onclick="window.open('${escHtml(content)}')">`
+    : escHtml(content).replace(/\n/g, '<br>');
   el.innerHTML =
     '<div class="msg-av-sm ' + avClass + '">' + avLetter + '</div>' +
-    '<div><div class="msg-bubble">' + escHtml(content).replace(/\n/g, '<br>') +
+    '<div><div class="msg-bubble">' + rendered +
     '</div><div class="msg-time">' + time + '</div></div>';
   area.appendChild(el);
   area.scrollTop = area.scrollHeight;
@@ -1129,31 +1122,6 @@ function removeImage() {
   document.getElementById('img-preview').src = '';
 }
 
-/* ════════════════════════════════════
-   TESTERS
-════════════════════════════════════ */
-function renderTesters() {
-  const list = document.getElementById('tester-list');
-  list.innerHTML = `
-    <div style="color:rgba(255,255,255,.5);font-size:.8rem;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:.7rem;padding-left:2px">
-      Loyalty Testers
-    </div>
-    <div style="color:rgba(255,255,255,.35);font-size:.78rem;margin-bottom:1rem;padding-left:2px">
-      Choose wisely — you can only pick one 👀
-    </div>
-  ` + TESTERS.map(t => `
-    <div class="tester-card">
-      <div class="tester-av">${t.emoji}</div>
-      <div class="tester-info">
-        <div class="tester-name">${t.name}</div>
-        <div class="tester-desc">${t.desc}</div>
-      </div>
-      <div class="tester-badge ${t.active ? '' : 'inactive'}">
-        ${t.active ? '● Active' : '🔒 Unlock'}
-      </div>
-    </div>
-  `).join('');
-}
 
 /* ════════════════════════════════════
    POLLING (auto-refresh every 15s)
