@@ -444,7 +444,7 @@ app.get('/magic', async (req, res) => {
     if (row.used || ageMinutes > 15) return res.status(410).send(errorPage('This link has expired. Please request a new one.'));
     await pool.query(`UPDATE magic_links SET used = TRUE WHERE token = $1`, [token]);
     const appUrl = process.env.APP_URL || '';
-    res.redirect(`${appUrl}/tell-her.html?uid=${encodeURIComponent(row.user_id)}#chat`);
+    res.redirect(`https://tell-her-production.up.railway.app/?uid=${encodeURIComponent(row.user_id)}#chat`);
   } catch (error) {
     console.error('Magic redirect error:', error);
     res.status(500).send(errorPage('Something went wrong. Please request a new link.'));

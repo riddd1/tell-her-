@@ -882,7 +882,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   if(urlParams.get('payment')==='success'&&window.location.hash==='#login'){
     showScreen('s-login');
     const loginSubtext=document.getElementById('login-subtext');
-    if(loginSubtext){loginSubtext.textContent='Payment confirmed. We sent a link to your email. Click it to open your conversation.';loginSubtext.style.color='#22c55e'}
+    if(loginSubtext){loginSubtext.textContent='Payment confirmed. Enter your email to access your conversation.';loginSubtext.style.color='#22c55e'}
     history.replaceState({},'',window.location.pathname);
   }
   const refCode=urlParams.get('ref');
