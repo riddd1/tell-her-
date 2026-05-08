@@ -725,16 +725,20 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
       </div>
     </div>
 
-    <div
-  id="whop-checkout"
-  data-whop-checkout-plan-id="plan_pVRWzALypyeBH"
-  data-whop-checkout-return-url="https://telr-tests-production.up.railway.app/success"
-  data-whop-checkout-theme="dark"
-  data-whop-checkout-theme-accent-color="pink"
-  data-whop-checkout-hide-price="true"
-  data-whop-checkout-hide-tos="true"
-  style="width:100%"
-></div>
+    <p id="checkout-price" style="text-align:center;font-size:1.1rem;font-weight:700;color:var(--txt);margin-bottom:4px">$25 one time</p>
+    <p id="checkout-price-sub" style="text-align:center;font-size:.75rem;color:var(--sub);margin-bottom:16px">less than $3 a day</p>
+    <div id="whop-checkout-wrap">
+      <div
+        id="whop-checkout"
+        data-whop-checkout-plan-id="plan_pVRWzALypyeBH"
+        data-whop-checkout-return-url="https://telr-tests-production.up.railway.app/success"
+        data-whop-checkout-theme="dark"
+        data-whop-checkout-theme-accent-color="pink"
+        data-whop-checkout-hide-price="true"
+        data-whop-checkout-hide-tos="true"
+        style="width:100%"
+      ></div>
+    </div>
     <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px">
       <i data-lucide="lock" style="width:12px;height:12px;color:var(--sub)"></i>
       <span style="font-size:.7rem;color:var(--sub)">secure payment · results sent privately</span>
@@ -807,8 +811,19 @@ function toggleUpsell(){
   r.style.background=upsellAdded?'var(--pink)':'transparent';
   r.style.borderColor=upsellAdded?'var(--pink)':'rgba(247,37,133,.4)';
   document.querySelector('.up-l2').textContent=upsellAdded?'added to your order':'add +$10 to my order';
-  const checkout=document.getElementById('whop-checkout');
-  if(checkout)checkout.setAttribute('data-whop-checkout-plan-id',upsellAdded?'plan_rm7H7MYEO6QOc':'plan_pVRWzALypyeBH');
+  const priceEl=document.getElementById('checkout-price');
+  const priceSubEl=document.getElementById('checkout-price-sub');
+  if(priceEl)priceEl.textContent=upsellAdded?'$35 one time':'$25 one time';
+  if(priceSubEl)priceSubEl.textContent=upsellAdded?'$25 test + $10 questions':'less than $3 a day';
+  const wrap=document.getElementById('whop-checkout-wrap');
+  if(wrap){
+    const uid=getUserId();
+    const ref=localStorage.getItem('tellher_ref')||'';
+    const returnUrl='https://telr-tests-production.up.railway.app/success?uid='+uid+'&ref='+ref;
+    const email=localStorage.getItem('tellher_email')||'';
+    const planId=upsellAdded?'plan_rm7H7MYEO6QOc':'plan_pVRWzALypyeBH';
+    wrap.innerHTML='<div id="whop-checkout" data-whop-checkout-plan-id="'+planId+'" data-whop-checkout-return-url="'+returnUrl+'" data-whop-checkout-theme="dark" data-whop-checkout-theme-accent-color="pink" data-whop-checkout-hide-price="true" data-whop-checkout-hide-tos="true"'+(email?' data-whop-checkout-prefill-email="'+email+'"':'')+' style="width:100%"></div>';
+  }
 }
 
 const API_BASE='https://telr-tests-production.up.railway.app';
@@ -821,11 +836,9 @@ function completeOrder(){
   upsellAdded=false;
   const r=document.getElementById('up-radio');
   if(r){r.style.background='transparent';r.style.borderColor='rgba(247,37,133,.4)';}
-  const checkout=document.getElementById('whop-checkout');
-  if(checkout){
-    checkout.setAttribute('data-whop-checkout-plan-id','plan_pVRWzALypyeBH');
-    checkout.setAttribute('data-whop-checkout-return-url',returnUrl);
-    if(email)checkout.setAttribute('data-whop-checkout-prefill-email',email);
+  const wrap=document.getElementById('whop-checkout-wrap');
+  if(wrap){
+    wrap.innerHTML='<div id="whop-checkout" data-whop-checkout-plan-id="plan_pVRWzALypyeBH" data-whop-checkout-return-url="'+returnUrl+'" data-whop-checkout-theme="dark" data-whop-checkout-theme-accent-color="pink" data-whop-checkout-hide-price="true" data-whop-checkout-hide-tos="true"'+(email?' data-whop-checkout-prefill-email="'+email+'"':'')+' style="width:100%"></div>';
   }
   showScreen('s-offer');
   window.scrollTo(0,0);
