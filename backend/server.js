@@ -113,6 +113,14 @@ app.get('/', (req, res) => {
   res.json({ status: 'Lily Backend Running' });
 });
 
+app.get('/login', (req, res) => {
+  res.sendFile(path.join(__dirname, 'login.html'));
+});
+
+app.get('/chat', (req, res) => {
+  res.sendFile(path.join(__dirname, 'chat.html'));
+});
+
 app.get('/config', (req, res) => {
   res.json({
     productId: process.env.CREEM_PRODUCT_ID,
@@ -444,7 +452,7 @@ app.get('/magic', async (req, res) => {
     if (row.used || ageMinutes > 15) return res.status(410).send(errorPage('This link has expired. Please request a new one.'));
     await pool.query(`UPDATE magic_links SET used = TRUE WHERE token = $1`, [token]);
     const appUrl = process.env.APP_URL || '';
-    res.redirect(`https://tell-her-production.up.railway.app/?uid=${encodeURIComponent(row.user_id)}#chat`);
+    res.redirect(`https://telr-tests-production.up.railway.app/chat?uid=${encodeURIComponent(row.user_id)}`);
   } catch (error) {
     console.error('Magic redirect error:', error);
     res.status(500).send(errorPage('Something went wrong. Please request a new link.'));
@@ -783,7 +791,7 @@ app.get('/success', async (req, res) => {
     }
   }
 
-  res.redirect('https://tell-her-production.up.railway.app/?payment=success#login');
+  res.redirect('https://telr-tests-production.up.railway.app/login?payment=success');
 });
 
 // ── User Profile Get ──────────────────────────────────

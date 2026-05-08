@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Tell Her · Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600;0,700;1,400;1,600&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#08080a;--pink:#f72585;--pinkl:#ff4da6;--card:#101013;--inp:#1a1a1f;--txt:#f5f5f7;--sub:#888893}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-serif;color:var(--txt);-webkit-font-smoothing:antialiased}
+.login-wrap{max-width:480px;margin:0 auto;padding:max(48px,env(safe-area-inset-top)) 24px 48px;min-height:100svh;display:flex;flex-direction:column;justify-content:center}
+.login-logo{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.4rem;color:var(--txt);text-align:center;margin-bottom:40px}
+.login-logo span{color:var(--pink)}
+.login-hl{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:2rem;font-weight:600;color:var(--txt);text-align:center;margin-bottom:10px;line-height:1.2}
+.login-sub{font-size:.9rem;color:var(--sub);text-align:center;margin-bottom:32px;line-height:1.6}
+.f-group{position:relative;margin-bottom:12px}
+.f-label{position:absolute;top:50%;left:14px;transform:translateY(-50%);font-size:.85rem;color:var(--sub);pointer-events:none;transition:all .2s}
+.f-label.floating{top:10px;transform:none;font-size:.65rem;color:var(--pink);letter-spacing:.5px;text-transform:uppercase}
+.f-input{width:100%;background:var(--card);border:1.5px solid rgba(255,255,255,.07);border-radius:12px;padding:22px 14px 8px;font-size:.9rem;font-family:'DM Sans',sans-serif;color:var(--txt);outline:none;transition:border-color .2s}
+.f-input:focus{border-color:var(--pink)}
+.login-btn-submit{display:block;width:100%;background:var(--pink);color:#fff;font-size:.9rem;font-weight:600;padding:18px;border-radius:14px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px;transition:all .2s;box-shadow:0 8px 28px rgba(247,37,133,.3);letter-spacing:.5px;text-transform:uppercase}
+.login-btn-submit:hover{background:var(--pinkl)}
+.login-confirm{text-align:center;padding:32px 0}
+.login-confirm-h{font-size:1.1rem;font-weight:600;color:var(--txt);margin-bottom:10px}
+.login-confirm-sub{font-size:.82rem;color:var(--sub);line-height:1.6}
+@media(max-width:768px){.f-input{font-size:16px!important}}
+</style>
+</head>
+<body>
+<div class="login-wrap">
+  <div class="login-logo">Tell Her<span>.</span></div>
+  <h2 class="login-hl">Welcome back.</h2>
+  <p class="login-sub" id="login-subtext">Enter your email and we will send you a link straight to your conversation.</p>
+  <div id="login-form">
+    <div class="f-group">
+      <input class="f-input" id="login-email" type="email" placeholder=" ">
+      <label class="f-label" for="login-email">Email address</label>
+    </div>
+    <p id="login-err" style="display:none;color:#ef4444;font-size:.78rem;margin-top:-4px;margin-bottom:8px"></p>
+    <button class="login-btn-submit" onclick="submitMagicLink()">Send my link</button>
+  </div>
+  <div id="login-confirm" class="login-confirm" style="display:none">
+    <div class="login-confirm-h">Check your inbox. Your link is on the way.</div>
+    <div class="login-confirm-sub">Check your spam folder if you do not see it.</div>
+  </div>
+</div>
+<script>
+const API_BASE='https://telr-tests-production.up.railway.app';
+const urlParams=new URLSearchParams(window.location.search);
+if(urlParams.get('payment')==='success'){
+  const sub=document.getElementById('login-subtext');
+  if(sub){sub.textContent='Payment confirmed. Enter your email to access your conversation.';sub.style.color='#22c55e';}
+}
+document.querySelectorAll('.f-input').forEach(inp=>{
+  const lbl=inp.nextElementSibling;
+  inp.addEventListener('focus',()=>lbl&&lbl.classList.add('floating'));
+  inp.addEventListener('blur',()=>{if(lbl&&!inp.value)lbl.classList.remove('floating')});
+});
+async function submitMagicLink(){
+  const email=document.getElementById('login-email').value.trim();
+  const errEl=document.getElementById('login-err');
+  errEl.style.display='none';
+  if(!email)return;
+  try{
+    const res=await fetch(`${API_BASE}/magic-link`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});
+    if(!res.ok){const data=await res.json();errEl.textContent=data.error||'Something went wrong.';errEl.style.display='block';return}
+    document.getElementById('login-form').style.display='none';
+    document.getElementById('login-confirm').style.display='block';
+  }catch(_){errEl.textContent='Could not reach server. Try again.';errEl.style.display='block';}
+}
+</script>
+</body>
+</html>
