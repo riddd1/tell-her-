@@ -300,7 +300,7 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
     <div class="land-topbar">
       <div class="land-logo">Tell Her<span>.</span></div>
       <div style="display:flex;align-items:center;gap:10px">
-        <button onclick="showScreen('s-login')" style="background:none;border:1.5px solid #f72585;color:#f72585;font-size:.72rem;font-weight:600;padding:7px 16px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.5px;white-space:nowrap;flex-shrink:0">Log in</button>
+        <button onclick="window.location.href='https://telr-tests-production.up.railway.app/login'" style="background:none;border:1.5px solid #f72585;color:#f72585;font-size:.72rem;font-weight:600;padding:7px 16px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.5px;white-space:nowrap;flex-shrink:0">Log in</button>
         <div class="land-pill">
           <span class="land-pill-dot"></span>
           <span><strong style="color:var(--txt)">2,847</strong> women this week</span>
@@ -880,7 +880,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   });
   const urlParams=new URLSearchParams(window.location.search);
   if(urlParams.get('payment')==='success'&&window.location.hash==='#login'){
-    showScreen('s-login');
+    window.location.href='https://telr-tests-production.up.railway.app/login';
     const loginSubtext=document.getElementById('login-subtext');
     if(loginSubtext){loginSubtext.textContent='Payment confirmed. Enter your email to access your conversation.';loginSubtext.style.color='#22c55e'}
     history.replaceState({},'',window.location.pathname);
