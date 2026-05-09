@@ -44,7 +44,6 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
 .land-trust-item svg{color:var(--pink);flex-shrink:0}
 .land-footer{font-size:10.5px;color:#2a2a35;text-align:center;line-height:2;margin-top:auto}
 .land-footer a{color:#2a2a35;text-decoration:underline}
-.dev-btn{background:none;border:1px dashed rgba(247,37,133,.15);color:rgba(247,37,133,.3);font-size:.65rem;padding:7px 18px;border-radius:20px;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:1px;font-weight:600;margin-top:12px;display:block;width:100%}
 
 /* QUIZ */
 .q-progress-track{height:3px;background:#1a1a1f;width:100%}
@@ -743,7 +742,6 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
       <span style="font-size:.7rem;color:var(--sub)">secure payment · results sent privately</span>
     </div>
     <p style="text-align:center;font-size:.65rem;color:#2a2a35;margin-top:6px">your bank statement says TELL HER SERVICES, nothing else</p>
-    <button class="dev-btn" onclick="loadTestPlan()">DEV: LOAD $1 TEST PLAN</button>
   </div>
 </div>
 
@@ -845,7 +843,6 @@ function completeOrder(){
 }
 function skipToChat(){currentQ=11;showScreen('s-collect');}
 async function devSimulatePayment(){const uid=getUserId();const ref=localStorage.getItem('tellher_ref')||'';try{const r=await fetch(`${API_BASE}/test/payment-success`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:uid,refCode:ref})});const d=await r.json();if(d.success){window.location.href='https://www.tellher.co/chat?uid='+uid;}else{alert('Error: '+JSON.stringify(d));}}catch(e){alert('Error: '+e.message);}}
-function loadTestPlan(){const uid=getUserId();const ref=localStorage.getItem('tellher_ref')||'';const returnUrl='https://www.tellher.co/success?uid='+uid+'&ref='+ref;const email=localStorage.getItem('tellher_email')||'';const wrap=document.getElementById('whop-checkout-wrap');if(wrap){wrap.innerHTML='<div id="whop-checkout" data-whop-checkout-plan-id="plan_qxuEnxymdPz2X" data-whop-checkout-return-url="'+returnUrl+'" data-whop-checkout-theme="dark" data-whop-checkout-theme-accent-color="pink" data-whop-checkout-hide-price="true" data-whop-checkout-hide-tos="true"'+(email?' data-whop-checkout-prefill-email="'+email+'"':'')+' style="width:100%"></div>';}const p=document.getElementById('checkout-price');if(p)p.textContent='$1 test plan';}
 function isValidEmail(email){const re=/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;if(!re.test(email))return false;const domain=email.split('@')[1];if(domain.split('.').some(part=>part.length<2))return false;return true}
 async function submitCollect(){const name=document.getElementById('collect-name').value.trim();const email=document.getElementById('collect-email').value.trim();const errEl=document.getElementById('collect-email-err');if(!isValidEmail(email)){errEl.style.display='block';return}errEl.style.display='none';localStorage.setItem('tellher_name',name);localStorage.setItem('tellher_email',email);const userId=getUserId();await fetch(`${API_BASE}/user/profile`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId,userName:name,email})}).catch(()=>{});showScreen('s-results');window.scrollTo(0,0)}
 async function submitMagicLink(){const email=document.getElementById('login-email').value.trim();const errEl=document.getElementById('login-err');errEl.style.display='none';if(!email)return;try{const res=await fetch(`${API_BASE}/magic-link`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});if(!res.ok){const data=await res.json();errEl.innerHTML=(data.error||'Something went wrong.')+' <a href="#" onclick="startQuiz();return false;" style="color:#f72585;text-decoration:underline">Take the quiz</a>';errEl.style.display='block';setTimeout(()=>startQuiz(),2800);return}document.getElementById('login-form').style.display='none';document.getElementById('login-confirm').style.display='block'}catch(_){errEl.textContent='Could not reach server. Try again.';errEl.style.display='block'}}

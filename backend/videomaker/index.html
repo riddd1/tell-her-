@@ -635,6 +635,43 @@ button,input,select,textarea{transition-property:background,border-color,color,b
 .hist-full{font-family:'SF Mono',Consolas,Menlo,monospace;font-size:12px;line-height:1.7;color:#f0f0f0;white-space:pre-wrap;max-height:420px;overflow-y:auto;border-top:1px solid rgba(255,255,255,.06);padding-top:10px;display:none}
 .hist-expand{font-size:10.5px;padding:4px 10px;border-radius:5px;border:1px solid rgba(255,255,255,.1);background:none;color:rgba(255,255,255,.4);cursor:pointer;font-family:inherit;transition:all .15s;align-self:flex-start}
 .hist-expand:hover{color:rgba(255,255,255,.7);border-color:rgba(255,255,255,.2)}
+
+/* ── MOBILE RESPONSIVE ── */
+@media (max-width: 768px) {
+  body{overflow-y:auto;overflow-x:hidden}
+  .topbar{height:auto;min-height:46px;flex-wrap:wrap;padding:8px 12px;gap:6px}
+  .topbar-tabs{overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap;flex-shrink:0;width:100%;margin-left:0;display:flex;padding-bottom:1px}
+  .topbar-tabs::-webkit-scrollbar{display:none}
+  .logo-sub{display:none}
+  #sm-topbar-extras{margin-left:0;width:100%}
+  .main{grid-template-columns:1fr!important;height:auto!important;display:flex!important;flex-direction:column}
+  .lp{border-right:none;border-bottom:1px solid rgba(255,255,255,0.07);height:auto;max-height:none;overflow-y:visible;flex-shrink:0}
+  .rp{height:auto;min-height:50vh;flex-shrink:0}
+  .preview-area{min-height:50vh;padding:12px;align-items:flex-start;overflow-x:auto}
+  #capture-root{width:100%;max-width:390px;margin:0 auto}
+  .sm-rp{height:auto;overflow:visible;padding:14px}
+  .output-box{min-height:180px;flex:none}
+  .bottom-btns{flex-direction:column}
+  .history-strip{flex-wrap:nowrap}
+  #history-main{height:auto;padding:16px}
+  .range-box,.slideshow-box{width:92vw;max-height:85vh}
+  .ie-box{width:92vw}
+  .smp-box{width:92vw}
+  .msm-box{width:88vw}
+  .t-tab{font-size:10px;padding:4px 9px;white-space:nowrap}
+  .logo-wrap .logo{font-size:13px}
+  .gbtn{padding:11px 10px;font-size:12px}
+  .act-btns{flex-wrap:wrap;gap:4px}
+  .act-btn{font-size:10px;padding:5px 9px}
+}
+@media (max-width: 480px) {
+  .topbar{padding:6px 10px}
+  .t-tab{font-size:9.5px;padding:4px 8px}
+  .lp{padding:10px}
+  .sm-rp{padding:10px}
+  .platform-grid{grid-template-columns:1fr 1fr}
+  .preview-area{padding:8px}
+}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/twemoji.min.js" crossorigin="anonymous"></script>
 </head>
@@ -932,6 +969,10 @@ button,input,select,textarea{transition-property:background,border-color,color,b
       <div class="act-btns">
         <button class="act-btn" onclick="smClear()">Clear</button>
         <button class="act-btn primary" onclick="smCopy()">Copy Script</button>
+        <button class="act-btn" id="sm-send-btn" onclick="smSendToBuilder()" style="border-color:rgba(139,92,246,0.45);color:#c4b5fd;background:rgba(139,92,246,0.1)">
+          <svg viewBox="0 0 24 24" style="width:10px;height:10px;display:inline;vertical-align:middle;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;margin-right:3px"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Send to Builder
+        </button>
       </div>
     </div>
     <div class="output-box placeholder" id="sm-output" data-placeholder="Pick a social media platform on the left and hit Generate Script.&#10;&#10;Every script is unique — slow drip reveals, natural texting, meme captions that judge his lines."></div>
@@ -3263,6 +3304,15 @@ function smCopy() {
   const box = document.getElementById('sm-output');
   if (box.classList.contains('placeholder') || !box.textContent.trim()) return;
   navigator.clipboard.writeText(box.textContent).then(()=>showToast('Copied to clipboard ✓'));
+}
+
+function smSendToBuilder() {
+  const box = document.getElementById('sm-output');
+  if (box.classList.contains('placeholder') || !box.textContent.trim()) return;
+  document.getElementById('code-ta').value = box.textContent.trim();
+  switchTab('code');
+  parseCode();
+  showToast('Script sent to Builder ✓');
 }
 
 function smClear() {
