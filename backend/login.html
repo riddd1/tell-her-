@@ -51,6 +51,11 @@ const urlParams=new URLSearchParams(window.location.search);
 if(urlParams.get('payment')==='success'){
   const sub=document.getElementById('login-subtext');
   if(sub){sub.textContent='Payment confirmed. Enter your email to access your conversation.';sub.style.color='#22c55e';}
+  const savedEmail=localStorage.getItem('tellher_email');
+  if(savedEmail){
+    const inp=document.getElementById('login-email');
+    if(inp){inp.value=savedEmail;const lbl=inp.nextElementSibling;if(lbl)lbl.classList.add('floating');}
+  }
 }
 document.querySelectorAll('.f-input').forEach(inp=>{
   const lbl=inp.nextElementSibling;
