@@ -374,7 +374,7 @@ function renderAffList(affs){
       </div>
       <div class="aff-creds">
         <div class="cred-pill"><span>Password</span><strong>${escH(a.password)}</strong></div>
-        <div class="cred-pill"><span>Link</span><strong>https://tell-her-production.up.railway.app/?ref=${escH(a.code)}</strong></div>
+        <div class="cred-pill"><span>Link</span><strong>https://www.tellher.co/?ref=${escH(a.code)}</strong></div>
       </div>
       <div class="aff-limit-row">
         <span class="aff-limit-label">Scripts/day</span>
@@ -418,7 +418,7 @@ async function createAffiliate(){
     const d=await r.json();
     if(d.success){
       document.getElementById('new-pass-out').textContent=d.password;
-      document.getElementById('new-link-out').textContent=`https://tell-her-production.up.railway.app/?ref=${d.password}`;
+      document.getElementById('new-link-out').textContent=`https://www.tellher.co/?ref=${d.password}`;
       document.getElementById('success-card').classList.add('open');
       document.getElementById('create-form').classList.remove('open');
       document.getElementById('new-aff-name').value='';
@@ -436,7 +436,7 @@ async function deleteAff(code){
 /* ══ AFFILIATE USER ═════════════════════════════════ */
 function showAffScreen(d){
   currentAffCode=d.code;
-  currentAffLink=`https://tell-her-production.up.railway.app/?ref=${d.code}`;
+  currentAffLink=`https://www.tellher.co/?ref=${d.code}`;
   document.getElementById('aff-nav-name').innerHTML=`${escH(d.name)}<span style="color:var(--pink)">.</span>`;
   document.getElementById('aff-link-text').innerHTML=`<strong>${escH(currentAffLink)}</strong>`;
   document.getElementById('aff-clicks').textContent=d.clicks;
