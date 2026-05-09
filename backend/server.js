@@ -421,11 +421,14 @@ app.post('/magic-link', async (req, res) => {
   if (!email) return res.status(400).json({ error: 'email required' });
   try {
     const profileResult = await pool.query(
-      `SELECT user_id FROM user_profiles WHERE email = $1 LIMIT 1`,
+      `SELECT user_id, paid FROM user_profiles WHERE email = $1 LIMIT 1`,
       [email]
     );
     if (profileResult.rows.length === 0) {
       return res.status(404).json({ error: 'No account found with that email. Please complete the quiz first.' });
+    }
+    if (!profileResult.rows[0].paid) {
+      return res.status(403).json({ error: 'No active subscription found for that email. Please complete payment first.' });
     }
     const userId = profileResult.rows[0].user_id;
     const token = crypto.randomBytes(32).toString('hex');
@@ -463,6 +466,10 @@ app.get('/magic', async (req, res) => {
     const row = result.rows[0];
     const ageMinutes = (Date.now() - new Date(row.created_at).getTime()) / 60000;
     if (row.used || ageMinutes > 15) return res.status(410).send(errorPage('This link has expired. Please request a new one.'));
+    const paidCheck = await pool.query(`SELECT paid FROM user_profiles WHERE user_id = $1`, [row.user_id]);
+    if (!paidCheck.rows.length || !paidCheck.rows[0].paid) {
+      return res.status(403).send(errorPage('No active subscription found. Please complete payment first.'));
+    }
     await pool.query(`UPDATE magic_links SET used = TRUE WHERE token = $1`, [token]);
     const appUrl = process.env.APP_URL || '';
     res.redirect(`https://www.tellher.co/chat?uid=${encodeURIComponent(row.user_id)}`);
