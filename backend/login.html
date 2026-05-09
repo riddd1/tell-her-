@@ -21,9 +21,13 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
 .f-input:focus{border-color:var(--pink)}
 .login-btn-submit{display:block;width:100%;background:var(--pink);color:#fff;font-size:.9rem;font-weight:600;padding:18px;border-radius:14px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;margin-top:8px;transition:all .2s;box-shadow:0 8px 28px rgba(247,37,133,.3);letter-spacing:.5px;text-transform:uppercase}
 .login-btn-submit:hover{background:var(--pinkl)}
-.login-confirm{text-align:center;padding:32px 0}
-.login-confirm-h{font-size:1.1rem;font-weight:600;color:var(--txt);margin-bottom:10px}
-.login-confirm-sub{font-size:.82rem;color:var(--sub);line-height:1.6}
+.login-confirm{text-align:center;padding:16px 0}
+.login-confirm-h{font-size:1.15rem;font-weight:600;color:var(--txt);margin-bottom:8px}
+.login-confirm-sub{font-size:.85rem;color:var(--sub);line-height:1.6;margin-bottom:24px}
+.spam-btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:rgba(247,37,133,.12);border:1.5px solid rgba(247,37,133,.35);color:var(--pink);font-size:.9rem;font-weight:600;padding:16px;border-radius:14px;cursor:pointer;font-family:'DM Sans',sans-serif;margin-bottom:10px;text-decoration:none;transition:all .2s}
+.spam-btn:hover{background:rgba(247,37,133,.2);border-color:var(--pink)}
+.spam-hint{font-size:.75rem;color:var(--sub);line-height:1.7;background:rgba(255,255,255,.04);border-radius:10px;padding:14px;text-align:left;margin-top:6px}
+.spam-hint b{color:rgba(255,255,255,.6);font-weight:600}
 @media(max-width:768px){.f-input{font-size:16px!important}}
 </style>
 </head>
@@ -41,8 +45,13 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
     <button class="login-btn-submit" onclick="submitMagicLink()">Send my link</button>
   </div>
   <div id="login-confirm" class="login-confirm" style="display:none">
-    <div class="login-confirm-h">Check your inbox. Your link is on the way.</div>
-    <div class="login-confirm-sub">Check your spam folder if you do not see it.</div>
+    <div style="font-size:2rem;margin-bottom:12px">📬</div>
+    <div class="login-confirm-h">Your link is on the way.</div>
+    <div class="login-confirm-sub">Check your inbox — if you don't see it in 60 seconds, it's in spam.</div>
+    <a id="spam-link" href="#" target="_blank" class="spam-btn">
+      <span>⚠️</span> Check Spam Folder
+    </a>
+    <div class="spam-hint" id="spam-steps"></div>
   </div>
 </div>
 <script>
@@ -72,7 +81,30 @@ async function submitMagicLink(){
     if(!res.ok){const data=await res.json();errEl.textContent=data.error||'Something went wrong.';errEl.style.display='block';return}
     document.getElementById('login-form').style.display='none';
     document.getElementById('login-confirm').style.display='block';
+    setSpamLink(email);
   }catch(_){errEl.textContent='Could not reach server. Try again.';errEl.style.display='block';}
+}
+function setSpamLink(email){
+  const domain=(email.split('@')[1]||'').toLowerCase();
+  const link=document.getElementById('spam-link');
+  const steps=document.getElementById('spam-steps');
+  if(domain.includes('gmail')){
+    link.href='https://mail.google.com/mail/#spam';
+    steps.innerHTML='<b>Gmail:</b> Open the email → click <b>"Report not spam"</b> so future emails land in your inbox automatically.';
+  } else if(domain.includes('outlook')||domain.includes('hotmail')||domain.includes('live')||domain.includes('msn')){
+    link.href='https://outlook.live.com/mail/junkemail';
+    steps.innerHTML='<b>Outlook:</b> Open the email → click <b>"Not junk"</b> at the top to move it and whitelist us.';
+  } else if(domain.includes('yahoo')){
+    link.href='https://mail.yahoo.com/d/folders/6';
+    steps.innerHTML='<b>Yahoo:</b> Open the email → click <b>"Not Spam"</b> to move it to your inbox.';
+  } else if(domain.includes('icloud')||domain.includes('me.com')||domain.includes('mac.com')){
+    link.href='https://www.icloud.com/mail';
+    steps.innerHTML='<b>iCloud Mail:</b> Open your Junk folder → select the email → click <b>"Not Junk"</b>.';
+  } else {
+    link.href='#';
+    link.style.display='none';
+    steps.innerHTML='<b>Can\'t find it?</b> Open your spam or junk folder and look for an email from <b>hello@tellher.co</b>. Mark it as "Not spam" so future emails reach you.';
+  }
 }
 </script>
 </body>
