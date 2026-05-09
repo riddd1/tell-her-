@@ -433,13 +433,14 @@ app.post('/magic-link', async (req, res) => {
       `INSERT INTO magic_links (token, email, user_id) VALUES ($1, $2, $3)`,
       [token, email, userId]
     );
-    const appUrl = process.env.APP_URL || 'https://your-domain.com';
+    const appUrl = process.env.APP_URL || 'https://www.tellher.co';
     const link = `${appUrl}/magic?token=${token}`;
     await resend.emails.send({
       from: 'Tell Her <hello@tellher.co>',
       to: email,
-      subject: 'Your Tell Her link',
-      html: `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#08080a;font-family:'DM Sans',system-ui,sans-serif"><table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:48px 24px"><table width="100%" style="max-width:480px;background:#101013;border-radius:16px;padding:40px;border:1px solid rgba(247,37,133,0.15)"><tr><td align="center" style="padding-bottom:28px"><p style="font-family:Georgia,serif;font-style:italic;font-size:1.5rem;color:#f5f5f7;margin:0">Tell Her<span style="color:#f72585">.</span></p></td></tr><tr><td align="center" style="padding-bottom:16px"><p style="font-family:Georgia,serif;font-style:italic;font-size:1.5rem;color:#f5f5f7;margin:0">Your link is ready.</p></td></tr><tr><td align="center" style="padding-bottom:28px"><p style="font-size:.9rem;color:#888893;line-height:1.6;margin:0">Click the button below to open your conversation. This link expires in 15 minutes.</p></td></tr><tr><td align="center" style="padding-bottom:32px"><a href="${link}" style="display:inline-block;background:#f72585;color:#fff;font-size:.9rem;font-weight:600;padding:16px 36px;border-radius:14px;text-decoration:none;letter-spacing:.5px">Open my conversation</a></td></tr><tr><td align="center"><p style="font-size:.75rem;color:#2a2a35;margin:0">If you did not request this, you can safely ignore this email.</p></td></tr></table></td></tr></table></body></html>`,
+      subject: 'Your Tell Her access link',
+      text: `Your Tell Her access link\n\nClick here to open your conversation:\n${link}\n\nThis link expires in 15 minutes. If you did not request this, you can safely ignore this email.`,
+      html: `<!DOCTYPE html><html><body style="margin:0;padding:0;background:#08080a;font-family:'DM Sans',system-ui,sans-serif"><table width="100%" cellpadding="0" cellspacing="0"><tr><td align="center" style="padding:48px 24px"><table width="100%" style="max-width:480px;background:#101013;border-radius:16px;padding:40px;border:1px solid rgba(247,37,133,0.15)"><tr><td align="center" style="padding-bottom:28px"><p style="font-family:Georgia,serif;font-style:italic;font-size:1.5rem;color:#f5f5f7;margin:0">Tell Her<span style="color:#f72585">.</span></p></td></tr><tr><td align="center" style="padding-bottom:16px"><p style="font-family:Georgia,serif;font-style:italic;font-size:1.5rem;color:#f5f5f7;margin:0">Your link is ready.</p></td></tr><tr><td align="center" style="padding-bottom:28px"><p style="font-size:.9rem;color:#888893;line-height:1.6;margin:0">Click the button below to open your conversation. This link expires in 15 minutes.</p></td></tr><tr><td align="center" style="padding-bottom:32px"><a href="${link}" style="display:inline-block;background:#f72585;color:#fff;font-size:.9rem;font-weight:600;padding:16px 36px;border-radius:14px;text-decoration:none;letter-spacing:.5px">Open my conversation</a></td></tr><tr><td align="center"><p style="font-size:.75rem;color:#555560;margin:0">If you did not request this, you can safely ignore this email.</p></td></tr></table></td></tr></table></body></html>`,
     });
     res.json({ success: true });
   } catch (error) {
@@ -660,6 +661,7 @@ app.post('/payment/confirm', async (req, res) => {
         from: 'Tell Her <hello@tellher.co>',
         to: user.email,
         subject: 'Your Tell Her conversation is ready',
+        text: `Your Tell Her conversation is ready\n\nPayment confirmed. Click here to open your conversation:\n${link}\n\nIf you have any questions, reply to this email.`,
         html: '<div style="background:#08080a;padding:40px;font-family:sans-serif;text-align:center"><p style="font-family:Georgia,serif;font-style:italic;font-size:1.5rem;color:#f5f5f7">Tell Her<span style="color:#f72585">.</span></p><p style="color:#888;margin-bottom:28px">Payment confirmed. Click below to open your conversation.</p><a href="' + link + '" style="background:#f72585;color:#fff;padding:16px 36px;border-radius:14px;text-decoration:none;font-weight:600">Open my conversation</a></div>',
       });
     }
