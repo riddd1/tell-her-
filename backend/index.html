@@ -300,7 +300,7 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
     <div class="land-topbar">
       <div class="land-logo">Tell Her<span>.</span></div>
       <div style="display:flex;align-items:center;gap:10px">
-        <button onclick="window.location.href='https://telr-tests-production.up.railway.app/login'" style="background:#f72585;border:none;color:#fff;font-size:.8rem;font-weight:700;padding:10px 22px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.5px;white-space:nowrap;flex-shrink:0;box-shadow:0 4px 14px rgba(247,37,133,.35)">Log in</button>
+        <button onclick="window.location.href='https://www.tellher.co/login'" style="background:#f72585;border:none;color:#fff;font-size:.8rem;font-weight:700;padding:10px 22px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.5px;white-space:nowrap;flex-shrink:0;box-shadow:0 4px 14px rgba(247,37,133,.35)">Log in</button>
         <div class="land-pill">
           <span class="land-pill-dot"></span>
           <span><strong style="color:var(--txt)">2,847</strong> women this week</span>
@@ -730,7 +730,7 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
       <div
         id="whop-checkout"
         data-whop-checkout-plan-id="plan_pVRWzALypyeBH"
-        data-whop-checkout-return-url="https://telr-tests-production.up.railway.app/success"
+        data-whop-checkout-return-url="https://www.tellher.co/success"
         data-whop-checkout-theme="dark"
         data-whop-checkout-theme-accent-color="pink"
         data-whop-checkout-hide-price="true"
@@ -818,19 +818,19 @@ function toggleUpsell(){
   if(wrap){
     const uid=getUserId();
     const ref=localStorage.getItem('tellher_ref')||'';
-    const returnUrl='https://telr-tests-production.up.railway.app/success?uid='+uid+'&ref='+ref;
+    const returnUrl='https://www.tellher.co/success?uid='+uid+'&ref='+ref;
     const email=localStorage.getItem('tellher_email')||'';
     const planId=upsellAdded?'plan_rm7H7MYEO6QOc':'plan_pVRWzALypyeBH';
     wrap.innerHTML='<div id="whop-checkout" data-whop-checkout-plan-id="'+planId+'" data-whop-checkout-return-url="'+returnUrl+'" data-whop-checkout-theme="dark" data-whop-checkout-theme-accent-color="pink" data-whop-checkout-hide-price="true" data-whop-checkout-hide-tos="true"'+(email?' data-whop-checkout-prefill-email="'+email+'"':'')+' style="width:100%"></div>';
   }
 }
 
-const API_BASE='https://telr-tests-production.up.railway.app';
+const API_BASE='https://www.tellher.co';
 function getUserId(){let id=localStorage.getItem('tellher_uid');if(!id){id='u_'+Date.now()+'_'+Math.random().toString(36).slice(2,8);localStorage.setItem('tellher_uid',id)}return id}
 function completeOrder(){
   const uid=getUserId();
   const ref=localStorage.getItem('tellher_ref')||'';
-  const returnUrl='https://telr-tests-production.up.railway.app/success?uid='+uid+'&ref='+ref;
+  const returnUrl='https://www.tellher.co/success?uid='+uid+'&ref='+ref;
   const email=localStorage.getItem('tellher_email')||'';
   upsellAdded=false;
   const r=document.getElementById('up-radio');
@@ -843,7 +843,7 @@ function completeOrder(){
   window.scrollTo(0,0);
 }
 function skipToChat(){currentQ=11;showScreen('s-collect');}
-function loadTestPlan(){const uid=getUserId();const ref=localStorage.getItem('tellher_ref')||'';const returnUrl='https://telr-tests-production.up.railway.app/success?uid='+uid+'&ref='+ref;const email=localStorage.getItem('tellher_email')||'';const wrap=document.getElementById('whop-checkout-wrap');if(wrap){wrap.innerHTML='<div id="whop-checkout" data-whop-checkout-plan-id="plan_qxuEnxymdPz2X" data-whop-checkout-return-url="'+returnUrl+'" data-whop-checkout-theme="dark" data-whop-checkout-theme-accent-color="pink" data-whop-checkout-hide-price="true" data-whop-checkout-hide-tos="true"'+(email?' data-whop-checkout-prefill-email="'+email+'"':'')+' style="width:100%"></div>';}const p=document.getElementById('checkout-price');if(p)p.textContent='$1 test plan';}
+function loadTestPlan(){const uid=getUserId();const ref=localStorage.getItem('tellher_ref')||'';const returnUrl='https://www.tellher.co/success?uid='+uid+'&ref='+ref;const email=localStorage.getItem('tellher_email')||'';const wrap=document.getElementById('whop-checkout-wrap');if(wrap){wrap.innerHTML='<div id="whop-checkout" data-whop-checkout-plan-id="plan_qxuEnxymdPz2X" data-whop-checkout-return-url="'+returnUrl+'" data-whop-checkout-theme="dark" data-whop-checkout-theme-accent-color="pink" data-whop-checkout-hide-price="true" data-whop-checkout-hide-tos="true"'+(email?' data-whop-checkout-prefill-email="'+email+'"':'')+' style="width:100%"></div>';}const p=document.getElementById('checkout-price');if(p)p.textContent='$1 test plan';}
 function isValidEmail(email){const re=/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;if(!re.test(email))return false;const domain=email.split('@')[1];if(domain.split('.').some(part=>part.length<2))return false;return true}
 async function submitCollect(){const name=document.getElementById('collect-name').value.trim();const email=document.getElementById('collect-email').value.trim();const errEl=document.getElementById('collect-email-err');if(!isValidEmail(email)){errEl.style.display='block';return}errEl.style.display='none';localStorage.setItem('tellher_name',name);localStorage.setItem('tellher_email',email);const userId=getUserId();await fetch(`${API_BASE}/user/profile`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId,userName:name,email})}).catch(()=>{});showScreen('s-results');window.scrollTo(0,0)}
 async function submitMagicLink(){const email=document.getElementById('login-email').value.trim();const errEl=document.getElementById('login-err');errEl.style.display='none';if(!email)return;try{const res=await fetch(`${API_BASE}/magic-link`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});if(!res.ok){const data=await res.json();errEl.innerHTML=(data.error||'Something went wrong.')+' <a href="#" onclick="startQuiz();return false;" style="color:#f72585;text-decoration:underline">Take the quiz</a>';errEl.style.display='block';setTimeout(()=>startQuiz(),2800);return}document.getElementById('login-form').style.display='none';document.getElementById('login-confirm').style.display='block'}catch(_){errEl.textContent='Could not reach server. Try again.';errEl.style.display='block'}}
@@ -878,7 +878,7 @@ document.addEventListener('DOMContentLoaded',()=>{
   });
   const urlParams=new URLSearchParams(window.location.search);
   if(urlParams.get('payment')==='success'&&window.location.hash==='#login'){
-    window.location.href='https://telr-tests-production.up.railway.app/login';
+    window.location.href='https://www.tellher.co/login';
     const loginSubtext=document.getElementById('login-subtext');
     if(loginSubtext){loginSubtext.textContent='Payment confirmed. Enter your email to access your conversation.';loginSubtext.style.color='#22c55e'}
     history.replaceState({},'',window.location.pathname);

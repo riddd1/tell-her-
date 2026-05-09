@@ -463,7 +463,7 @@ app.get('/magic', async (req, res) => {
     if (row.used || ageMinutes > 15) return res.status(410).send(errorPage('This link has expired. Please request a new one.'));
     await pool.query(`UPDATE magic_links SET used = TRUE WHERE token = $1`, [token]);
     const appUrl = process.env.APP_URL || '';
-    res.redirect(`https://telr-tests-production.up.railway.app/chat?uid=${encodeURIComponent(row.user_id)}`);
+    res.redirect(`https://www.tellher.co/chat?uid=${encodeURIComponent(row.user_id)}`);
   } catch (error) {
     console.error('Magic redirect error:', error);
     res.status(500).send(errorPage('Something went wrong. Please request a new link.'));
@@ -654,7 +654,7 @@ app.post('/payment/confirm', async (req, res) => {
         'INSERT INTO magic_links (token, email, user_id, created_at, used) VALUES ($1, $2, $3, NOW(), false)',
         [token, user.email, userId]
       );
-      const appUrl = process.env.APP_URL || 'https://telr-tests-production.up.railway.app';
+      const appUrl = process.env.APP_URL || 'https://www.tellher.co';
       const link = appUrl + '/magic?token=' + token;
       await resend.emails.send({
         from: 'Tell Her <hello@tellher.co>',
@@ -733,7 +733,7 @@ app.post('/webhooks/creem', async (req, res) => {
             'INSERT INTO magic_links (token, email, user_id, created_at, used) VALUES ($1, $2, $3, NOW(), false)',
             [token, email, userId]
           );
-          const appUrl = process.env.APP_URL || 'https://telr-tests-production.up.railway.app';
+          const appUrl = process.env.APP_URL || 'https://www.tellher.co';
           const link = appUrl + '/magic?token=' + token;
           await resend.emails.send({
             from: 'Tell Her <hello@tellher.co>',
@@ -789,7 +789,7 @@ app.get('/success', async (req, res) => {
           'INSERT INTO magic_links (token, email, user_id, created_at, used) VALUES ($1, $2, $3, NOW(), false)',
           [token, user.email, userId]
         );
-        const appUrl = process.env.APP_URL || 'https://telr-tests-production.up.railway.app';
+        const appUrl = process.env.APP_URL || 'https://www.tellher.co';
         const link = appUrl + '/magic?token=' + token;
         await resend.emails.send({
           from: 'Tell Her <hello@tellher.co>',
@@ -803,7 +803,7 @@ app.get('/success', async (req, res) => {
     }
   }
 
-  res.redirect('https://telr-tests-production.up.railway.app/login?payment=success');
+  res.redirect('https://www.tellher.co/login?payment=success');
 });
 
 // ── User Profile Get ──────────────────────────────────
