@@ -1060,6 +1060,39 @@ app.post('/admin/affiliate/video-posts', async (req, res) => {
   }
 });
 
+app.post('/admin/posts/overview', async (req, res) => {
+  const { password, from, to } = req.body;
+  if (password !== process.env.ADMIN_PASSWORD) return res.status(401).json({ error: 'Unauthorized' });
+  try {
+    const fromDate = from ? new Date(from) : (() => { const d = new Date(); d.setDate(d.getDate() - 29); return d; })();
+    const toDate = to ? new Date(to) : new Date();
+    toDate.setHours(23, 59, 59, 999);
+    const affs = await pool.query('SELECT name, code FROM affiliates ORDER BY name');
+    const posts = await pool.query(
+      `SELECT LOWER(affiliate_code) as code, video_url, submitted_at,
+              EXTRACT(DOW FROM submitted_at)::integer as dow
+       FROM affiliate_video_posts
+       WHERE submitted_at >= $1 AND submitted_at <= $2`,
+      [fromDate.toISOString(), toDate.toISOString()]
+    );
+    const postMap = {};
+    posts.rows.forEach(row => {
+      const c = row.code;
+      if (!postMap[c]) postMap[c] = {0:[],1:[],2:[],3:[],4:[],5:[],6:[]};
+      postMap[c][row.dow].push({ url: row.video_url, submittedAt: row.submitted_at });
+    });
+    const affiliates = affs.rows.map(a => ({
+      name: a.name,
+      code: a.code,
+      days: postMap[a.code.toLowerCase()] || {0:[],1:[],2:[],3:[],4:[],5:[],6:[]}
+    }));
+    res.json({ affiliates });
+  } catch (e) {
+    console.error('Posts overview error:', e);
+    res.status(500).json({ error: 'Failed to get overview' });
+  }
+});
+
 // ── AI Proxy ──────────────────────────────────────────
 app.post('/ai/generate', async (req, res) => {
   const { prompt, systemPrompt } = req.body;

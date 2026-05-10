@@ -166,51 +166,31 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
 .send-btn:disabled{opacity:.35}
 .attach-label{width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--sub);flex-shrink:0;align-self:center}
 
-/* ── OVERVIEW TABLE (admin) ── */
+/* ── POSTS OVERVIEW (admin) ── */
 .overview-section{margin-top:32px}
-.overview-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.05)}
-.overview-table th{background:var(--card2);color:var(--sub);font-weight:600;text-transform:uppercase;letter-spacing:.7px;font-size:.6rem;padding:10px 14px;text-align:left}
-.overview-table td{padding:11px 14px;border-top:1px solid rgba(255,255,255,.04);font-size:.83rem;color:var(--txt);vertical-align:middle}
-.overview-table tr:hover td{background:rgba(255,255,255,.02)}
-.ov-name{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:700;color:var(--txt)}
-.ov-num{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;color:var(--pink)}
-.ov-num.zero{color:rgba(255,255,255,.2)}
-.ov-sub{font-size:.6rem;color:var(--sub);margin-top:1px}
-.ov-row{cursor:pointer}
-.ov-row:hover td{background:rgba(247,37,133,.04)!important}
-.ov-row td{transition:background .15s}
-.ov-chevron{color:var(--sub);font-size:.65rem;transition:transform .2s;display:inline-block}
-.ov-expand-row td{padding:0!important;border-top:none!important}
-.ov-expand-inner{display:none;padding:14px 14px 16px;border-top:1px solid rgba(255,255,255,.04)}
-.ov-expand-inner.open{display:block}
-
-/* ── VIDEO POSTS PANEL (admin) ── */
-.posts-panel{display:none;margin-top:12px;border-top:1px solid rgba(255,255,255,.05);padding-top:14px}
-.posts-panel.open{display:block}
-.posts-loading{color:var(--sub);font-size:.76rem;padding:8px 0}
-.btn-view-posts{background:none;border:1px solid rgba(255,255,255,.1);color:var(--sub);font-size:.65rem;font-weight:600;padding:4px 10px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;flex-shrink:0}
-.btn-view-posts:hover{border-color:rgba(247,37,133,.3);color:var(--pink)}
-.btn-view-posts.active{border-color:rgba(247,37,133,.4);color:var(--pink)}
-.date-range-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.date-range-bar{display:flex;align-items:center;gap:8px;margin-bottom:16px;flex-wrap:wrap}
 .date-range-bar label{font-size:.62rem;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
 .date-inp{background:var(--inp);border:1.5px solid rgba(255,255,255,.07);border-radius:8px;padding:6px 9px;color:var(--txt);font-size:.76rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;color-scheme:dark}
 .date-inp:focus{border-color:rgba(247,37,133,.4)}
 .btn-apply-range{background:var(--pink);color:#fff;font-size:.68rem;font-weight:600;padding:6px 12px;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s}
 .btn-apply-range:hover{background:var(--pinkl)}
-.posts-total{font-size:.68rem;color:var(--sub);margin-bottom:10px}
-.day-row{background:var(--card2);border-radius:10px;margin-bottom:6px;overflow:hidden}
-.day-row-hd{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;cursor:pointer;user-select:none;transition:background .15s}
-.day-row-hd:hover{background:rgba(255,255,255,.04)}
-.day-row-left{display:flex;align-items:center;gap:10px}
-.day-name{font-size:.86rem;font-weight:600;color:var(--txt)}
-.day-date-lbl{font-size:.72rem;color:var(--sub)}
-.day-count{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:700;color:var(--pink);margin-right:4px}
-.day-count-lbl{font-size:.65rem;color:var(--sub)}
-.day-chevron{color:var(--sub);transition:transform .2s;font-size:.7rem}
-.day-links{display:none;padding:0 13px 10px;flex-direction:column;gap:5px}
-.day-links.open{display:flex}
-.day-link{color:rgba(247,37,133,.85);font-size:.76rem;text-decoration:none;word-break:break-all;line-height:1.4}
-.day-link:hover{color:var(--pinkl)}
+.matrix-wrap{overflow-x:auto;border-radius:14px;border:1px solid rgba(255,255,255,.05)}
+.matrix-table{width:100%;border-collapse:collapse;background:var(--card);min-width:560px}
+.matrix-table th{background:var(--card2);color:var(--sub);font-weight:600;text-transform:uppercase;letter-spacing:.7px;font-size:.6rem;padding:10px 12px;text-align:center;white-space:nowrap}
+.matrix-table th:first-child{text-align:left;padding-left:16px}
+.matrix-table td{border-top:1px solid rgba(255,255,255,.04);padding:10px 12px;text-align:center;vertical-align:top}
+.matrix-table td:first-child{text-align:left;padding-left:16px}
+.matrix-table tr:hover td{background:rgba(255,255,255,.02)}
+.mx-name{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:700;color:var(--txt);white-space:nowrap}
+.mx-cell{display:inline-flex;flex-direction:column;align-items:center;min-width:28px}
+.mx-count{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;color:var(--pink);cursor:pointer;line-height:1;transition:color .15s}
+.mx-count:hover{color:var(--pinkl)}
+.mx-count.zero{color:rgba(255,255,255,.15);cursor:default}
+.mx-links{display:none;flex-direction:column;gap:4px;margin-top:6px;text-align:left}
+.mx-links.open{display:flex}
+.mx-link{color:rgba(247,37,133,.8);font-size:.62rem;text-decoration:none;word-break:break-all;line-height:1.4;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.mx-link:hover{color:var(--pinkl)}
+.posts-loading{color:var(--sub);font-size:.76rem;padding:12px 0}
 
 @media(max-width:480px){
   .stats-row{grid-template-columns:1fr 1fr}
@@ -275,22 +255,19 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
     <div id="aff-list"></div>
 
     <div class="overview-section">
-      <div class="section-hd" style="margin-bottom:12px">
+      <div class="section-hd" style="margin-bottom:14px">
         <div class="section-title">All Affiliates · Posts</div>
       </div>
-      <table class="overview-table" id="overview-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Posts (30d)</th>
-            <th>Posts (all time)</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="overview-body">
-          <tr><td colspan="4" style="color:var(--sub);font-size:.8rem">Loading…</td></tr>
-        </tbody>
-      </table>
+      <div class="date-range-bar">
+        <label>From</label>
+        <input class="date-inp" type="date" id="ov-global-from">
+        <label>To</label>
+        <input class="date-inp" type="date" id="ov-global-to">
+        <button class="btn-apply-range" onclick="loadOverview()">Apply</button>
+      </div>
+      <div class="matrix-wrap">
+        <div id="overview-wrap" style="padding:12px 16px"><div class="posts-loading">Loading…</div></div>
+      </div>
     </div>
   </div>
 </div>
@@ -453,44 +430,17 @@ async function loadAdminStats(){
     document.getElementById('a-paid').textContent=d.paidUsers??'—';
     document.getElementById('a-rev').textContent=d.revenue!=null?'$'+d.revenue:'—';
     renderAffList(d.affiliates||[]);
+    const gFrom=document.getElementById('ov-global-from');
+    const gTo=document.getElementById('ov-global-to');
+    if(!gFrom.value) gFrom.value=defaultFrom();
+    if(!gTo.value) gTo.value=defaultTo();
+    loadOverview();
   }catch(_){}
 }
 
 function renderAffList(affs){
   const el=document.getElementById('aff-list');
-  const tbody=document.getElementById('overview-body');
-  if(!affs.length){
-    el.innerHTML='<div class="empty-state">No affiliates yet.</div>';
-    tbody.innerHTML='<tr><td colspan="4" style="color:var(--sub);font-size:.8rem">No affiliates yet.</td></tr>';
-    return;
-  }
-  const sorted=[...affs].sort((a,b)=>(b.video_posts_30d||0)-(a.video_posts_30d||0));
-  tbody.innerHTML=sorted.map(a=>{
-    const p30=a.video_posts_30d||0;
-    const pAll=a.video_posts_total||0;
-    const code=escH(a.code);
-    return`
-    <tr class="ov-row" onclick="toggleOvRow('${code}')">
-      <td><div class="ov-name">${escH(a.name)}</div></td>
-      <td><div class="ov-num ${p30===0?'zero':''}">${p30}</div><div class="ov-sub">last 30 days</div></td>
-      <td><div class="ov-num ${pAll===0?'zero':''}">${pAll}</div><div class="ov-sub">all time</div></td>
-      <td style="text-align:right"><span class="ov-chevron" id="ov-chev-${code}">▶</span></td>
-    </tr>
-    <tr class="ov-expand-row">
-      <td colspan="4">
-        <div class="ov-expand-inner" id="ov-expand-${code}">
-          <div class="date-range-bar">
-            <label>From</label>
-            <input class="date-inp" type="date" id="ov-from-${code}" value="${defaultFrom()}">
-            <label>To</label>
-            <input class="date-inp" type="date" id="ov-to-${code}" value="${defaultTo()}">
-            <button class="btn-apply-range" onclick="event.stopPropagation();loadOvPanel('${code}')">Apply</button>
-          </div>
-          <div id="ov-content-${code}"><div class="posts-loading">Loading…</div></div>
-        </div>
-      </td>
-    </tr>`;
-  }).join('');
+  if(!affs.length){ el.innerHTML='<div class="empty-state">No affiliates yet.</div>'; return; }
   el.innerHTML=affs.map(a=>`
     <div class="aff-card">
       <div class="aff-top">
@@ -536,102 +486,49 @@ const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov
 function defaultFrom(){ const d=new Date(); d.setDate(d.getDate()-29); return d.toISOString().slice(0,10); }
 function defaultTo(){ return new Date().toISOString().slice(0,10); }
 
-async function togglePostsPanel(code){
-  const panel=document.getElementById(`vp-panel-${code}`);
-  const btn=document.getElementById(`vp-btn-${code}`);
-  if(panel.classList.contains('open')){
-    panel.classList.remove('open'); btn.classList.remove('active'); return;
-  }
-  panel.classList.add('open'); btn.classList.add('active');
-  const from=defaultFrom(), to=defaultTo();
-  panel.innerHTML=`
-    <div class="date-range-bar">
-      <label>From</label>
-      <input class="date-inp" type="date" id="vp-from-${escH(code)}" value="${from}">
-      <label>To</label>
-      <input class="date-inp" type="date" id="vp-to-${escH(code)}" value="${to}">
-      <button class="btn-apply-range" onclick="loadPostsPanel('${escH(code)}')">Apply</button>
-    </div>
-    <div id="vp-content-${escH(code)}"><div class="posts-loading">Loading…</div></div>`;
-  loadPostsPanel(code);
-}
+// DOW order: Mon=1,Tue=2,Wed=3,Thu=4,Fri=5,Sat=6,Sun=0
+const DOW_ORDER=[1,2,3,4,5,6,0];
+const DOW_LABELS={1:'Mon',2:'Tue',3:'Wed',4:'Thu',5:'Fri',6:'Sat',0:'Sun'};
 
-function toggleOvRow(code){
-  const inner=document.getElementById(`ov-expand-${code}`);
-  const chev=document.getElementById(`ov-chev-${code}`);
-  const isOpen=inner.classList.contains('open');
-  inner.classList.toggle('open');
-  if(chev) chev.style.transform=isOpen?'':'rotate(90deg)';
-  if(!isOpen) loadOvPanel(code);
-}
-
-async function loadOvPanel(code){
-  const fromEl=document.getElementById(`ov-from-${code}`);
-  const toEl=document.getElementById(`ov-to-${code}`);
-  const content=document.getElementById(`ov-content-${code}`);
-  const from=fromEl?fromEl.value:defaultFrom();
-  const to=toEl?toEl.value:defaultTo();
-  content.innerHTML='<div class="posts-loading">Loading…</div>';
+async function loadOverview(){
+  const wrap=document.getElementById('overview-wrap');
+  const from=document.getElementById('ov-global-from').value||defaultFrom();
+  const to=document.getElementById('ov-global-to').value||defaultTo();
+  wrap.innerHTML='<div class="posts-loading">Loading…</div>';
   try{
-    const r=await fetch(`${API}/admin/affiliate/video-posts`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:adminPassword,code,from,to})});
+    const r=await fetch(`${API}/admin/posts/overview`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:adminPassword,from,to})});
     const data=await r.json();
-    renderPostsContent(content,data);
+    renderMatrix(wrap,data);
   }catch(_){
-    content.innerHTML='<div class="posts-loading" style="color:var(--red)">Failed to load.</div>';
+    wrap.innerHTML='<div class="posts-loading" style="color:var(--red)">Failed to load.</div>';
   }
 }
 
-async function loadPostsPanel(code){
-  const fromEl=document.getElementById(`vp-from-${code}`);
-  const toEl=document.getElementById(`vp-to-${code}`);
-  const content=document.getElementById(`vp-content-${code}`);
-  const from=fromEl?fromEl.value:defaultFrom();
-  const to=toEl?toEl.value:defaultTo();
-  content.innerHTML='<div class="posts-loading">Loading…</div>';
-  try{
-    const r=await fetch(`${API}/admin/affiliate/video-posts`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:adminPassword,code,from,to})});
-    const data=await r.json();
-    renderPostsContent(content,data);
-  }catch(_){
-    content.innerHTML='<div class="posts-loading" style="color:var(--red)">Failed to load.</div>';
+function renderMatrix(wrap,data){
+  if(!data.affiliates||!data.affiliates.length){
+    wrap.innerHTML='<div class="posts-loading">No affiliates yet.</div>'; return;
   }
-}
-
-function renderPostsContent(content,data){
-  if(data.total===0){
-    content.innerHTML='<div class="posts-loading">No videos in this range.</div>';
-    return;
-  }
-  const rows=data.days.map((item,i)=>{
-    const d=new Date(item.date+'T12:00:00');
-    const dayName=DAYS[d.getDay()];
-    const dateStr=MONTHS[d.getMonth()]+' '+d.getDate();
-    const count=item.posts.length;
-    const uid=`day-links-${i}-${item.date}`;
-    const links=item.posts.map(p=>`<a class="day-link" href="${escH(p.url)}" target="_blank" rel="noopener">${escH(p.url)}</a>`).join('');
-    return`<div class="day-row">
-      <div class="day-row-hd" onclick="toggleDayLinks('${uid}',this)">
-        <div class="day-row-left">
-          <span class="day-name">${dayName}</span>
-          <span class="day-date-lbl">${dateStr}</span>
-        </div>
-        <div style="display:flex;align-items:center;gap:4px">
-          <span class="day-count">${count}</span>
-          <span class="day-count-lbl">${count===1?'post':'posts'}</span>
-          <span class="day-chevron">▶</span>
-        </div>
-      </div>
-      <div class="day-links" id="${uid}">${links}</div>
-    </div>`;
+  const header='<tr><th>Name</th>'+DOW_ORDER.map(d=>`<th>${DOW_LABELS[d]}</th>`).join('')+'</tr>';
+  const rows=data.affiliates.map(a=>{
+    const cells=DOW_ORDER.map(dow=>{
+      const posts=(a.days[dow]||[]);
+      const count=posts.length;
+      const uid=`mx-${escH(a.code)}-${dow}`;
+      const links=posts.map(p=>`<a class="mx-link" href="${escH(p.url)}" target="_blank" rel="noopener" title="${escH(p.url)}">${escH(p.url)}</a>`).join('');
+      return`<td><div class="mx-cell">
+        <span class="mx-count${count===0?' zero':''}" ${count>0?`onclick="toggleMxLinks('${uid}',this)"`:''}">${count===0?'—':count}</span>
+        <div class="mx-links" id="${uid}">${links}</div>
+      </div></td>`;
+    }).join('');
+    return`<tr><td><div class="mx-name">${escH(a.name)}</div></td>${cells}</tr>`;
   }).join('');
-  content.innerHTML=`<div class="posts-total">${data.total} video${data.total!==1?'s':''} in this range</div>${rows}`;
+  wrap.innerHTML=`<table class="matrix-table"><thead>${header}</thead><tbody>${rows}</tbody></table>`;
 }
 
-function toggleDayLinks(uid,hd){
-  const el=document.getElementById(uid);
-  const chev=hd.querySelector('.day-chevron');
-  el.classList.toggle('open');
-  if(chev) chev.style.transform=el.classList.contains('open')?'rotate(90deg)':'';
+function toggleMxLinks(uid,el){
+  const list=document.getElementById(uid);
+  list.classList.toggle('open');
+  el.style.color=list.classList.contains('open')?'var(--pinkl)':'';
 }
 
 function toggleCreateForm(){
