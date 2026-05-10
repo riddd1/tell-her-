@@ -175,20 +175,24 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
 .btn-apply-range{background:var(--pink);color:#fff;font-size:.68rem;font-weight:600;padding:6px 12px;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s}
 .btn-apply-range:hover{background:var(--pinkl)}
 .matrix-wrap{overflow-x:auto;border-radius:14px;border:1px solid rgba(255,255,255,.05)}
-.matrix-table{width:100%;border-collapse:collapse;background:var(--card);min-width:560px}
-.matrix-table th{background:var(--card2);color:var(--sub);font-weight:600;text-transform:uppercase;letter-spacing:.7px;font-size:.6rem;padding:10px 12px;text-align:center;white-space:nowrap}
-.matrix-table th:first-child{text-align:left;padding-left:16px}
-.matrix-table td{border-top:1px solid rgba(255,255,255,.04);padding:10px 12px;text-align:center;vertical-align:top}
-.matrix-table td:first-child{text-align:left;padding-left:16px}
+.matrix-table{border-collapse:collapse;background:var(--card);table-layout:auto}
+.matrix-table th{background:var(--card2);color:var(--sub);font-weight:600;font-size:.6rem;padding:10px 14px;text-align:center;white-space:nowrap;border-bottom:1px solid rgba(255,255,255,.05)}
+.matrix-table td{border-top:1px solid rgba(255,255,255,.04);padding:10px 14px;text-align:center;vertical-align:top;white-space:nowrap}
 .matrix-table tr:hover td{background:rgba(255,255,255,.02)}
-.mx-name{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:700;color:var(--txt);white-space:nowrap}
-.mx-cell{display:inline-flex;flex-direction:column;align-items:center;min-width:28px}
-.mx-count{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;color:var(--pink);cursor:pointer;line-height:1;transition:color .15s}
+.mx-name-th{text-align:left!important;position:sticky;left:0;z-index:2;background:var(--card2)}
+.mx-name-td{text-align:left!important;position:sticky;left:0;z-index:1;background:var(--card)}
+.matrix-table tr:hover .mx-name-td{background:var(--card2)}
+.mx-name{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:700;color:var(--txt);white-space:nowrap;padding-right:8px}
+.mx-date-hd{display:flex;flex-direction:column;align-items:center;gap:2px}
+.mx-day-name{font-size:.65rem;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+.mx-day-date{font-size:.68rem;color:var(--txt);font-weight:500}
+.mx-cell{display:inline-flex;flex-direction:column;align-items:center;min-width:32px}
+.mx-count{font-family:'Cormorant Garamond',serif;font-size:1.15rem;font-weight:700;color:var(--pink);cursor:pointer;line-height:1;transition:color .15s;user-select:none}
 .mx-count:hover{color:var(--pinkl)}
-.mx-count.zero{color:rgba(255,255,255,.15);cursor:default}
+.mx-count.zero{color:rgba(255,255,255,.15);cursor:default;font-size:.85rem}
 .mx-links{display:none;flex-direction:column;gap:4px;margin-top:6px;text-align:left}
 .mx-links.open{display:flex}
-.mx-link{color:rgba(247,37,133,.8);font-size:.62rem;text-decoration:none;word-break:break-all;line-height:1.4;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
+.mx-link{color:rgba(247,37,133,.8);font-size:.62rem;text-decoration:none;word-break:break-all;line-height:1.4;max-width:110px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:block}
 .mx-link:hover{color:var(--pinkl)}
 .posts-loading{color:var(--sub);font-size:.76rem;padding:12px 0}
 
@@ -486,9 +490,8 @@ const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov
 function defaultFrom(){ const d=new Date(); d.setDate(d.getDate()-29); return d.toISOString().slice(0,10); }
 function defaultTo(){ return new Date().toISOString().slice(0,10); }
 
-// DOW order: Mon=1,Tue=2,Wed=3,Thu=4,Fri=5,Sat=6,Sun=0
-const DOW_ORDER=[1,2,3,4,5,6,0];
-const DOW_LABELS={1:'Mon',2:'Tue',3:'Wed',4:'Thu',5:'Fri',6:'Sat',0:'Sun'};
+const DAY_SHORT=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MON_SHORT=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
 async function loadOverview(){
   const wrap=document.getElementById('overview-wrap');
@@ -508,19 +511,23 @@ function renderMatrix(wrap,data){
   if(!data.affiliates||!data.affiliates.length){
     wrap.innerHTML='<div class="posts-loading">No affiliates yet.</div>'; return;
   }
-  const header='<tr><th>Name</th>'+DOW_ORDER.map(d=>`<th>${DOW_LABELS[d]}</th>`).join('')+'</tr>';
+  const dates=data.dates||[];
+  const header='<tr><th class="mx-name-th">Name</th>'+dates.map(ds=>{
+    const d=new Date(ds+'T12:00:00');
+    return`<th><div class="mx-date-hd"><span class="mx-day-name">${DAY_SHORT[d.getDay()]}</span><span class="mx-day-date">${MON_SHORT[d.getMonth()]} ${d.getDate()}</span></div></th>`;
+  }).join('')+'</tr>';
   const rows=data.affiliates.map(a=>{
-    const cells=DOW_ORDER.map(dow=>{
-      const posts=(a.days[dow]||[]);
+    const cells=dates.map(ds=>{
+      const posts=(a.days[ds]||[]);
       const count=posts.length;
-      const uid=`mx-${escH(a.code)}-${dow}`;
+      const uid=`mx-${escH(a.code)}-${ds}`;
       const links=posts.map(p=>`<a class="mx-link" href="${escH(p.url)}" target="_blank" rel="noopener" title="${escH(p.url)}">${escH(p.url)}</a>`).join('');
       return`<td><div class="mx-cell">
-        <span class="mx-count${count===0?' zero':''}" ${count>0?`onclick="toggleMxLinks('${uid}',this)"`:''}">${count===0?'—':count}</span>
+        <span class="mx-count${count===0?' zero':''}"${count>0?` onclick="toggleMxLinks('${uid}',this)"`:''}">${count===0?'—':count}</span>
         <div class="mx-links" id="${uid}">${links}</div>
       </div></td>`;
     }).join('');
-    return`<tr><td><div class="mx-name">${escH(a.name)}</div></td>${cells}</tr>`;
+    return`<tr><td class="mx-name-td"><div class="mx-name">${escH(a.name)}</div></td>${cells}</tr>`;
   }).join('');
   wrap.innerHTML=`<table class="matrix-table"><thead>${header}</thead><tbody>${rows}</tbody></table>`;
 }

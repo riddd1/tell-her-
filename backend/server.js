@@ -1067,10 +1067,18 @@ app.post('/admin/posts/overview', async (req, res) => {
     const fromDate = from ? new Date(from) : (() => { const d = new Date(); d.setDate(d.getDate() - 29); return d; })();
     const toDate = to ? new Date(to) : new Date();
     toDate.setHours(23, 59, 59, 999);
+    // Build ordered list of every date in range
+    const dates = [];
+    const cur = new Date(fromDate); cur.setHours(12, 0, 0, 0);
+    const endMs = toDate.getTime();
+    while (cur.getTime() <= endMs) {
+      dates.push(cur.toISOString().slice(0, 10));
+      cur.setDate(cur.getDate() + 1);
+    }
     const affs = await pool.query('SELECT name, code FROM affiliates ORDER BY name');
     const posts = await pool.query(
       `SELECT LOWER(affiliate_code) as code, video_url, submitted_at,
-              EXTRACT(DOW FROM submitted_at)::integer as dow
+              (submitted_at AT TIME ZONE 'UTC')::date::text as post_date
        FROM affiliate_video_posts
        WHERE submitted_at >= $1 AND submitted_at <= $2`,
       [fromDate.toISOString(), toDate.toISOString()]
@@ -1078,15 +1086,16 @@ app.post('/admin/posts/overview', async (req, res) => {
     const postMap = {};
     posts.rows.forEach(row => {
       const c = row.code;
-      if (!postMap[c]) postMap[c] = {0:[],1:[],2:[],3:[],4:[],5:[],6:[]};
-      postMap[c][row.dow].push({ url: row.video_url, submittedAt: row.submitted_at });
+      if (!postMap[c]) postMap[c] = {};
+      if (!postMap[c][row.post_date]) postMap[c][row.post_date] = [];
+      postMap[c][row.post_date].push({ url: row.video_url, submittedAt: row.submitted_at });
     });
     const affiliates = affs.rows.map(a => ({
       name: a.name,
       code: a.code,
-      days: postMap[a.code.toLowerCase()] || {0:[],1:[],2:[],3:[],4:[],5:[],6:[]}
+      days: postMap[a.code.toLowerCase()] || {}
     }));
-    res.json({ affiliates });
+    res.json({ dates, affiliates });
   } catch (e) {
     console.error('Posts overview error:', e);
     res.status(500).json({ error: 'Failed to get overview' });
