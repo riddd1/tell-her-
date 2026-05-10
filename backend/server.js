@@ -589,6 +589,11 @@ app.post('/admin/stats', async (req, res) => {
       const clicks = await pool.query('SELECT COUNT(*) FROM affiliate_clicks WHERE affiliate_code = $1', [a.code]);
       const sales = await pool.query('SELECT COUNT(*) FROM affiliate_sales WHERE affiliate_code = $1', [a.code]);
       const earnings = parseInt(sales.rows[0].count) * a.commission_per_sale;
+      const videoPosts = await pool.query('SELECT COUNT(*) FROM affiliate_video_posts WHERE LOWER(affiliate_code) = LOWER($1)', [a.code]);
+      const videoPosts30 = await pool.query(
+        `SELECT COUNT(*) FROM affiliate_video_posts WHERE LOWER(affiliate_code) = LOWER($1) AND submitted_at >= NOW() - INTERVAL '30 days'`,
+        [a.code]
+      );
       return {
         id: a.id,
         name: a.name,
@@ -598,6 +603,8 @@ app.post('/admin/stats', async (req, res) => {
         clicks: parseInt(clicks.rows[0].count),
         sales: parseInt(sales.rows[0].count),
         earnings,
+        video_posts_total: parseInt(videoPosts.rows[0].count),
+        video_posts_30d: parseInt(videoPosts30.rows[0].count),
       };
     }));
     res.json({

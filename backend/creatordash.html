@@ -166,6 +166,17 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
 .send-btn:disabled{opacity:.35}
 .attach-label{width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--sub);flex-shrink:0;align-self:center}
 
+/* ── OVERVIEW TABLE (admin) ── */
+.overview-section{margin-top:32px}
+.overview-table{width:100%;border-collapse:collapse;background:var(--card);border-radius:14px;overflow:hidden;border:1px solid rgba(255,255,255,.05)}
+.overview-table th{background:var(--card2);color:var(--sub);font-weight:600;text-transform:uppercase;letter-spacing:.7px;font-size:.6rem;padding:10px 14px;text-align:left}
+.overview-table td{padding:11px 14px;border-top:1px solid rgba(255,255,255,.04);font-size:.83rem;color:var(--txt);vertical-align:middle}
+.overview-table tr:hover td{background:rgba(255,255,255,.02)}
+.ov-name{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:700;color:var(--txt)}
+.ov-num{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;color:var(--pink)}
+.ov-num.zero{color:rgba(255,255,255,.2)}
+.ov-sub{font-size:.6rem;color:var(--sub);margin-top:1px}
+
 /* ── VIDEO ANALYTICS TABLE (admin) ── */
 .posts-panel{display:none;margin-top:12px;border-top:1px solid rgba(255,255,255,.05);padding-top:12px}
 .posts-panel.open{display:block}
@@ -247,6 +258,24 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
       <div class="cred-row"><div><div class="cred-label">Link</div><div class="cred-val" id="new-link-out">—</div></div><button class="btn-copy" onclick="copyText('new-link-out',this)">Copy</button></div>
     </div>
     <div id="aff-list"></div>
+
+    <div class="overview-section">
+      <div class="section-hd" style="margin-bottom:12px">
+        <div class="section-title">All Affiliates · Posts</div>
+      </div>
+      <table class="overview-table" id="overview-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Posts (30d)</th>
+            <th>Posts (all time)</th>
+          </tr>
+        </thead>
+        <tbody id="overview-body">
+          <tr><td colspan="3" style="color:var(--sub);font-size:.8rem">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 
@@ -413,7 +442,22 @@ async function loadAdminStats(){
 
 function renderAffList(affs){
   const el=document.getElementById('aff-list');
-  if(!affs.length){ el.innerHTML='<div class="empty-state">No affiliates yet.</div>'; return; }
+  const tbody=document.getElementById('overview-body');
+  if(!affs.length){
+    el.innerHTML='<div class="empty-state">No affiliates yet.</div>';
+    tbody.innerHTML='<tr><td colspan="3" style="color:var(--sub);font-size:.8rem">No affiliates yet.</td></tr>';
+    return;
+  }
+  const sorted=[...affs].sort((a,b)=>(b.video_posts_30d||0)-(a.video_posts_30d||0));
+  tbody.innerHTML=sorted.map(a=>{
+    const p30=a.video_posts_30d||0;
+    const pAll=a.video_posts_total||0;
+    return`<tr>
+      <td><div class="ov-name">${escH(a.name)}</div></td>
+      <td><div class="ov-num ${p30===0?'zero':''}">${p30}</div><div class="ov-sub">last 30 days</div></td>
+      <td><div class="ov-num ${pAll===0?'zero':''}">${pAll}</div><div class="ov-sub">all time</div></td>
+    </tr>`;
+  }).join('');
   el.innerHTML=affs.map(a=>`
     <div class="aff-card">
       <div class="aff-top">
