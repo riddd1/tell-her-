@@ -570,6 +570,18 @@ button,input,select,textarea{transition-property:background,border-color,color,b
 .asm-empty b{color:#c4b5fd}
 .asm-cancel{background:rgba(255,255,255,0.06);border:none;color:rgba(255,255,255,0.5);border-radius:10px;padding:10px;font-size:12px;font-weight:600;cursor:pointer;width:100%}
 .asm-cancel:hover{background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.8)}
+
+@media(max-width:700px){
+  body{overflow:auto}
+  .main{grid-template-columns:1fr;height:auto}
+  .lp{border-right:none;border-bottom:1px solid rgba(255,255,255,0.07);max-height:none;overflow-y:visible}
+  body[data-tab='stash'] .bottom-btns,
+  body[data-tab='code'] .bottom-btns{display:none}
+  body[data-tab='stash'] .rp,
+  body[data-tab='code'] .rp{display:none}
+  .rp{max-height:70vh}
+  .preview-area{padding:12px}
+}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/twemoji.min.js" crossorigin="anonymous"></script>
 </head>
@@ -833,6 +845,7 @@ let suppressBuilderSync = false;
 
 // ── TAB ──
 function switchTab(tab) {
+  document.body.dataset.tab = tab;
   document.getElementById('tab-builder').classList.toggle('active', tab==='builder');
   document.getElementById('tab-code').classList.toggle('active', tab==='code');
   document.getElementById('tab-stash').classList.toggle('active', tab==='stash');
@@ -846,6 +859,7 @@ function switchTab(tab) {
 (function applyHashTab(){
   const h = (location.hash || '').slice(1);
   if (h === 'builder' || h === 'code' || h === 'stash') switchTab(h);
+  else document.body.dataset.tab = 'builder';
 })();
 
 // ── FILES ──

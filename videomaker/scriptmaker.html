@@ -36,7 +36,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .platform-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
 .platform-pill{padding:9px 10px;font-size:11.5px;font-weight:600;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.65);cursor:pointer;transition:all .15s;display:flex;align-items:center;gap:7px;font-family:inherit;text-align:left}
 .platform-pill svg{width:14px;height:14px;flex-shrink:0;fill:currentColor}
-.platform-pill:hover{border-color:rgba(232,168,124,0.35);background:rgba(232,168,124,0.06);color:rgba(255,255,255,0.9)}
+.platform-pill:hover{border-color:rgba(232,168,124,0.35);background:rgba(232,168,124,0.06);color:rgba(255,255,255,0.9)}. 
 .platform-pill.active{border-color:#e8a87c;background:rgba(232,168,124,0.12);color:#e8a87c}
 .spacer{flex:1}
 .gbtn{display:flex;align-items:center;justify-content:center;gap:7px;width:100%;border:none;color:#fff;border-radius:12px;padding:13px;font-size:13px;font-weight:700;letter-spacing:.15px;cursor:pointer;transition:all .22s;will-change:transform;font-family:inherit;background:linear-gradient(270deg,#e8a87c,#c45c8a,#8b5cf6,#c45c8a,#e8a87c);background-size:300% 300%;animation:gradientShift 5s ease infinite}
@@ -67,10 +67,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .char-count{font-size:11px;color:rgba(255,255,255,0.4);font-family:'SF Mono',Consolas,Menlo,monospace}
 .char-count.warn{color:#f5a623}
 .char-count.over{color:#e05555}
-.history-strip{display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;flex-shrink:0;min-height:24px}
-.history-strip:empty{display:none}
-.history-chip{flex-shrink:0;font-size:10.5px;padding:4px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.5);cursor:pointer;transition:all .15s;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;background:rgba(255,255,255,0.03)}
-.history-chip:hover{border-color:rgba(232,168,124,0.4);color:#e8a87c;background:rgba(232,168,124,0.06)}
+@media(max-width:640px){
+  body{overflow:auto}
+  .main{grid-template-columns:1fr;height:auto}
+  .lp{border-right:none;border-bottom:1px solid rgba(255,255,255,0.07);padding:12px}
+  .rp{padding:14px 16px;gap:10px}
+  .output-box{min-height:220px}
+}
 .toast{position:fixed;bottom:20px;right:20px;background:linear-gradient(90deg,#e8a87c,#c45c8a);color:#fff;font-size:12px;font-weight:600;padding:10px 18px;border-radius:8px;transform:translateY(80px);opacity:0;transition:all .25s cubic-bezier(.34,1.56,.64,1);pointer-events:none;z-index:1000;box-shadow:0 8px 24px rgba(0,0,0,0.4)}
 .toast.show{transform:translateY(0);opacity:1}
 /* login overlay */
@@ -149,29 +152,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
         Social Media
       </div>
       <div class="platform-grid" id="platformGroup">
-        <button class="platform-pill active" data-val="instagram">
-          <svg viewBox="0 0 24 24"><path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2c1.66 0 3 1.34 3 3v10c0 1.66-1.34 3-3 3H7c-1.66 0-3-1.34-3-3V7c0-1.66 1.34-3 3-3h10zm-5 3a5 5 0 100 10 5 5 0 000-10zm0 2a3 3 0 110 6 3 3 0 010-6zm5.5-2.5a1 1 0 100 2 1 1 0 000-2z"/></svg>
-          Instagram
-        </button>
-        <button class="platform-pill" data-val="tiktok">
+        <button class="platform-pill active" data-val="tiktok">
           <svg viewBox="0 0 24 24"><path d="M19.6 6.3a4.6 4.6 0 01-3.4-1.5 4.6 4.6 0 01-1.1-3H12v13.4a2.6 2.6 0 11-2.6-2.6h.4V9.4a5.4 5.4 0 00-.4 0 5.6 5.6 0 105.6 5.6V9.7a7.6 7.6 0 004.6 1.6V8.5a4.6 4.6 0 010-2.2z"/></svg>
           TikTok
         </button>
-        <button class="platform-pill" data-val="snapchat">
-          <svg viewBox="0 0 24 24"><path d="M12 1.5c-3 0-5.6 1.7-6.4 4.6-.3 1.1-.2 2.7-.1 4 0 .3.1.7.1 1l-.6.2c-.4.2-.9.3-1.4.3-.6 0-1.1.4-1.1 1 0 .5.4 1 1 1.2.4.2 1 .3 1.6.4-.1.4-.4.8-.7 1.2-.7.7-1.6 1.1-2.4 1.5 0 .6.6 1 1.2 1.2.6.2 1.3.3 1.9.3.1.4.4.8.8 1 .4.2.8.3 1.3.4.5 0 1 0 1.5.2.4.1.8.4 1.2.7.4.3.9.6 1.4.7.5.2 1 .2 1.6.2.6 0 1.1 0 1.6-.2.5-.1 1-.4 1.4-.7.4-.3.8-.6 1.2-.7.5-.2 1-.2 1.5-.2.5 0 .9-.2 1.3-.4.4-.2.6-.6.8-1 .6 0 1.3-.1 1.9-.3.6-.2 1.2-.6 1.2-1.2-.8-.4-1.7-.8-2.4-1.5-.3-.4-.6-.8-.7-1.2.6-.1 1.2-.2 1.6-.4.6-.2 1-.7 1-1.2 0-.6-.5-1-1.1-1-.5 0-1-.1-1.4-.3l-.6-.2c0-.3.1-.7.1-1 .1-1.3.2-2.9-.1-4-.8-2.9-3.4-4.6-6.4-4.6z"/></svg>
-          Snapchat
-        </button>
-        <button class="platform-pill" data-val="facebook">
-          <svg viewBox="0 0 24 24"><path d="M22 12c0-5.5-4.5-10-10-10S2 6.5 2 12c0 5 3.7 9.1 8.4 9.9v-7H7.9V12h2.5V9.8c0-2.5 1.5-3.9 3.8-3.9 1.1 0 2.2.2 2.2.2v2.5h-1.3c-1.2 0-1.6.8-1.6 1.6V12h2.8l-.4 2.9h-2.3v7C18.3 21.1 22 17 22 12z"/></svg>
-          Facebook
-        </button>
-        <button class="platform-pill" data-val="youtube">
-          <svg viewBox="0 0 24 24"><path d="M23.5 6.2a3 3 0 00-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 00.5 6.2C0 8 0 12 0 12s0 4 .5 5.8a3 3 0 002.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 002.1-2.1C24 16 24 12 24 12s0-4-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg>
-          YouTube
-        </button>
-        <button class="platform-pill" data-val="twitter">
-          <svg viewBox="0 0 24 24"><path d="M18.2 2H22l-7.6 8.7L23.4 22h-7L11 15.1 4.6 22H1l8.1-9.3L.7 2h7.2l4.9 6.4L18.2 2zm-1.3 18h2L7.3 4H5.2l11.7 16z"/></svg>
-          Twitter / X
+        <button class="platform-pill" data-val="instagram">
+          <svg viewBox="0 0 24 24"><path d="M7 2C4.24 2 2 4.24 2 7v10c0 2.76 2.24 5 5 5h10c2.76 0 5-2.24 5-5V7c0-2.76-2.24-5-5-5H7zm10 2c1.66 0 3 1.34 3 3v10c0 1.66-1.34 3-3 3H7c-1.66 0-3-1.34-3-3V7c0-1.66 1.34-3 3-3h10zm-5 3a5 5 0 100 10 5 5 0 000-10zm0 2a3 3 0 110 6 3 3 0 010-6zm5.5-2.5a1 1 0 100 2 1 1 0 000-2z"/></svg>
+          Instagram
         </button>
       </div>
     </div>
@@ -206,7 +193,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
       <div class="status-text" id="statusText">Ready</div>
       <div class="char-count" id="charCount">0 / 5000</div>
     </div>
-    <div class="history-strip" id="historyStrip"></div>
   </div>
 </div>
 <div class="toast" id="toast"></div>
@@ -215,7 +201,6 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 const API = '';  // same origin — backend serves this page
 
 let affCode = '';
-const history = [];
 
 // ── Login gate ────────────────────────────────────────
 async function smLogin() {
@@ -536,8 +521,6 @@ async function generateScript() {
     statusDot.className = 'status-dot ready';
     statusText.textContent = 'Done — copy and paste into your generator';
     updateCharCount(text);
-    addToHistory(text, storyReply);
-
     // record usage
     if (affCode) {
       try {
@@ -564,29 +547,6 @@ function updateCharCount(text) {
   const len = text.length;
   el.textContent = `${len} / 5000`;
   el.className = 'char-count' + (len > 5000 ? ' over' : len > 1200 ? ' warn' : '');
-}
-
-function addToHistory(text, storyReply) {
-  const preview = storyReply ? storyReply.slice(0, 40) : text.slice(0, 40);
-  history.unshift({ text, preview });
-  if (history.length > 6) history.pop();
-  renderHistory();
-}
-
-function renderHistory() {
-  const strip = document.getElementById('historyStrip');
-  strip.innerHTML = history.map((h, i) =>
-    `<div class="history-chip" onclick="loadHistory(${i})" title="${h.preview.replace(/"/g,'&quot;')}">${h.preview}…</div>`
-  ).join('');
-}
-
-function loadHistory(i) {
-  const text = history[i].text;
-  document.getElementById('outputBox').textContent = text;
-  document.getElementById('outputBox').classList.remove('placeholder');
-  updateCharCount(text);
-  document.getElementById('statusDot').className = 'status-dot ready';
-  document.getElementById('statusText').textContent = 'Loaded from history';
 }
 
 function copyScript() {
