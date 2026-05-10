@@ -177,25 +177,33 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
 .ov-num.zero{color:rgba(255,255,255,.2)}
 .ov-sub{font-size:.6rem;color:var(--sub);margin-top:1px}
 
-/* ── VIDEO ANALYTICS TABLE (admin) ── */
-.posts-panel{display:none;margin-top:12px;border-top:1px solid rgba(255,255,255,.05);padding-top:12px}
+/* ── VIDEO POSTS PANEL (admin) ── */
+.posts-panel{display:none;margin-top:12px;border-top:1px solid rgba(255,255,255,.05);padding-top:14px}
 .posts-panel.open{display:block}
-.posts-table{width:100%;border-collapse:collapse;font-size:.76rem}
-.posts-table th{color:var(--sub);font-weight:600;text-transform:uppercase;letter-spacing:.6px;font-size:.6rem;padding:5px 8px;text-align:left;border-bottom:1px solid rgba(255,255,255,.05)}
-.posts-table td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:top}
-.posts-table tr:last-child td{border-bottom:none}
-.day-label{color:var(--txt);font-weight:500;white-space:nowrap}
-.day-date{color:var(--sub);font-size:.6rem;margin-top:2px}
-.post-count{color:var(--pink);font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:700;text-align:center}
-.post-count.zero{color:rgba(255,255,255,.12)}
-.post-links{display:flex;flex-direction:column;gap:3px}
-.post-link{color:rgba(247,37,133,.8);font-size:.68rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;text-decoration:none}
-.post-link:hover{color:var(--pinkl)}
-.posts-total{font-size:.68rem;color:var(--sub);margin-top:8px;text-align:right}
+.posts-loading{color:var(--sub);font-size:.76rem;padding:8px 0}
 .btn-view-posts{background:none;border:1px solid rgba(255,255,255,.1);color:var(--sub);font-size:.65rem;font-weight:600;padding:4px 10px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;flex-shrink:0}
 .btn-view-posts:hover{border-color:rgba(247,37,133,.3);color:var(--pink)}
 .btn-view-posts.active{border-color:rgba(247,37,133,.4);color:var(--pink)}
-.posts-loading{color:var(--sub);font-size:.76rem;padding:8px 0}
+.date-range-bar{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.date-range-bar label{font-size:.62rem;color:var(--sub);text-transform:uppercase;letter-spacing:.5px;font-weight:600}
+.date-inp{background:var(--inp);border:1.5px solid rgba(255,255,255,.07);border-radius:8px;padding:6px 9px;color:var(--txt);font-size:.76rem;font-family:'DM Sans',sans-serif;outline:none;transition:border-color .2s;color-scheme:dark}
+.date-inp:focus{border-color:rgba(247,37,133,.4)}
+.btn-apply-range{background:var(--pink);color:#fff;font-size:.68rem;font-weight:600;padding:6px 12px;border-radius:8px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:background .15s}
+.btn-apply-range:hover{background:var(--pinkl)}
+.posts-total{font-size:.68rem;color:var(--sub);margin-bottom:10px}
+.day-row{background:var(--card2);border-radius:10px;margin-bottom:6px;overflow:hidden}
+.day-row-hd{display:flex;align-items:center;justify-content:space-between;padding:10px 13px;cursor:pointer;user-select:none;transition:background .15s}
+.day-row-hd:hover{background:rgba(255,255,255,.04)}
+.day-row-left{display:flex;align-items:center;gap:10px}
+.day-name{font-size:.86rem;font-weight:600;color:var(--txt)}
+.day-date-lbl{font-size:.72rem;color:var(--sub)}
+.day-count{font-family:'Cormorant Garamond',serif;font-size:1rem;font-weight:700;color:var(--pink);margin-right:4px}
+.day-count-lbl{font-size:.65rem;color:var(--sub)}
+.day-chevron{color:var(--sub);transition:transform .2s;font-size:.7rem}
+.day-links{display:none;padding:0 13px 10px;flex-direction:column;gap:5px}
+.day-links.open{display:flex}
+.day-link{color:rgba(247,37,133,.85);font-size:.76rem;text-decoration:none;word-break:break-all;line-height:1.4}
+.day-link:hover{color:var(--pinkl)}
 
 @media(max-width:480px){
   .stats-row{grid-template-columns:1fr 1fr}
@@ -503,8 +511,11 @@ async function saveLimit(code){
   }catch(_){}
 }
 
-const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+function defaultFrom(){ const d=new Date(); d.setDate(d.getDate()-29); return d.toISOString().slice(0,10); }
+function defaultTo(){ return new Date().toISOString().slice(0,10); }
 
 async function togglePostsPanel(code){
   const panel=document.getElementById(`vp-panel-${code}`);
@@ -513,41 +524,70 @@ async function togglePostsPanel(code){
     panel.classList.remove('open'); btn.classList.remove('active'); return;
   }
   panel.classList.add('open'); btn.classList.add('active');
-  panel.innerHTML='<div class="posts-loading">Loading posts…</div>';
+  const from=defaultFrom(), to=defaultTo();
+  panel.innerHTML=`
+    <div class="date-range-bar">
+      <label>From</label>
+      <input class="date-inp" type="date" id="vp-from-${escH(code)}" value="${from}">
+      <label>To</label>
+      <input class="date-inp" type="date" id="vp-to-${escH(code)}" value="${to}">
+      <button class="btn-apply-range" onclick="loadPostsPanel('${escH(code)}')">Apply</button>
+    </div>
+    <div id="vp-content-${escH(code)}"><div class="posts-loading">Loading…</div></div>`;
+  loadPostsPanel(code);
+}
+
+async function loadPostsPanel(code){
+  const fromEl=document.getElementById(`vp-from-${code}`);
+  const toEl=document.getElementById(`vp-to-${code}`);
+  const content=document.getElementById(`vp-content-${code}`);
+  const from=fromEl?fromEl.value:defaultFrom();
+  const to=toEl?toEl.value:defaultTo();
+  content.innerHTML='<div class="posts-loading">Loading…</div>';
   try{
-    const r=await fetch(`${API}/admin/affiliate/video-posts`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:adminPassword,code})});
+    const r=await fetch(`${API}/admin/affiliate/video-posts`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:adminPassword,code,from,to})});
     const data=await r.json();
-    renderPostsPanel(panel,data);
+    renderPostsContent(content,data);
   }catch(_){
-    panel.innerHTML='<div class="posts-loading" style="color:var(--red)">Failed to load.</div>';
+    content.innerHTML='<div class="posts-loading" style="color:var(--red)">Failed to load.</div>';
   }
 }
 
-function renderPostsPanel(panel,data){
-  const activeDays=data.days.filter(d=>d.posts.length>0);
+function renderPostsContent(content,data){
   if(data.total===0){
-    panel.innerHTML=`<div class="posts-loading">No videos submitted yet.</div>`;
+    content.innerHTML='<div class="posts-loading">No videos in this range.</div>';
     return;
   }
-  let rows='';
-  data.days.forEach(item=>{
-    const d=new Date(item.date+'T00:00:00');
+  const rows=data.days.map((item,i)=>{
+    const d=new Date(item.date+'T12:00:00');
     const dayName=DAYS[d.getDay()];
     const dateStr=MONTHS[d.getMonth()]+' '+d.getDate();
     const count=item.posts.length;
-    const links=item.posts.map(p=>`<a class="post-link" href="${escH(p.url)}" target="_blank" rel="noopener">${escH(p.url)}</a>`).join('');
-    rows+=`<tr>
-      <td><div class="day-label">${dayName}</div><div class="day-date">${dateStr}</div></td>
-      <td><div class="post-count ${count===0?'zero':''}">${count===0?'—':count}</div></td>
-      <td><div class="post-links">${links||'—'}</div></td>
-    </tr>`;
-  });
-  panel.innerHTML=`
-    <table class="posts-table">
-      <thead><tr><th>Date</th><th>Videos</th><th>Links</th></tr></thead>
-      <tbody>${rows}</tbody>
-    </table>
-    <div class="posts-total">${data.total} video${data.total!==1?'s':''} posted in the last 30 days</div>`;
+    const uid=`day-links-${i}-${item.date}`;
+    const links=item.posts.map(p=>`<a class="day-link" href="${escH(p.url)}" target="_blank" rel="noopener">${escH(p.url)}</a>`).join('');
+    return`<div class="day-row">
+      <div class="day-row-hd" onclick="toggleDayLinks('${uid}',this)">
+        <div class="day-row-left">
+          <span class="day-name">${dayName}</span>
+          <span class="day-date-lbl">${dateStr}</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:4px">
+          <span class="day-count">${count}</span>
+          <span class="day-count-lbl">${count===1?'post':'posts'}</span>
+          <span class="day-chevron">▶</span>
+        </div>
+      </div>
+      <div class="day-links" id="${uid}">${links}</div>
+    </div>`;
+  }).join('');
+  content.innerHTML=`<div class="posts-total">${data.total} video${data.total!==1?'s':''} in this range</div>${rows}`;
+}
+
+function toggleDayLinks(uid,hd){
+  const el=document.getElementById(uid);
+  const chev=hd.querySelector('.day-chevron');
+  el.classList.toggle('open');
+  if(chev) chev.style.transform=el.classList.contains('open')?'rotate(90deg)':'';
 }
 
 function toggleCreateForm(){

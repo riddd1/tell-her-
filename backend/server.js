@@ -1028,34 +1028,31 @@ app.post('/affiliate/submit-video', async (req, res) => {
 });
 
 app.post('/admin/affiliate/video-posts', async (req, res) => {
-  const { password, code } = req.body;
+  const { password, code, from, to } = req.body;
   if (password !== process.env.ADMIN_PASSWORD) return res.status(401).json({ error: 'Unauthorized' });
   if (!code) return res.status(400).json({ error: 'code required' });
   try {
+    const fromDate = from ? new Date(from) : (() => { const d = new Date(); d.setDate(d.getDate() - 29); return d; })();
+    const toDate = to ? new Date(to) : new Date();
+    toDate.setHours(23, 59, 59, 999);
     const result = await pool.query(
       `SELECT id, video_url, submitted_at
        FROM affiliate_video_posts
        WHERE LOWER(affiliate_code) = LOWER($1)
-         AND submitted_at >= NOW() - INTERVAL '30 days'
+         AND submitted_at >= $2 AND submitted_at <= $3
        ORDER BY submitted_at DESC`,
-      [code]
+      [code, fromDate.toISOString(), toDate.toISOString()]
     );
-    // Group by calendar date
     const byDay = {};
     result.rows.forEach(row => {
-      const d = new Date(row.submitted_at);
-      const key = d.toISOString().slice(0, 10); // YYYY-MM-DD
+      const key = new Date(row.submitted_at).toISOString().slice(0, 10);
       if (!byDay[key]) byDay[key] = [];
       byDay[key].push({ id: row.id, url: row.video_url, submittedAt: row.submitted_at });
     });
-    // Build last-30-days array
-    const days = [];
-    for (let i = 0; i < 30; i++) {
-      const d = new Date();
-      d.setDate(d.getDate() - i);
-      const key = d.toISOString().slice(0, 10);
-      days.push({ date: key, posts: byDay[key] || [] });
-    }
+    // Only return days that have posts, sorted newest first
+    const days = Object.entries(byDay)
+      .map(([date, posts]) => ({ date, posts }))
+      .sort((a, b) => b.date.localeCompare(a.date));
     res.json({ days, total: result.rows.length });
   } catch (e) {
     console.error('Video posts admin error:', e);
