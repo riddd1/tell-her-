@@ -112,6 +112,15 @@ async function initDB() {
     );
     CREATE INDEX IF NOT EXISTS idx_script_gen_code ON script_generations(affiliate_code);
   `);
+  await pool.query(`
+    CREATE TABLE IF NOT EXISTS affiliate_video_posts (
+      id TEXT PRIMARY KEY,
+      affiliate_code TEXT NOT NULL,
+      video_url TEXT NOT NULL,
+      submitted_at TIMESTAMPTZ DEFAULT NOW()
+    );
+    CREATE INDEX IF NOT EXISTS idx_video_posts_code ON affiliate_video_posts(affiliate_code);
+  `);
   console.log('Database initialized');
 }
 
@@ -984,6 +993,66 @@ app.post('/admin/affiliate/update-limit', async (req, res) => {
     res.json({ success: true });
   } catch (e) {
     res.status(500).json({ error: 'Failed to update limit' });
+  }
+});
+
+// ── Affiliate Video Posts ─────────────────────────────
+app.post('/affiliate/submit-video', async (req, res) => {
+  const { password, videoUrl } = req.body;
+  if (!password || !videoUrl) return res.status(400).json({ error: 'password and videoUrl required' });
+  const url = videoUrl.trim();
+  if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    return res.status(400).json({ error: 'Invalid URL' });
+  }
+  try {
+    const aff = await pool.query('SELECT code FROM affiliates WHERE LOWER(password) = LOWER($1)', [password]);
+    if (aff.rows.length === 0) return res.status(401).json({ error: 'Invalid password' });
+    const code = aff.rows[0].code;
+    const id = Date.now().toString();
+    await pool.query(
+      'INSERT INTO affiliate_video_posts (id, affiliate_code, video_url, submitted_at) VALUES ($1, $2, $3, NOW())',
+      [id, code, url]
+    );
+    res.json({ success: true });
+  } catch (e) {
+    console.error('Submit video error:', e);
+    res.status(500).json({ error: 'Failed to submit video' });
+  }
+});
+
+app.post('/admin/affiliate/video-posts', async (req, res) => {
+  const { password, code } = req.body;
+  if (password !== process.env.ADMIN_PASSWORD) return res.status(401).json({ error: 'Unauthorized' });
+  if (!code) return res.status(400).json({ error: 'code required' });
+  try {
+    const result = await pool.query(
+      `SELECT id, video_url, submitted_at
+       FROM affiliate_video_posts
+       WHERE LOWER(affiliate_code) = LOWER($1)
+         AND submitted_at >= NOW() - INTERVAL '30 days'
+       ORDER BY submitted_at DESC`,
+      [code]
+    );
+    // Group by calendar date
+    const byDay = {};
+    result.rows.forEach(row => {
+      const d = new Date(row.submitted_at);
+      const key = d.toISOString().slice(0, 10); // YYYY-MM-DD
+      if (!byDay[key]) byDay[key] = [];
+      byDay[key].push({ id: row.id, url: row.video_url, submittedAt: row.submitted_at });
+    });
+    // Build last-30-days array
+    const days = [];
+    for (let i = 0; i < 30; i++) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const key = d.toISOString().slice(0, 10);
+      days.push({ date: key, posts: byDay[key] || [] });
+    }
+    res.json({ days, total: result.rows.length });
+  } catch (e) {
+    console.error('Video posts admin error:', e);
+    res.status(500).json({ error: 'Failed to get video posts' });
   }
 });
 

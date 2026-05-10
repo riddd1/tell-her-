@@ -101,6 +101,20 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
 .script-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;background:var(--pink);color:#fff;font-size:.88rem;font-weight:600;padding:17px;border-radius:13px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .2s;box-shadow:0 8px 28px rgba(247,37,133,.28);letter-spacing:.5px;text-transform:uppercase}
 .script-btn:hover{background:var(--pinkl);transform:translateY(-1px)}
 
+/* ── VIDEO SUBMIT ── */
+.video-submit-card{background:var(--card);border:1px solid rgba(255,255,255,.06);border-radius:14px;padding:18px;margin-bottom:14px}
+.video-submit-title{font-size:.62rem;text-transform:uppercase;letter-spacing:1.5px;color:var(--sub);font-weight:700;margin-bottom:12px}
+.video-submit-row{display:flex;gap:9px;align-items:stretch}
+.video-url-input{flex:1;background:var(--inp);border:1.5px solid rgba(255,255,255,.07);border-radius:10px;padding:12px 13px;font-size:.86rem;font-family:'DM Sans',sans-serif;color:var(--txt);outline:none;transition:border-color .2s;min-width:0}
+.video-url-input:focus{border-color:rgba(247,37,133,.4)}
+.video-url-input::placeholder{color:var(--sub)}
+.btn-submit-video{background:var(--pink);color:#fff;font-size:.78rem;font-weight:600;padding:12px 16px;border-radius:10px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;white-space:nowrap;flex-shrink:0;transition:background .15s}
+.btn-submit-video:hover{background:var(--pinkl)}
+.btn-submit-video:disabled{opacity:.45;cursor:default}
+.video-submit-msg{font-size:.76rem;margin-top:9px;display:none}
+.video-submit-msg.ok{color:var(--green);display:block}
+.video-submit-msg.err{color:var(--red);display:block}
+
 /* ── CREATOR CHAT SCREEN ── */
 #s-creator{display:none;height:100svh;flex-direction:column}
 #s-creator.active{display:flex}
@@ -152,12 +166,35 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
 .send-btn:disabled{opacity:.35}
 .attach-label{width:30px;height:30px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--sub);flex-shrink:0;align-self:center}
 
+/* ── VIDEO ANALYTICS TABLE (admin) ── */
+.posts-panel{display:none;margin-top:12px;border-top:1px solid rgba(255,255,255,.05);padding-top:12px}
+.posts-panel.open{display:block}
+.posts-table{width:100%;border-collapse:collapse;font-size:.76rem}
+.posts-table th{color:var(--sub);font-weight:600;text-transform:uppercase;letter-spacing:.6px;font-size:.6rem;padding:5px 8px;text-align:left;border-bottom:1px solid rgba(255,255,255,.05)}
+.posts-table td{padding:6px 8px;border-bottom:1px solid rgba(255,255,255,.03);vertical-align:top}
+.posts-table tr:last-child td{border-bottom:none}
+.day-label{color:var(--txt);font-weight:500;white-space:nowrap}
+.day-date{color:var(--sub);font-size:.6rem;margin-top:2px}
+.post-count{color:var(--pink);font-family:'Cormorant Garamond',serif;font-size:1.05rem;font-weight:700;text-align:center}
+.post-count.zero{color:rgba(255,255,255,.12)}
+.post-links{display:flex;flex-direction:column;gap:3px}
+.post-link{color:rgba(247,37,133,.8);font-size:.68rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:200px;text-decoration:none}
+.post-link:hover{color:var(--pinkl)}
+.posts-total{font-size:.68rem;color:var(--sub);margin-top:8px;text-align:right}
+.btn-view-posts{background:none;border:1px solid rgba(255,255,255,.1);color:var(--sub);font-size:.65rem;font-weight:600;padding:4px 10px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;flex-shrink:0}
+.btn-view-posts:hover{border-color:rgba(247,37,133,.3);color:var(--pink)}
+.btn-view-posts.active{border-color:rgba(247,37,133,.4);color:var(--pink)}
+.posts-loading{color:var(--sub);font-size:.76rem;padding:8px 0}
+
 @media(max-width:480px){
   .stats-row{grid-template-columns:1fr 1fr}
   .dash-body{padding:20px 14px 80px}
   .login-card{padding:32px 20px}
   .create-row{flex-direction:column}
   .btn-create{width:100%}
+  .video-submit-row{flex-direction:column}
+  .btn-submit-video{width:100%}
+  .post-link{max-width:140px}
 }
 </style>
 </head>
@@ -218,7 +255,10 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
   <div class="dash-nav">
     <div class="nav-logo" id="aff-nav-name">Tell Her<span>.</span></div>
     <div class="nav-badge" style="color:var(--sub);background:none">Affiliate</div>
-    <button class="btn-ghost" onclick="doLogout()">Log out</button>
+    <div style="display:flex;gap:8px">
+      <button class="btn-ghost" onclick="refreshAffDash()" title="Refresh"><i data-lucide="refresh-cw" style="width:13px;height:13px"></i></button>
+      <button class="btn-ghost" onclick="doLogout()">Log out</button>
+    </div>
   </div>
   <div class="dash-body">
     <div class="aff-link-card">
@@ -232,6 +272,14 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
       <div class="stat-card"><div class="stat-num" id="aff-earn">—</div><div class="stat-lbl">Earnings</div></div>
     </div>
     <div class="divider"></div>
+    <div class="video-submit-card">
+      <div class="video-submit-title">Submit a video link</div>
+      <div class="video-submit-row">
+        <input class="video-url-input" id="video-url-input" type="url" placeholder="Paste your TikTok / Instagram link…">
+        <button class="btn-submit-video" id="btn-submit-video" onclick="submitVideoLink()">Submit</button>
+      </div>
+      <div class="video-submit-msg" id="video-submit-msg"></div>
+    </div>
     <button class="script-btn" onclick="window.open(API+'/videomaker/scriptmaker.html?code='+encodeURIComponent(currentAffCode), '_blank')">
       <i data-lucide="pen-line" style="width:17px;height:17px"></i> Open Script Maker
     </button>
@@ -327,7 +375,7 @@ async function doLogin(){
   try{
     const r = await fetch(`${API}/affiliate/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:pass})});
     reachable = true;
-    if(r.ok){ const d=await r.json(); showAffScreen(d); return; }
+    if(r.ok){ const d=await r.json(); showAffScreen(d,pass); return; }
   }catch(_){}
 
   if(!reachable){
@@ -341,7 +389,7 @@ async function doLogin(){
 document.getElementById('login-pass').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
 
 function doLogout(){
-  adminPassword=''; creatorCode=''; currentAffLink=''; activeConv=null;
+  adminPassword=''; creatorCode=''; currentAffLink=''; currentAffPassword=''; activeConv=null;
   clearInterval(pollTimer);
   document.getElementById('login-pass').value='';
   document.querySelectorAll('.f-label').forEach(l=>l.classList.remove('floating'));
@@ -370,7 +418,10 @@ function renderAffList(affs){
     <div class="aff-card">
       <div class="aff-top">
         <div class="aff-name">${escH(a.name)}</div>
-        <button class="btn-red" onclick="deleteAff('${escH(a.code)}')">Delete</button>
+        <div style="display:flex;gap:6px;align-items:center">
+          <button class="btn-view-posts" id="vp-btn-${escH(a.code)}" onclick="togglePostsPanel('${escH(a.code)}')">Posts</button>
+          <button class="btn-red" onclick="deleteAff('${escH(a.code)}')">Delete</button>
+        </div>
       </div>
       <div class="aff-creds">
         <div class="cred-pill"><span>Password</span><strong>${escH(a.password)}</strong></div>
@@ -385,6 +436,9 @@ function renderAffList(affs){
         <div class="aff-stat"><div class="aff-stat-num">${a.clicks}</div><div class="aff-stat-lbl">Clicks</div></div>
         <div class="aff-stat"><div class="aff-stat-num">${a.sales}</div><div class="aff-stat-lbl">Sales</div></div>
         <div class="aff-stat"><div class="aff-stat-num">$${a.earnings}</div><div class="aff-stat-lbl">Earned</div></div>
+      </div>
+      <div class="posts-panel" id="vp-panel-${escH(a.code)}">
+        <div class="posts-loading">Loading posts…</div>
       </div>
     </div>`).join('');
   lucide.createIcons();
@@ -403,6 +457,53 @@ async function saveLimit(code){
       setTimeout(()=>{btn.textContent='Save';btn.classList.remove('saved');},2000);
     }
   }catch(_){}
+}
+
+const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+async function togglePostsPanel(code){
+  const panel=document.getElementById(`vp-panel-${code}`);
+  const btn=document.getElementById(`vp-btn-${code}`);
+  if(panel.classList.contains('open')){
+    panel.classList.remove('open'); btn.classList.remove('active'); return;
+  }
+  panel.classList.add('open'); btn.classList.add('active');
+  panel.innerHTML='<div class="posts-loading">Loading posts…</div>';
+  try{
+    const r=await fetch(`${API}/admin/affiliate/video-posts`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:adminPassword,code})});
+    const data=await r.json();
+    renderPostsPanel(panel,data);
+  }catch(_){
+    panel.innerHTML='<div class="posts-loading" style="color:var(--red)">Failed to load.</div>';
+  }
+}
+
+function renderPostsPanel(panel,data){
+  const activeDays=data.days.filter(d=>d.posts.length>0);
+  if(data.total===0){
+    panel.innerHTML=`<div class="posts-loading">No videos submitted yet.</div>`;
+    return;
+  }
+  let rows='';
+  data.days.forEach(item=>{
+    const d=new Date(item.date+'T00:00:00');
+    const dayName=DAYS[d.getDay()];
+    const dateStr=MONTHS[d.getMonth()]+' '+d.getDate();
+    const count=item.posts.length;
+    const links=item.posts.map(p=>`<a class="post-link" href="${escH(p.url)}" target="_blank" rel="noopener">${escH(p.url)}</a>`).join('');
+    rows+=`<tr>
+      <td><div class="day-label">${dayName}</div><div class="day-date">${dateStr}</div></td>
+      <td><div class="post-count ${count===0?'zero':''}">${count===0?'—':count}</div></td>
+      <td><div class="post-links">${links||'—'}</div></td>
+    </tr>`;
+  });
+  panel.innerHTML=`
+    <table class="posts-table">
+      <thead><tr><th>Date</th><th>Videos</th><th>Links</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="posts-total">${data.total} video${data.total!==1?'s':''} posted in the last 30 days</div>`;
 }
 
 function toggleCreateForm(){
@@ -434,15 +535,53 @@ async function deleteAff(code){
 }
 
 /* ══ AFFILIATE USER ═════════════════════════════════ */
-function showAffScreen(d){
+let currentAffPassword = '';
+
+function showAffScreen(d, pass){
   currentAffCode=d.code;
+  currentAffPassword=pass||'';
   currentAffLink=`https://www.tellher.co/?ref=${d.code}`;
   document.getElementById('aff-nav-name').innerHTML=`${escH(d.name)}<span style="color:var(--pink)">.</span>`;
   document.getElementById('aff-link-text').innerHTML=`<strong>${escH(currentAffLink)}</strong>`;
   document.getElementById('aff-clicks').textContent=d.clicks;
   document.getElementById('aff-sales').textContent=d.sales;
   document.getElementById('aff-earn').textContent='$'+d.earnings;
+  document.getElementById('video-url-input').value='';
+  const msg=document.getElementById('video-submit-msg');
+  msg.className='video-submit-msg'; msg.textContent='';
   showScreen('s-affiliate');
+}
+
+async function refreshAffDash(){
+  try{
+    const r=await fetch(`${API}/affiliate/login`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:currentAffPassword})});
+    if(r.ok){ const d=await r.json(); showAffScreen(d,currentAffPassword); }
+  }catch(_){}
+}
+
+async function submitVideoLink(){
+  const input=document.getElementById('video-url-input');
+  const url=input.value.trim();
+  const msg=document.getElementById('video-submit-msg');
+  const btn=document.getElementById('btn-submit-video');
+  msg.className='video-submit-msg'; msg.textContent='';
+  if(!url){ msg.className='video-submit-msg err'; msg.textContent='Please paste a video link.'; return; }
+  if(!url.startsWith('http://') && !url.startsWith('https://')){ msg.className='video-submit-msg err'; msg.textContent='Link must start with http:// or https://'; return; }
+  btn.disabled=true;
+  try{
+    const r=await fetch(`${API}/affiliate/submit-video`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:currentAffPassword,videoUrl:url})});
+    const d=await r.json();
+    if(d.success){
+      input.value='';
+      msg.className='video-submit-msg ok'; msg.textContent='Video submitted!';
+      setTimeout(()=>{ msg.className='video-submit-msg'; msg.textContent=''; },3000);
+    } else {
+      msg.className='video-submit-msg err'; msg.textContent=d.error||'Failed to submit.';
+    }
+  }catch(_){
+    msg.className='video-submit-msg err'; msg.textContent='Connection error. Try again.';
+  }
+  btn.disabled=false;
 }
 
 function copyAffLink(){
