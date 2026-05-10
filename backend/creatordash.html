@@ -176,6 +176,13 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
 .ov-num{font-family:'Cormorant Garamond',serif;font-size:1.1rem;font-weight:700;color:var(--pink)}
 .ov-num.zero{color:rgba(255,255,255,.2)}
 .ov-sub{font-size:.6rem;color:var(--sub);margin-top:1px}
+.ov-row{cursor:pointer}
+.ov-row:hover td{background:rgba(247,37,133,.04)!important}
+.ov-row td{transition:background .15s}
+.ov-chevron{color:var(--sub);font-size:.65rem;transition:transform .2s;display:inline-block}
+.ov-expand-row td{padding:0!important;border-top:none!important}
+.ov-expand-inner{display:none;padding:14px 14px 16px;border-top:1px solid rgba(255,255,255,.04)}
+.ov-expand-inner.open{display:block}
 
 /* ── VIDEO POSTS PANEL (admin) ── */
 .posts-panel{display:none;margin-top:12px;border-top:1px solid rgba(255,255,255,.05);padding-top:14px}
@@ -277,10 +284,11 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
             <th>Name</th>
             <th>Posts (30d)</th>
             <th>Posts (all time)</th>
+            <th></th>
           </tr>
         </thead>
         <tbody id="overview-body">
-          <tr><td colspan="3" style="color:var(--sub);font-size:.8rem">Loading…</td></tr>
+          <tr><td colspan="4" style="color:var(--sub);font-size:.8rem">Loading…</td></tr>
         </tbody>
       </table>
     </div>
@@ -453,27 +461,41 @@ function renderAffList(affs){
   const tbody=document.getElementById('overview-body');
   if(!affs.length){
     el.innerHTML='<div class="empty-state">No affiliates yet.</div>';
-    tbody.innerHTML='<tr><td colspan="3" style="color:var(--sub);font-size:.8rem">No affiliates yet.</td></tr>';
+    tbody.innerHTML='<tr><td colspan="4" style="color:var(--sub);font-size:.8rem">No affiliates yet.</td></tr>';
     return;
   }
   const sorted=[...affs].sort((a,b)=>(b.video_posts_30d||0)-(a.video_posts_30d||0));
   tbody.innerHTML=sorted.map(a=>{
     const p30=a.video_posts_30d||0;
     const pAll=a.video_posts_total||0;
-    return`<tr>
+    const code=escH(a.code);
+    return`
+    <tr class="ov-row" onclick="toggleOvRow('${code}')">
       <td><div class="ov-name">${escH(a.name)}</div></td>
       <td><div class="ov-num ${p30===0?'zero':''}">${p30}</div><div class="ov-sub">last 30 days</div></td>
       <td><div class="ov-num ${pAll===0?'zero':''}">${pAll}</div><div class="ov-sub">all time</div></td>
+      <td style="text-align:right"><span class="ov-chevron" id="ov-chev-${code}">▶</span></td>
+    </tr>
+    <tr class="ov-expand-row">
+      <td colspan="4">
+        <div class="ov-expand-inner" id="ov-expand-${code}">
+          <div class="date-range-bar">
+            <label>From</label>
+            <input class="date-inp" type="date" id="ov-from-${code}" value="${defaultFrom()}">
+            <label>To</label>
+            <input class="date-inp" type="date" id="ov-to-${code}" value="${defaultTo()}">
+            <button class="btn-apply-range" onclick="event.stopPropagation();loadOvPanel('${code}')">Apply</button>
+          </div>
+          <div id="ov-content-${code}"><div class="posts-loading">Loading…</div></div>
+        </div>
+      </td>
     </tr>`;
   }).join('');
   el.innerHTML=affs.map(a=>`
     <div class="aff-card">
       <div class="aff-top">
         <div class="aff-name">${escH(a.name)}</div>
-        <div style="display:flex;gap:6px;align-items:center">
-          <button class="btn-view-posts" id="vp-btn-${escH(a.code)}" onclick="togglePostsPanel('${escH(a.code)}')">Posts</button>
-          <button class="btn-red" onclick="deleteAff('${escH(a.code)}')">Delete</button>
-        </div>
+        <button class="btn-red" onclick="deleteAff('${escH(a.code)}')">Delete</button>
       </div>
       <div class="aff-creds">
         <div class="cred-pill"><span>Password</span><strong>${escH(a.password)}</strong></div>
@@ -488,9 +510,6 @@ function renderAffList(affs){
         <div class="aff-stat"><div class="aff-stat-num">${a.clicks}</div><div class="aff-stat-lbl">Clicks</div></div>
         <div class="aff-stat"><div class="aff-stat-num">${a.sales}</div><div class="aff-stat-lbl">Sales</div></div>
         <div class="aff-stat"><div class="aff-stat-num">$${a.earnings}</div><div class="aff-stat-lbl">Earned</div></div>
-      </div>
-      <div class="posts-panel" id="vp-panel-${escH(a.code)}">
-        <div class="posts-loading">Loading posts…</div>
       </div>
     </div>`).join('');
   lucide.createIcons();
@@ -535,6 +554,31 @@ async function togglePostsPanel(code){
     </div>
     <div id="vp-content-${escH(code)}"><div class="posts-loading">Loading…</div></div>`;
   loadPostsPanel(code);
+}
+
+function toggleOvRow(code){
+  const inner=document.getElementById(`ov-expand-${code}`);
+  const chev=document.getElementById(`ov-chev-${code}`);
+  const isOpen=inner.classList.contains('open');
+  inner.classList.toggle('open');
+  if(chev) chev.style.transform=isOpen?'':'rotate(90deg)';
+  if(!isOpen) loadOvPanel(code);
+}
+
+async function loadOvPanel(code){
+  const fromEl=document.getElementById(`ov-from-${code}`);
+  const toEl=document.getElementById(`ov-to-${code}`);
+  const content=document.getElementById(`ov-content-${code}`);
+  const from=fromEl?fromEl.value:defaultFrom();
+  const to=toEl?toEl.value:defaultTo();
+  content.innerHTML='<div class="posts-loading">Loading…</div>';
+  try{
+    const r=await fetch(`${API}/admin/affiliate/video-posts`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:adminPassword,code,from,to})});
+    const data=await r.json();
+    renderPostsContent(content,data);
+  }catch(_){
+    content.innerHTML='<div class="posts-loading" style="color:var(--red)">Failed to load.</div>';
+  }
 }
 
 async function loadPostsPanel(code){
