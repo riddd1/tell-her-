@@ -302,7 +302,7 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
         <button onclick="window.location.href='https://www.tellher.co/login'" style="background:#f72585;border:none;color:#fff;font-size:.8rem;font-weight:700;padding:10px 22px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;letter-spacing:.5px;white-space:nowrap;flex-shrink:0;box-shadow:0 4px 14px rgba(247,37,133,.35)">Log in</button>
         <div class="land-pill">
           <span class="land-pill-dot"></span>
-          <span><strong style="color:var(--txt)">2,847</strong> women this week</span>
+          <span><strong id="women-count" style="color:var(--txt)">2,847</strong> women this week</span>
         </div>
       </div>
     </div>
@@ -620,7 +620,7 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
     <!-- scarcity -->
     <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(247,37,133,.08);border:1px solid rgba(247,37,133,.2);border-radius:100px;padding:6px 14px;font-size:.72rem;color:var(--sub);font-weight:600;margin-bottom:20px">
       <span style="width:6px;height:6px;border-radius:50%;background:var(--pink);display:inline-block;animation:blink 1.8s ease-in-out infinite"></span>
-      i can only take <strong style="color:var(--txt);margin:0 4px">3</strong> more girls today
+      i can only take <strong id="spots-count" style="color:var(--txt);margin:0 4px">3</strong> more girls today
     </div>
 
     <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:700;line-height:1.2;color:var(--txt);margin-bottom:16px">i've got you, girl. let's get your <em style="color:var(--pink)">peace back.</em></h2>
@@ -889,6 +889,31 @@ function autoResizeLive(el){el.style.height='';el.style.height=Math.min(el.scrol
 function startChatPoll(){clearInterval(chatPollTimer);chatPollTimer=setInterval(loadLiveMsgs,5000)}
 async function handleChatImageUpload(e){const file=e.target.files[0];if(!file||!currentTester)return;const reader=new FileReader();reader.onload=async(ev)=>{const base64=ev.target.result.split(',')[1];try{const uploadRes=await fetch(`${API_BASE}/upload-image`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({base64Image:base64})});const uploadData=await uploadRes.json();if(uploadData.url){const userId=getUserId();await fetch(`${API_BASE}/messages/send`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId,testerId:currentTester.id,content:uploadData.url,type:'image'})});await loadLiveMsgs()}}catch(err){console.error('Image upload failed:',err)}};reader.readAsDataURL(file);e.target.value=''}
 function backToResults(){clearInterval(chatPollTimer);showScreen('s-results')}
+
+// ── Dynamic counters ──────────────────────────────────
+(function(){
+  // Per-user seed so everyone sees a slightly different number (stored once)
+  let seed = parseInt(localStorage.getItem('tellher_seed') || 0);
+  if (!seed) { seed = Math.floor(Math.random() * 120) + 1; localStorage.setItem('tellher_seed', seed); }
+
+  // Women count: base + seed + 1 per 5 min since fixed epoch
+  const BASE = 2847;
+  const EPOCH = 1746950400000; // fixed reference point
+  function calcCount(){ return BASE + seed + Math.floor((Date.now() - EPOCH) / 300000); }
+  function updateWomen(){ const el=document.getElementById('women-count'); if(el) el.textContent=calcCount().toLocaleString(); }
+  updateWomen();
+  // re-fire at the next 5-min boundary, then every 5 min after
+  const msUntilNext = 300000 - ((Date.now() - EPOCH) % 300000);
+  setTimeout(function(){ updateWomen(); setInterval(updateWomen, 300000); }, msUntilNext);
+
+  // Spots remaining: random 2–6, fixed per user per day
+  const today = new Date().toDateString();
+  const spotKey = 'tellher_spots_' + today;
+  let spots = parseInt(localStorage.getItem(spotKey) || 0);
+  if (!spots) { spots = Math.floor(Math.random() * 5) + 2; localStorage.setItem(spotKey, spots); }
+  const spotsEl = document.getElementById('spots-count');
+  if (spotsEl) spotsEl.textContent = spots;
+})();
 
 document.addEventListener('DOMContentLoaded',()=>{
   fetch(`${API_BASE}/track/visit`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:getUserId()})}).catch(()=>{});
