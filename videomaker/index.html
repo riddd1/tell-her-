@@ -1737,6 +1737,8 @@ function updateSlideshowUI() {
 async function generateSlideshow() {
   const hasContent = unifiedSlides.some(s => s.type === 'image' || (s.type === 'dm' && s.selected));
   if (!hasContent) { alert('Please select at least one item or add an image slide'); return; }
+  const isAndroidDevice = /Android/i.test(navigator.userAgent);
+  const captureScale = isAndroidDevice ? 2 : 4;
 
   closeSlideshowModal();
 
@@ -1771,7 +1773,7 @@ async function generateSlideshow() {
           frameCount++;
           document.getElementById('loading-progress').textContent = `Preparing image ${frameCount} / ${totalFrames}…`;
           const img = await new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = item.editedSrc || item.src; });
-          const mW = 1560, mH = Math.round(1560 * 16 / 9);
+          const mW = root.offsetWidth * captureScale, mH = Math.round(mW * 16 / 9);
           const mc = document.createElement('canvas'); mc.width = mW; mc.height = mH;
           const mx = mc.getContext('2d');
           mx.fillStyle = '#000'; mx.fillRect(0, 0, mW, mH);
@@ -1788,7 +1790,7 @@ async function generateSlideshow() {
         domMap[item.id].el.style.display = domMap[item.id].nat;
         batchVisible.push(item.id);
         await new Promise(r => setTimeout(r, 150));
-        const canvas = await html2canvas(root, {scale:4, useCORS:true, allowTaint:true, backgroundColor:bgColor, logging:false});
+        const canvas = await html2canvas(root, {scale:captureScale, useCORS:true, allowTaint:true, backgroundColor:bgColor, logging:false});
         frames.push(canvas); durations.push(item.timing || 0.8);
       }
     }
@@ -2329,10 +2331,16 @@ function createVideoFromFrames(frames, durations, audioFile, audioStart, audioEn
     }) || 'video/webm';
     const ext = mimeType.startsWith('video/mp4') ? 'mp4' : 'webm';
 
-    const mediaRecorder = new MediaRecorder(stream, {
-      mimeType,
-      videoBitsPerSecond: 25_000_000   // 25 Mbps — lossless-looking at this res
-    });
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    let mediaRecorder;
+    try {
+      mediaRecorder = new MediaRecorder(stream, {
+        mimeType,
+        videoBitsPerSecond: isAndroid ? 8_000_000 : 25_000_000
+      });
+    } catch(e) {
+      mediaRecorder = new MediaRecorder(stream);
+    }
     const chunks = [];
     mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
 
