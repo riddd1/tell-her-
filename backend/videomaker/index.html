@@ -2509,10 +2509,16 @@ function createVideoFromFrames(frames, durations, audioFile, audioStart, audioEn
     }) || 'video/webm';
     const ext = mimeType.startsWith('video/mp4') ? 'mp4' : 'webm';
 
-    const mediaRecorder = new MediaRecorder(stream, {
-      mimeType,
-      videoBitsPerSecond: 25_000_000   // 25 Mbps — lossless-looking at this res
-    });
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    let mediaRecorder;
+    try {
+      mediaRecorder = new MediaRecorder(stream, {
+        mimeType,
+        videoBitsPerSecond: isAndroid ? 8_000_000 : 25_000_000
+      });
+    } catch(e) {
+      mediaRecorder = new MediaRecorder(stream);
+    }
     const chunks = [];
     mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
 
