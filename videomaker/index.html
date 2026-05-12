@@ -2303,12 +2303,18 @@ function createVideoFromFrames(frames, durations, audioFile, audioStart, audioEn
 
     function drawCurrent() {
       const frame = frames[currentIdx];
-      // Letterbox is always black regardless of chat background color.
-      // Content is centered; as messages grow the block rises naturally.
-      const dy = Math.round((videoH - frame.height) / 2);
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, videoW, videoH);
-      ctx.drawImage(frame, 0, dy);
+      // Scale-to-fit: never overflow the canvas regardless of frame dimensions.
+      // DM frames (width == videoW, height <= videoH) scale at 1.0 — same as before.
+      // Meme frames that are the wrong size (e.g. 2× too large) get scaled down
+      // instead of being cropped, eliminating the "zoomed in" appearance on Android.
+      const sf = Math.min(videoW / frame.width, videoH / frame.height);
+      const dw = Math.round(frame.width  * sf);
+      const dh = Math.round(frame.height * sf);
+      const dx = Math.round((videoW - dw) / 2);
+      const dy = Math.round((videoH - dh) / 2);
+      ctx.drawImage(frame, dx, dy, dw, dh);
     }
 
     const videoStream = videoCanvas.captureStream(fps);
