@@ -1917,6 +1917,8 @@ function updateSlideshowUI() {
 async function generateSlideshow() {
   const hasContent = unifiedSlides.some(s => s.type === 'image' || (s.type === 'dm' && s.selected));
   if (!hasContent) { alert('Please select at least one item or add an image slide'); return; }
+  const isAndroidDevice = /Android/i.test(navigator.userAgent);
+  const captureScale = isAndroidDevice ? 2 : 4;
 
   closeSlideshowModal();
 
@@ -1968,7 +1970,7 @@ async function generateSlideshow() {
         domMap[item.id].el.style.display = domMap[item.id].nat;
         batchVisible.push(item.id);
         await new Promise(r => setTimeout(r, 150));
-        const canvas = await html2canvas(root, {scale:4, useCORS:true, allowTaint:true, backgroundColor:bgColor, logging:false});
+        const canvas = await html2canvas(root, {scale:captureScale, useCORS:true, allowTaint:true, backgroundColor:bgColor, logging:false});
         frames.push(canvas); durations.push(item.timing || 0.8);
       }
     }
