@@ -3372,8 +3372,8 @@ function smSendToBuilder() {
   const box = document.getElementById('sm-output');
   if (box.classList.contains('placeholder') || !box.textContent.trim()) return;
   document.getElementById('code-ta').value = box.textContent.trim();
-  switchTab('code');
   parseCode();
+  switchTab('builder');
   showToast('Script sent to Builder ✓');
 }
 
