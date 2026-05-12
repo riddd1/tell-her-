@@ -637,6 +637,19 @@ app.post('/admin/affiliate/create', async (req, res) => {
   }
 });
 
+app.post('/admin/reset', async (req, res) => {
+  const { password, confirm } = req.body;
+  if (password !== process.env.ADMIN_PASSWORD) return res.status(401).json({ error: 'Unauthorized' });
+  if (confirm !== 'RESET_ALL_DATA') return res.status(400).json({ error: 'Send confirm: "RESET_ALL_DATA" to proceed' });
+  try {
+    await pool.query('TRUNCATE messages, user_profiles, magic_links, affiliate_clicks, affiliate_sales, script_generations, site_visits RESTART IDENTITY CASCADE');
+    res.json({ success: true, message: 'All user data cleared. Affiliates kept.' });
+  } catch (e) {
+    console.error('Reset error:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 app.post('/admin/affiliate/delete', async (req, res) => {
   const { password, code } = req.body;
   if (password !== process.env.ADMIN_PASSWORD) return res.status(401).json({ error: 'Unauthorized' });
