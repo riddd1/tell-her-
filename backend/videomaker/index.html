@@ -1952,7 +1952,7 @@ async function generateSlideshow() {
 
   const bgColor = document.getElementById('c-bg').value;
   const frames = [], durations = [];
-  const totalFrames = unifiedSlides.filter(s => s.type === 'image' || (s.type === 'dm' && s.selected)).length;
+  const totalFrames = unifiedSlides.filter(s => s.type === 'image' || (s.type === 'dm' && s.selected && s.id !== 'story')).length;
   let frameCount = 0;
 
   document.getElementById('loading').classList.add('show');
@@ -1983,10 +1983,11 @@ async function generateSlideshow() {
       }
 
       if (item.type === 'dm' && item.selected && domMap[item.id]) {
-        frameCount++;
-        document.getElementById('loading-progress').textContent = `Capturing frame ${frameCount} / ${totalFrames}…`;
         domMap[item.id].el.style.display = domMap[item.id].nat;
         batchVisible.push(item.id);
+        if (item.id === 'story') continue; // show story but don't give it its own frame — first message frame includes it
+        frameCount++;
+        document.getElementById('loading-progress').textContent = `Capturing frame ${frameCount} / ${totalFrames}…`;
         await new Promise(r => setTimeout(r, 150));
         const canvas = await html2canvas(root, {scale:captureScale, useCORS:true, allowTaint:true, backgroundColor:bgColor, logging:false});
         frames.push(canvas); durations.push(item.timing || 0.8);
