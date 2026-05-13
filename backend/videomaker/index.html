@@ -652,7 +652,12 @@ button,input,select,textarea{transition-property:background,border-color,color,b
   .topbar-tabs::-webkit-scrollbar{display:none}
   .logo-sub{display:none}
   #sm-topbar-extras{margin-left:0;width:100%}
-  .main{grid-template-columns:1fr!important;height:auto!important;display:flex!important;flex-direction:column}
+  .main{grid-template-columns:1fr;height:auto;display:flex;flex-direction:column}
+  .mob-hide{display:none!important}
+  .platform-pill[data-val="snapchat"],
+  .platform-pill[data-val="facebook"],
+  .platform-pill[data-val="youtube"],
+  .platform-pill[data-val="twitter"]{display:none}
   .lp{border-right:none;border-bottom:1px solid rgba(255,255,255,0.07);height:auto;max-height:none;overflow-y:visible;flex-shrink:0}
   .rp{height:auto;min-height:50vh;flex-shrink:0}
   .preview-area{min-height:50vh;padding:12px;align-items:flex-start;overflow-x:auto}
@@ -1028,14 +1033,19 @@ function switchTab(tab) {
     if (el) el.classList.toggle('active', tab===t);
   });
   const isAlt = tab==='scriptmaker' || tab==='history';
-  document.getElementById('builder-main').style.display = isAlt ? 'none' : 'grid';
+  document.getElementById('builder-main').style.display = isAlt ? 'none' : '';
   document.getElementById('builder-panel').style.display = tab==='builder' ? 'block' : 'none';
   document.getElementById('code-panel').style.display = tab==='code' ? 'flex' : 'none';
   document.getElementById('stash-panel').style.display = tab==='stash' ? 'flex' : 'none';
-  document.getElementById('scriptmaker-main').style.display = tab==='scriptmaker' ? 'grid' : 'none';
+  document.getElementById('scriptmaker-main').style.display = tab==='scriptmaker' ? '' : 'none';
   document.getElementById('history-main').style.display = tab==='history' ? 'flex' : 'none';
   const smExtras = document.getElementById('sm-topbar-extras');
   smExtras.style.display = isAlt ? 'flex' : 'none';
+  // Mobile: hide bottom action buttons unless on builder tab; hide live preview on stash
+  const btns = document.querySelector('.bottom-btns');
+  const rp = document.querySelector('#builder-main .rp');
+  if (btns) btns.classList.toggle('mob-hide', tab !== 'builder');
+  if (rp) rp.classList.toggle('mob-hide', tab === 'stash');
   if (tab === 'code') syncBuilderToCode();
   if (tab === 'scriptmaker') {
     if (!smAffCode) { document.getElementById('sm-login').style.display = 'flex'; }
