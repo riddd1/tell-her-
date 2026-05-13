@@ -1975,8 +1975,7 @@ async function generateSlideshow() {
           const mc = document.createElement('canvas'); mc.width = mW; mc.height = mH;
           const mx = mc.getContext('2d');
           mx.fillStyle = '#000'; mx.fillRect(0, 0, mW, mH);
-          const pad = 0.82;
-          const sc = Math.min(mW * pad / img.width, mH * pad / img.height);
+          const sc = Math.min(mW / img.width, mH / img.height);
           mx.drawImage(img, (mW - img.width*sc)/2, (mH - img.height*sc)/2, img.width*sc, img.height*sc);
           frames.push(mc); durations.push(item.timing || 3);
         }
