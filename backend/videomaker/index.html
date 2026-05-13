@@ -1971,11 +1971,12 @@ async function generateSlideshow() {
           frameCount++;
           document.getElementById('loading-progress').textContent = `Preparing image ${frameCount} / ${totalFrames}…`;
           const img = await new Promise((res, rej) => { const im = new Image(); im.onload = () => res(im); im.onerror = rej; im.src = item.editedSrc || item.src; });
-          const mW = 1560, mH = Math.round(1560 * 16 / 9);
+          const mW = root.offsetWidth * captureScale, mH = Math.round(mW * 16 / 9);
           const mc = document.createElement('canvas'); mc.width = mW; mc.height = mH;
           const mx = mc.getContext('2d');
           mx.fillStyle = '#000'; mx.fillRect(0, 0, mW, mH);
-          const sc = Math.min(mW / img.width, mH / img.height);
+          const pad = 0.82;
+          const sc = Math.min(mW * pad / img.width, mH * pad / img.height);
           mx.drawImage(img, (mW - img.width*sc)/2, (mH - img.height*sc)/2, img.width*sc, img.height*sc);
           frames.push(mc); durations.push(item.timing || 3);
         }
@@ -2501,12 +2502,19 @@ function createVideoFromFrames(frames, durations, audioFile, audioStart, audioEn
 
     function drawCurrent() {
       const frame = frames[currentIdx];
-      // Letterbox is always black regardless of chat background color.
-      // Content is centered; as messages grow the block rises naturally.
-      const dy = Math.round((videoH - frame.height) / 2);
       ctx.fillStyle = '#000000';
       ctx.fillRect(0, 0, videoW, videoH);
-      ctx.drawImage(frame, 0, dy);
+      if (frame.width === videoW) {
+        // DM frames: same width as canvas, center vertically (natural reveal effect).
+        const dy = Math.round((videoH - frame.height) / 2);
+        ctx.drawImage(frame, 0, dy);
+      } else {
+        // Meme/image frames: scale-to-fit so nothing overflows or gets cropped.
+        const sf = Math.min(videoW / frame.width, videoH / frame.height);
+        const dw = Math.round(frame.width * sf);
+        const dh = Math.round(frame.height * sf);
+        ctx.drawImage(frame, Math.round((videoW - dw) / 2), Math.round((videoH - dh) / 2), dw, dh);
+      }
     }
 
     const videoStream = videoCanvas.captureStream(fps);
