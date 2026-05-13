@@ -594,12 +594,17 @@ app.post('/admin/stats', async (req, res) => {
         `SELECT COUNT(*) FROM affiliate_video_posts WHERE LOWER(affiliate_code) = LOWER($1) AND submitted_at >= NOW() - INTERVAL '30 days'`,
         [a.code]
       );
+      const usedToday = await pool.query(
+        `SELECT COUNT(*) FROM script_generations WHERE LOWER(affiliate_code) = LOWER($1) AND generated_at >= NOW() AT TIME ZONE 'UTC' - INTERVAL '1 day'`,
+        [a.code]
+      );
       return {
         id: a.id,
         name: a.name,
         code: a.code,
         password: a.password,
         daily_script_limit: a.daily_script_limit ?? 10,
+        scripts_used_today: parseInt(usedToday.rows[0].count),
         clicks: parseInt(clicks.rows[0].count),
         sales: parseInt(sales.rows[0].count),
         earnings,
@@ -1013,6 +1018,23 @@ app.post('/admin/affiliate/update-limit', async (req, res) => {
     res.json({ success: true });
   } catch (e) {
     res.status(500).json({ error: 'Failed to update limit' });
+  }
+});
+
+app.post('/admin/affiliate/add-scripts', async (req, res) => {
+  const { password, code, amount } = req.body;
+  if (password !== process.env.ADMIN_PASSWORD) return res.status(401).json({ error: 'Unauthorized' });
+  const add = parseInt(amount);
+  if (isNaN(add) || add < 1) return res.status(400).json({ error: 'Invalid amount' });
+  try {
+    const result = await pool.query(
+      'UPDATE affiliates SET daily_script_limit = daily_script_limit + $1 WHERE code = $2 RETURNING daily_script_limit',
+      [add, code]
+    );
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Affiliate not found' });
+    res.json({ success: true, new_limit: result.rows[0].daily_script_limit });
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to add scripts' });
   }
 });
 

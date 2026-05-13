@@ -85,6 +85,17 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
 .btn-save-limit{background:none;border:1px solid rgba(247,37,133,.35);color:var(--pink);font-size:.65rem;font-weight:600;padding:4px 10px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;flex-shrink:0}
 .btn-save-limit:hover{background:rgba(247,37,133,.08)}
 .btn-save-limit.saved{border-color:var(--green);color:var(--green)}
+.aff-usage-row{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.aff-usage-bar-wrap{flex:1;height:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+.aff-usage-bar{height:100%;border-radius:3px;background:var(--pink);transition:width .4s}
+.aff-usage-txt{font-size:.63rem;color:var(--sub);white-space:nowrap;flex-shrink:0}
+.aff-add-row{display:flex;align-items:center;gap:8px;margin-bottom:12px;padding:10px 12px;background:rgba(247,37,133,.05);border:1px solid rgba(247,37,133,.12);border-radius:10px}
+.aff-add-label{font-size:.62rem;text-transform:uppercase;letter-spacing:.5px;color:var(--pink);font-weight:700;flex-shrink:0}
+.aff-add-input{background:var(--card2);border:1.5px solid rgba(255,255,255,.08);border-radius:7px;padding:4px 9px;color:var(--txt);font-size:.85rem;font-family:'DM Sans',sans-serif;width:60px;text-align:center;outline:none;transition:border-color .2s}
+.aff-add-input:focus{border-color:rgba(247,37,133,.4)}
+.btn-add-scripts{background:var(--pink);color:#fff;font-size:.65rem;font-weight:700;padding:5px 12px;border-radius:100px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;flex-shrink:0;white-space:nowrap;letter-spacing:.3px}
+.btn-add-scripts:hover{background:var(--pinkl)}
+.btn-add-scripts.added{background:var(--green)}
 .cred-pill strong{color:var(--txt);font-family:'Cormorant Garamond',serif;font-size:.95rem}
 .aff-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:7px}
 .aff-stat{background:var(--card2);border-radius:10px;padding:9px;text-align:center}
@@ -462,7 +473,12 @@ async function loadAdminStats(){
 function renderAffList(affs){
   const el=document.getElementById('aff-list');
   if(!affs.length){ el.innerHTML='<div class="empty-state">No affiliates yet.</div>'; return; }
-  el.innerHTML=affs.map(a=>`
+  el.innerHTML=affs.map(a=>{
+    const limit=a.daily_script_limit||10;
+    const used=a.scripts_used_today||0;
+    const remaining=Math.max(0,limit-used);
+    const pct=Math.min(100,Math.round((used/limit)*100));
+    return `
     <div class="aff-card">
       <div class="aff-top">
         <div class="aff-name">${escH(a.name)}</div>
@@ -472,9 +488,18 @@ function renderAffList(affs){
         <div class="cred-pill"><span>Password</span><strong>${escH(a.password)}</strong></div>
         <div class="cred-pill"><span>Link</span><strong>https://www.tellher.co/?ref=${escH(a.code)}</strong></div>
       </div>
+      <div class="aff-usage-row">
+        <div class="aff-usage-bar-wrap"><div class="aff-usage-bar" style="width:${pct}%"></div></div>
+        <span class="aff-usage-txt">${used}/${limit} used · ${remaining} left today</span>
+      </div>
+      <div class="aff-add-row">
+        <span class="aff-add-label">+ Add scripts</span>
+        <input class="aff-add-input" id="add-${escH(a.code)}" type="number" min="1" max="999" placeholder="5">
+        <button class="btn-add-scripts" id="addbtn-${escH(a.code)}" onclick="addScripts('${escH(a.code)}')">Add to ${escH(a.name)}</button>
+      </div>
       <div class="aff-limit-row">
-        <span class="aff-limit-label">Scripts/day</span>
-        <input class="aff-limit-input" id="limit-${escH(a.code)}" type="number" min="1" max="999" value="${a.daily_script_limit||10}">
+        <span class="aff-limit-label">Set limit</span>
+        <input class="aff-limit-input" id="limit-${escH(a.code)}" type="number" min="1" max="999" value="${limit}">
         <button class="btn-save-limit" onclick="saveLimit('${escH(a.code)}')">Save</button>
       </div>
       <div class="aff-stats">
@@ -482,7 +507,8 @@ function renderAffList(affs){
         <div class="aff-stat"><div class="aff-stat-num">${a.sales}</div><div class="aff-stat-lbl">Sales</div></div>
         <div class="aff-stat"><div class="aff-stat-num">$${a.earnings}</div><div class="aff-stat-lbl">Earned</div></div>
       </div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
   lucide.createIcons();
 }
 
@@ -499,6 +525,25 @@ async function saveLimit(code){
       setTimeout(()=>{btn.textContent='Save';btn.classList.remove('saved');},2000);
     }
   }catch(_){}
+}
+
+async function addScripts(code){
+  const inp=document.getElementById('add-'+code);
+  const btn=document.getElementById('addbtn-'+code);
+  const amount=parseInt(inp.value);
+  if(!amount||amount<1)return;
+  btn.disabled=true;
+  try{
+    const r=await fetch(`${API}/admin/affiliate/add-scripts`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:adminPassword,code,amount})});
+    const d=await r.json();
+    if(d.success){
+      btn.textContent=`+${amount} Added!`;btn.classList.add('added');
+      inp.value='';
+      setTimeout(()=>{btn.classList.remove('added');btn.disabled=false;loadAdminStats();},1800);
+    } else {
+      btn.disabled=false;
+    }
+  }catch(_){btn.disabled=false;}
 }
 
 async function setLimitAll(){
