@@ -196,6 +196,16 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
 .mx-link:hover{color:var(--pinkl)}
 .posts-loading{color:var(--sub);font-size:.76rem;padding:12px 0}
 
+/* ── GLOBAL LIMIT CARD ── */
+.global-limit-card{background:var(--card);border:1px solid rgba(247,37,133,.18);border-radius:14px;padding:16px 18px;margin-bottom:14px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.global-limit-lbl{font-size:.62rem;text-transform:uppercase;letter-spacing:.8px;color:var(--sub);font-weight:700;flex-shrink:0}
+.global-limit-input{background:var(--card2);border:1.5px solid rgba(255,255,255,.08);border-radius:8px;padding:6px 10px;color:var(--txt);font-size:.88rem;font-family:'DM Sans',sans-serif;width:72px;text-align:center;outline:none;transition:border-color .2s}
+.global-limit-input:focus{border-color:rgba(247,37,133,.4)}
+.global-limit-hint{font-size:.72rem;color:var(--sub);flex:1}
+.btn-set-all{background:var(--pink);color:#fff;font-size:.72rem;font-weight:600;padding:7px 16px;border-radius:100px;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s;flex-shrink:0;white-space:nowrap}
+.btn-set-all:hover{background:var(--pinkl)}
+.btn-set-all.done{background:var(--green)}
+
 @media(max-width:480px){
   .stats-row{grid-template-columns:1fr 1fr}
   .dash-body{padding:20px 14px 80px}
@@ -256,6 +266,13 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
       <div class="cred-row"><div><div class="cred-label">Password</div><div class="cred-val" id="new-pass-out">—</div></div><button class="btn-copy" onclick="copyText('new-pass-out',this)">Copy</button></div>
       <div class="cred-row"><div><div class="cred-label">Link</div><div class="cred-val" id="new-link-out">—</div></div><button class="btn-copy" onclick="copyText('new-link-out',this)">Copy</button></div>
     </div>
+    <div class="global-limit-card">
+      <span class="global-limit-lbl">Set All Scripts/day</span>
+      <input class="global-limit-input" id="global-limit-input" type="number" min="1" max="999" placeholder="10">
+      <span class="global-limit-hint">Sets the daily script limit for every affiliate at once</span>
+      <button class="btn-set-all" id="btn-set-all" onclick="setLimitAll()">Set for All</button>
+    </div>
+
     <div id="aff-list"></div>
 
     <div class="overview-section">
@@ -482,6 +499,25 @@ async function saveLimit(code){
       setTimeout(()=>{btn.textContent='Save';btn.classList.remove('saved');},2000);
     }
   }catch(_){}
+}
+
+async function setLimitAll(){
+  const inp=document.getElementById('global-limit-input');
+  const btn=document.getElementById('btn-set-all');
+  const newLimit=parseInt(inp.value);
+  if(!newLimit||newLimit<1)return;
+  btn.disabled=true;
+  try{
+    const r=await fetch(`${API}/admin/affiliate/update-limit-all`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:adminPassword,limit:newLimit})});
+    const d=await r.json();
+    if(d.success){
+      btn.textContent=`Done — ${d.updated} updated`;btn.classList.add('done');
+      setTimeout(()=>{btn.textContent='Set for All';btn.classList.remove('done');btn.disabled=false;},2500);
+      loadAdminStats();
+    } else {
+      btn.disabled=false;
+    }
+  }catch(_){btn.disabled=false;}
 }
 
 const DAYS = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];

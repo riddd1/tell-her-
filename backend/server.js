@@ -1016,6 +1016,19 @@ app.post('/admin/affiliate/update-limit', async (req, res) => {
   }
 });
 
+app.post('/admin/affiliate/update-limit-all', async (req, res) => {
+  const { password, limit } = req.body;
+  if (password !== process.env.ADMIN_PASSWORD) return res.status(401).json({ error: 'Unauthorized' });
+  const newLimit = parseInt(limit);
+  if (isNaN(newLimit) || newLimit < 1) return res.status(400).json({ error: 'Invalid limit' });
+  try {
+    const result = await pool.query('UPDATE affiliates SET daily_script_limit = $1 RETURNING id', [newLimit]);
+    res.json({ success: true, updated: result.rows.length });
+  } catch (e) {
+    res.status(500).json({ error: 'Failed to update limits' });
+  }
+});
+
 // ── Affiliate Video Posts ─────────────────────────────
 app.post('/affiliate/submit-video', async (req, res) => {
   const { password, videoUrl } = req.body;
