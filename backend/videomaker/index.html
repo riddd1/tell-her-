@@ -3123,8 +3123,7 @@ function getSmPlatform() {
 }
 
 function smBuildPrompt(platform, storyReply) {
-  if (platform === 'tiktok') return smBuildTikTok(platform, storyReply);
-  return smBuildInstagram(platform, storyReply);
+  return smBuildTikTok(platform, storyReply);
 }
 
 function smBuildTikTok(platform, storyReply) {
