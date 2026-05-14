@@ -3123,7 +3123,8 @@ function getSmPlatform() {
 }
 
 function smBuildPrompt(platform, storyReply) {
-  return smBuildTikTok(platform, storyReply);
+  if (platform === 'tiktok') return smBuildTikTok(platform, storyReply);
+  return smBuildInstagram(platform, storyReply);
 }
 
 function smBuildTikTok(platform, storyReply) {
@@ -3214,57 +3215,110 @@ Generate the script now. Start with **IMAGE 1**. Raw script only. Nothing else b
 }
 
 function smBuildInstagram(platform, storyReply) {
-  const storyLine = storyReply
-    ? `1) ${storyReply}`
-    : `1) [Write the girlfriend's hook message to her friend. Two parts: (1) a varied "test" phrase. (2) ONE specific suspicious thing she noticed about him — short, real, casual. End with a single emoji 😐 🙃 🥺.]`;
-  return `You are a viral social media script writer. Write fake Instagram DM loyalty test scripts. Output ONLY the raw script. No stage directions, no brackets, no commentary, no caption block at the end. Just the script.
+  const hooks = [
+    "test him pls i feel like he's already checked out 😐",
+    "test him pls he's a cop and thinks every girl wants him 🙃",
+    "test him pls he's a massage therapist but only goes to girls houses 😐",
+    "test him pls he goes out of town every other weekend and never says why 😭",
+    "test him pls i just bought him a car and i need to know if he's loyal 😭",
+    "test him pls he got a second phone and said it's for work 😐",
+    "test him pls he started going to the gym at 11pm 🙃",
+    "test him pls he changed his lock screen to a default wallpaper 😐",
+    "test him pls he comes home smelling like perfume 🙃",
+    "test him pls he deleted his instagram search history 😐",
+    "test him pls he stopped posting me 3 months ago 🙃",
+    "test him pls he leaves the room to take calls now 😐",
+    "test him pls he started using a password on his phone for the first time 🙃",
+    "test him pls his location is always off now 😐",
+    "test him pls he started caring about how he looks when he goes out alone 🙃",
+    "test him pls he gets defensive when i ask simple questions 😐",
+    "test him pls he came home with a hickey and said it was from a seatbelt 🙃",
+    "test him pls he has a contact saved as a man's name but the texts come in at 2am 😐",
+    "test him pls he started tilting his phone away when i walk past 🙃",
+    "test him pls he cleared his call log for the first time ever 😐",
+    "test him pls he has a second instagram i wasn't supposed to find 😐",
+    "test him pls he bought new cologne and hides it in his car 🙃",
+    "test him pls he started deleting his messages every night before bed 😐",
+    "test him pls his ring finger has a tan line and he says it's from a ring he lost 🙃",
+    "test him pls he works nights but his coworkers never seen him there 😐",
+    "test him pls he said he's done with his ex but she still likes every photo 🙃",
+    "test him pls he asks me not to post him but his friends always tag him out 😐",
+    "test him pls he has a whole personality with his friends that i've never seen 🙃",
+    "test him pls he told me he's not on social media but i found his finsta 😐",
+    "test him pls i paid his rent last month and he still won't let me see his phone 😭"
+  ];
+  const defaultHook = hooks[Math.floor(Math.random()*hooks.length)];
+  const storyLine = storyReply ? `1) ${storyReply}` : `1) ${defaultHook}`;
+  return `You are a viral Instagram script writer. Your only job is to make the audience unable to stop reading. Every single image must end with an open loop — a detail, a hint, or an energy shift that makes it physically impossible to not swipe to the next one. The script is a fake Instagram DM loyalty test: a girl slides into a guy's DMs as a stranger, and through completely casual conversation he slowly, unknowingly reveals he is cheating on or manipulating his girlfriend. It must feel 100% real — written by a real person, not AI.
 
-CRITICAL RULES:
+Output ONLY the raw script. No stage directions. No brackets. No placeholder text. No commentary. Nothing before or after. Start immediately with **IMAGE 1**.
 
-UNIQUENESS: Every script is its own world. Different man, different situation, different hook, different setting, different manipulation, different kill line, different everything.
-
-FORMAT:
+EXACT FORMAT:
 **IMAGE 1**
 2) STORY_REPLY:
 ${storyLine}
-2) [short punchy reaction — 1 to 3 words + 🫶]
+2) [her short casual reply]
 -b-
 **IMAGE 2**
-[her opener lines, each starting with 2)]
-[his response lines, each starting with 1)]
+2) [her opening line]
+2) [her second line]
+1) [his reply]
+1) [his second line]
 -b-
-...and so on. End immediately after the kill line.
+...continue...
+-b-
+-m-
+Caption: "his exact words" [emoji outside quotes]
+-b-
+...continue until kill line. End immediately after his kill line. Nothing after it.
 
-FORMAT RULES:
-- EVERY single dialogue line MUST start with either 1) or 2). No exceptions.
-- No apostrophes ever. Write: hes / shes / doesnt / thats / im / ur / u / wouldnt / havent
-- No specific names for people. No specific city names.
-- 7 to 10 images total
-- 2 to 4 lines per image. Vary the count.
-- Every line SHORT. Max 8 words. Split longer thoughts.
-- -b- on its own line between every image
-- Meme format: -m- then Caption: "his exact words" emoji. ONE word in ALL CAPS. Max 5 words. Emoji after the closing quote.
-- 3 to 4 memes total. Mid-script only — never on the final image.
-- Script ends clean on his kill line.
+FORMAT RULES — never break these:
+- 6 to 10 images total. Never fewer than 6. Never more than 10.
+- Every image must have exactly 3 to 4 lines of dialogue. Never 2. Never 5. Never 6.
+- Every single line of dialogue must be SHORT. Maximum 8 words per line. Split longer thoughts across two lines.
+- 1) = his lines (left gray bubble). 2) = her lines (right purple bubble)
+- -b- on its own line between every image, every single time.
+- -m- then Caption: for memes — placed immediately after his most revealing line
+- 3 to 4 memes per script. Never on the final image.
+- Meme caption format exactly: Caption: "his exact words" emoji — emoji OUTSIDE the closing quote, never inside
+- Script ends immediately after his kill line. She does NOT respond. No seen text. No wrap-up.
 
-HIS CHARACTER:
-- Evasive, never explanatory. Drops crumbs, never the full picture.
-- Sounds like he is flirting and bragging — not confessing.
+STICKINESS RULES — this is the most important section:
+- Every image must end on an unresolved thread. The viewer must feel like they are missing something if they stop.
+- Use the CURIOSITY GAP: each image reveals just enough to make the next image feel necessary. Never give the full picture too early.
+- His lines should feel charming but slightly off — not suspicious enough to call out, just enough to make you tilt your head.
+- She must react with just enough energy to keep him talking — never too eager, never cold. She's playing him without looking like it.
+- The meme placements are your biggest weapons. Drop them RIGHT after his most unhinged line so the audience is laughing AND disturbed at the same time.
+- The tension must BUILD across every image. Image 3 should feel slightly more charged than Image 2. Image 6 should feel almost unbearable.
+- The kill line must feel like a gut punch delivered in a monotone. The audience already knows — he just confirms it without knowing he did.
 
-HER CHARACTER:
-- Innocent and curious. Never interrogating.
-- Never references a girlfriend until AFTER he mentions someone himself.
-- Occasionally says "sir" alone on its own line when genuinely shocked.
+CONTENT RULES — never break these:
+- She uses natural emojis throughout: 😏 👀 😭 😅 😇 💀 😐 🙃 etc
+- He uses casual lowercase texting: lmaoo, nah, ight, idk, wbu, fr, honestly, ngl, kinda, yeah, bet, lowkey, deadass
+- HE brings up the girlfriend himself — she NEVER references a girlfriend before he does.
+- She NEVER confronts him. NEVER says "so you're cheating". NEVER interrogates.
+- He incriminates himself through comfort, ego, and oversharing — not through pressure.
+- Scenarios must be universal — understood by anyone worldwide. No specific city names.
+
+THE SLOW DRIP STRUCTURE:
+- Image 1: story reply hook + her casual supportive reply — sets the stakes immediately
+- Image 2: she slides in, normal opener, he responds interested — audience thinks "okay normal so far"
+- Images 3–4: small talk, he's charming, no red flags yet — but something feels slightly off
+- Image 5: first slip. He says something that doesn't add up. First meme goes here.
+- Images 6–8: each of her innocent questions pulls out one more layer. He keeps going deeper without realizing it.
+- Final image: the kill line. One casual line that confirms everything. Hard cut.
 
 THE KILL LINE:
-- His final 1 to 3 lines. Casual. Devastating. Like it means nothing to him.
-- Always shows what SHE (the unaware partner) believes while completely clueless.
-- No meme. Hard cut after it.
+- One to two short lines. Completely casual. Like it means nothing to him.
+- Lowercase, unbothered, the way guys text when they think they're safe.
+- The audience connects the dots — he never openly confesses.
+- It must be specific enough to be damning, vague enough to still sound innocent to him.
+- Cut immediately. Nothing after it. Script is over.
 
-Platform: ${platform}
-Story reply: "${storyReply || 'test him pls something feels off 😐'}"
+Platform context: ${platform}
+Story reply: "${storyReply || defaultHook}"
 
-Output the raw script only. Start with **IMAGE 1**. No other text.`;
+Generate the script now. Start with **IMAGE 1**. Raw script only. Nothing else.`;
 }
 
 async function smGenerate() {
