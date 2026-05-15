@@ -5,8 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DM Studio — IG Conversation Creator</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/umd/ffmpeg.js"></script>
-<script src="https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/index.js"></script>
 <script src="auddio.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
@@ -1737,8 +1735,7 @@ function updateSlideshowUI() {
 async function generateSlideshow() {
   const hasContent = unifiedSlides.some(s => s.type === 'image' || (s.type === 'dm' && s.selected));
   if (!hasContent) { alert('Please select at least one item or add an image slide'); return; }
-  const isAndroidDevice = /Android/i.test(navigator.userAgent);
-  const captureScale = isAndroidDevice ? 2 : 4;
+  const captureScale = 2;
 
   closeSlideshowModal();
 
@@ -1801,17 +1798,14 @@ async function generateSlideshow() {
 
     Object.values(domMap).forEach(({el}) => { el.style.display = ''; });
     if (frames.length === 0) { document.getElementById('loading').classList.remove('show'); return; }
-    document.getElementById('loading-progress').textContent = 'Encoding video…';
-    // If stash item was unlocked after selection, pick up the File object now
     if (!slideshowAudio.file && slideshowAudio.blobUrl) {
       const unlocked = audioStash.find(a => a.blobUrl === slideshowAudio.blobUrl && a.file);
       if (unlocked) { slideshowAudio.file = unlocked.file; slideshowAudio.blobUrl = null; }
     }
     const aFile  = slideshowAudio.file;
-    const aUrl   = slideshowAudio.blobUrl || null;
     const aStart = parseFloat(document.getElementById('audio-start').value) || 0;
     const aEnd   = parseFloat(document.getElementById('audio-end').value)   || 0;
-    await createVideoFromFrames(frames, durations, aFile, aStart, aEnd, aUrl);
+    await sendToServer(frames, durations, aFile, aStart, aEnd);
 
   } catch (err) {
     Object.values(domMap).forEach(({el}) => { el.style.display = ''; });
@@ -2150,250 +2144,52 @@ function saveImgEdit() {
   renderUnifiedList();
 }
 
-// Try every available strategy to load audio bytes.
-// Returns ArrayBuffer or null.
-async function loadAudioBytes(audioFile, audioUrl) {
-  if (audioFile) {
-    try { return await audioFile.arrayBuffer(); }
-    catch(e) { console.warn('audioFile.arrayBuffer() failed:', e); }
-  }
-  if (audioUrl) {
-    try {
-      const r = await fetch(audioUrl);
-      if (r.ok) return await r.arrayBuffer();
-    } catch(e) { /* file:// blocks fetch */ }
-    try {
-      return await new Promise((res, rej) => {
-        const xhr = new XMLHttpRequest();
-        xhr.open('GET', audioUrl, true);
-        xhr.responseType = 'arraybuffer';
-        xhr.onload = () => {
-          if ((xhr.status === 200 || xhr.status === 0) && xhr.response && xhr.response.byteLength > 0) {
-            res(xhr.response);
-          } else rej(new Error('xhr status ' + xhr.status));
-        };
-        xhr.onerror = () => rej(new Error('xhr error'));
-        xhr.send();
-      });
-    } catch(e) { /* XHR also blocked on file:// without --allow-file-access-from-files */ }
-  }
-  return null;
+function _arrayBufToBase64(buf) {
+  let b = '', bytes = new Uint8Array(buf), n = bytes.length;
+  for (let i = 0; i < n; i += 8192) b += String.fromCharCode(...bytes.subarray(i, Math.min(i + 8192, n)));
+  return btoa(b);
 }
 
-function createVideoFromFrames(frames, durations, audioFile, audioStart, audioEnd, audioUrl) {
-  return new Promise(async (resolve) => {
-    // ══════════════════════════════════════════════════════════════════
-    // ── 1) AUDIO: try to obtain ArrayBuffer first (most reliable). ──
-    //    If we can't, fall back to <audio>+captureStream. The bytes path
-    //    works on http(s):// and on file:// after Unlock. The captureStream
-    //    path may produce silence on Chrome+file:// because tracks are
-    //    flagged "isolated" — surface a warning if that's our only option.
-    // ══════════════════════════════════════════════════════════════════
-    let audioCtx = null, audioStream = null, _audioEl = null;
-    let startAudio = null;   // called RIGHT AFTER mediaRecorder.start() to keep audio sample-aligned with recording
+async function sendToServer(frames, durations, audioFile, audioStart, audioEnd) {
+  document.getElementById('loading-progress').textContent = 'Preparing frames…';
 
-    if (audioFile || audioUrl) {
-      const bytes = await loadAudioBytes(audioFile, audioUrl);
+  const frameData = frames.map((canvas, i) => ({
+    data: canvas.toDataURL('image/jpeg', 0.85),
+    duration: durations[i]
+  }));
 
-      if (bytes) {
-        // ── BufferSource path — sample-perfect, works on every origin ──
-        try {
-          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-          const audioBuf = await audioCtx.decodeAudioData(bytes);
-          const dest = audioCtx.createMediaStreamDestination();
-          audioStream = dest.stream;
-          startAudio = () => {
-            const src = audioCtx.createBufferSource();
-            src.buffer = audioBuf;
-            src.connect(dest);
-            const aS = Math.max(0, audioStart || 0);
-            const aE = (audioEnd > 0) ? Math.min(audioEnd, audioBuf.duration) : audioBuf.duration;
-            src.start(0, aS, Math.max(0, aE - aS));
-          };
-        } catch(err) {
-          console.warn('decodeAudioData failed:', err);
-          if (audioCtx) { try { audioCtx.close(); } catch(e){} }
-          audioCtx = null; audioStream = null; startAudio = null;
-        }
-      } else if (audioUrl) {
-        // ── Last-resort path: <audio> element + captureStream ──
-        // WARNING: on Chrome+file:// the captured tracks are "isolated" and
-        // produce silence in the recording even though playback is audible.
-        // To get reliable audio: run via start.command (http://localhost) or
-        // click "Enable Stash Audio for Video" to load files via the picker.
-        console.warn('Could not load audio bytes — using <audio>+captureStream fallback. On file://, this may record silence. Run via start.command for reliable audio.');
-        try {
-          _audioEl = new Audio();
-          _audioEl.src = audioUrl;
-          _audioEl.preload = 'auto';
-          document.body.appendChild(_audioEl);
-
-          await new Promise((res) => {
-            let done = false;
-            const finish = () => { if (!done) { done = true; res(); } };
-            _audioEl.addEventListener('canplay', finish, { once: true });
-            _audioEl.addEventListener('loadeddata', finish, { once: true });
-            _audioEl.addEventListener('error', finish, { once: true });
-            setTimeout(finish, 4000);
-            _audioEl.load();
-          });
-
-          const aS = Math.max(0, audioStart || 0);
-          _audioEl.currentTime = aS;
-          if (audioEnd > 0) {
-            _audioEl.addEventListener('timeupdate', () => {
-              if (_audioEl.currentTime >= audioEnd) _audioEl.pause();
-            });
-          }
-
-          // captureStream first — taps the element's native playback pipeline.
-          // (createMediaElementSource silently outputs SILENCE for CORS-tainted
-          // resources, so we never use it as the primary route.)
-          const captureMethod = _audioEl.captureStream || _audioEl.mozCaptureStream;
-          if (captureMethod) {
-            audioStream = captureMethod.call(_audioEl);
-          }
-
-          startAudio = async () => {
-            try { await _audioEl.play(); } catch(pe) { _audioEl.play().catch(() => {}); }
-          };
-
-          // If captureStream is unavailable (very old browsers), try
-          // MediaElementSource as a last-ditch route — produces real audio
-          // on same-origin http(s):// pages.
-          if (!audioStream || audioStream.getAudioTracks().length === 0) {
-            try {
-              audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-              const sourceNode = audioCtx.createMediaElementSource(_audioEl);
-              const dest = audioCtx.createMediaStreamDestination();
-              sourceNode.connect(dest);
-              sourceNode.connect(audioCtx.destination);
-              audioStream = dest.stream;
-            } catch(e) { console.warn('MediaElementSource fallback failed:', e); }
-          }
-        } catch(err) {
-          console.warn('captureStream setup failed:', err);
-          if (_audioEl) {
-            try { document.body.removeChild(_audioEl); } catch(e){}
-            _audioEl = null;
-          }
-          audioStream = null;
-          startAudio = null;
-        }
-      }
-    }
-
-    const fps = 30;
-
-    // Use native capture width — no downscaling, pure quality.
-    // Height = width × 16/9 so the canvas is always 9:16 (TikTok).
-    // Content is shorter than the canvas on early frames → black bars shrink
-    // as each new message appears, giving the organic "growing" reveal effect.
-    const videoW = frames[0].width;                     // e.g. 390×4 = 1560 px
-    const videoH = Math.round(videoW * 16 / 9);         // e.g. 2773 px
-
-    const videoCanvas = document.createElement('canvas');
-    videoCanvas.width  = videoW;
-    videoCanvas.height = videoH;
-    const ctx = videoCanvas.getContext('2d');
-    ctx.imageSmoothingEnabled = true;
-    ctx.imageSmoothingQuality = 'high';
-
-    const bgColor = document.getElementById('c-bg').value;
-
-    let currentIdx = 0;
-    let frameStart  = null;
-    let rafId       = null;
-
-    function drawCurrent() {
-      const frame = frames[currentIdx];
-      ctx.fillStyle = '#000000';
-      ctx.fillRect(0, 0, videoW, videoH);
-      // Scale-to-fit: never overflow the canvas regardless of frame dimensions.
-      // DM frames (width == videoW, height <= videoH) scale at 1.0 — same as before.
-      // Meme frames that are the wrong size (e.g. 2× too large) get scaled down
-      // instead of being cropped, eliminating the "zoomed in" appearance on Android.
-      const sf = Math.min(videoW / frame.width, videoH / frame.height);
-      const dw = Math.round(frame.width  * sf);
-      const dh = Math.round(frame.height * sf);
-      const dx = Math.round((videoW - dw) / 2);
-      const dy = Math.round((videoH - dh) / 2);
-      ctx.drawImage(frame, dx, dy, dw, dh);
-    }
-
-    const videoStream = videoCanvas.captureStream(fps);
-    const tracks = [...videoStream.getVideoTracks()];
-    if (audioStream) tracks.push(...audioStream.getAudioTracks());
-    const stream = new MediaStream(tracks);
-
-    const mimeTypes = [
-      'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
-      'video/mp4;codecs=avc1.42E01E',
-      'video/mp4',
-      'video/webm;codecs=vp9,opus',
-      'video/webm;codecs=vp8,opus',
-      'video/webm;codecs=vp9',
-      'video/webm;codecs=vp8',
-      'video/webm'
-    ];
-    const mimeType = mimeTypes.find(mt => {
-      try { return MediaRecorder.isTypeSupported(mt); } catch(e) { return false; }
-    }) || 'video/webm';
-    const ext = mimeType.startsWith('video/mp4') ? 'mp4' : 'webm';
-
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    let mediaRecorder;
-    try {
-      mediaRecorder = new MediaRecorder(stream, {
-        mimeType,
-        videoBitsPerSecond: isAndroid ? 8_000_000 : 25_000_000
-      });
-    } catch(e) {
-      mediaRecorder = new MediaRecorder(stream);
-    }
-    const chunks = [];
-    mediaRecorder.ondataavailable = e => { if (e.data.size > 0) chunks.push(e.data); };
-
-    mediaRecorder.onstop = () => {
-      cancelAnimationFrame(rafId);
-      if (audioCtx) { try { audioCtx.close(); } catch(e){} }
-      if (_audioEl) { _audioEl.pause(); try { document.body.removeChild(_audioEl); } catch(e){} }
-      const blob = new Blob(chunks, { type: mimeType });
-      const url  = URL.createObjectURL(blob);
-      const a    = document.createElement('a');
-      a.href     = url;
-      a.download = `ig-dm-slideshow.${ext}`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(() => URL.revokeObjectURL(url), 3000);
-      resolve();
+  let audioData = null;
+  if (audioFile) {
+    document.getElementById('loading-progress').textContent = 'Preparing audio…';
+    const buf = await audioFile.arrayBuffer();
+    audioData = {
+      data: `data:${audioFile.type || 'audio/mpeg'};base64,${_arrayBufToBase64(buf)}`,
+      mime: audioFile.type || 'audio/mpeg',
+      start: audioStart || 0,
+      end: audioEnd || 0
     };
+  }
 
-    // RAF loop keeps the canvas stream alive between frame transitions.
-    function loop(ts) {
-      if (!frameStart) frameStart = ts;
-      if (ts - frameStart >= (durations[currentIdx] || 0.8) * 1000) {
-        currentIdx++;
-        if (currentIdx >= frames.length) {
-          mediaRecorder.stop();
-          return;
-        }
-        frameStart = ts;
-      }
-      drawCurrent();
-      rafId = requestAnimationFrame(loop);
-    }
+  document.getElementById('loading-progress').textContent = 'Uploading to server…';
 
-    drawCurrent();
-    mediaRecorder.start(100);  // flush encoded data every 100 ms
-    // Kick off audio AT recording start so the first samples land in the
-    // recording. (Previously audio started during setup, losing ~100ms.)
-    if (startAudio) {
-      try { await startAudio(); } catch(e) { console.warn('startAudio failed:', e); }
-    }
-    rafId = requestAnimationFrame(loop);
+  const resp = await fetch('/api/render-video', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ frames: frameData, audio: audioData })
   });
+
+  if (!resp.ok) {
+    const txt = await resp.text().catch(() => 'unknown error');
+    throw new Error('Server error: ' + txt);
+  }
+
+  document.getElementById('loading-progress').textContent = 'Downloading video…';
+  const blob = await resp.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'ig-dm-slideshow.mp4';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 3000);
 }
 
 // ══════════════════════════════════════════════════════════════════════
