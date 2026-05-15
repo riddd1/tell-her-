@@ -1924,6 +1924,53 @@ function updateSlideshowUI() {
   document.getElementById('slideshow-generate-btn').disabled = !hasContent;
 }
 
+// Captures the root element by hiding data-URI/blob images, running html2canvas on
+// text+bubbles only (which works on all platforms), then drawing images back on top.
+async function captureRootFrame(root, scale, bgColor) {
+  const rootRect = root.getBoundingClientRect();
+  const imgData = [];
+  root.querySelectorAll('img').forEach(img => {
+    const src = img.src;
+    if (!src || (!src.startsWith('data:') && !src.startsWith('blob:'))) return;
+    const rect = img.getBoundingClientRect();
+    if (rect.width < 1 || rect.height < 1) return;
+    imgData.push({
+      img,
+      src,
+      x: Math.round((rect.left - rootRect.left) * scale),
+      y: Math.round((rect.top - rootRect.top) * scale),
+      w: Math.round(rect.width * scale),
+      h: Math.round(rect.height * scale),
+    });
+    img.style.visibility = 'hidden';
+  });
+
+  let canvas;
+  try {
+    canvas = await html2canvas(root, { scale, allowTaint:true, backgroundColor:bgColor, logging:false });
+  } finally {
+    imgData.forEach(d => { d.img.style.visibility = ''; });
+  }
+
+  if (!imgData.length) return canvas;
+  const ctx = canvas.getContext('2d');
+  await Promise.all(imgData.map(d => new Promise(resolve => {
+    const im = new Image();
+    im.onload = () => {
+      // object-fit: cover
+      const scaleW = d.w / im.naturalWidth, scaleH = d.h / im.naturalHeight;
+      const s = Math.max(scaleW, scaleH);
+      const srcW = d.w / s, srcH = d.h / s;
+      const srcX = (im.naturalWidth - srcW) / 2, srcY = (im.naturalHeight - srcH) / 2;
+      ctx.drawImage(im, srcX, srcY, srcW, srcH, d.x, d.y, d.w, d.h);
+      resolve();
+    };
+    im.onerror = resolve;
+    im.src = d.src;
+  })));
+  return canvas;
+}
+
 async function generateSlideshow() {
   const hasContent = unifiedSlides.some(s => s.type === 'image' || (s.type === 'dm' && s.selected));
   if (!hasContent) { alert('Please select at least one item or add an image slide'); return; }
@@ -1949,33 +1996,8 @@ async function generateSlideshow() {
   let frameCount = 0;
 
   document.getElementById('loading').classList.add('show');
-  document.getElementById('loading-progress').textContent = 'Preloading images…';
+  document.getElementById('loading-progress').textContent = 'Preparing…';
   Object.values(domMap).forEach(({el}) => { el.style.display = 'none'; });
-
-  // Convert all img srcs to blob URLs — iOS can't handle large data URIs in html2canvas
-  const _origImgSrcs = new Map();
-  const _blobUrls = [];
-  await Promise.all(Array.from(root.querySelectorAll('img[src]')).map(async img => {
-    const src = img.src;
-    if (!src) return;
-    try {
-      let blob;
-      if (src.startsWith('data:')) {
-        const [header, b64] = src.split(',');
-        const mime = header.match(/:(.*?);/)[1];
-        const bin = atob(b64);
-        const arr = new Uint8Array(bin.length);
-        for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
-        blob = new Blob([arr], {type: mime});
-      } else {
-        blob = await fetch(src).then(r => r.blob());
-      }
-      const blobUrl = URL.createObjectURL(blob);
-      _blobUrls.push(blobUrl);
-      _origImgSrcs.set(img, img.getAttribute('src'));
-      img.src = blobUrl;
-    } catch {}
-  }));
 
   try {
     const batchVisible = []; // ids of currently shown DM elements
@@ -2008,14 +2030,12 @@ async function generateSlideshow() {
         frameCount++;
         document.getElementById('loading-progress').textContent = `Capturing frame ${frameCount} / ${totalFrames}…`;
         await new Promise(r => setTimeout(r, 30));
-        const canvas = await html2canvas(root, {scale:captureScale, allowTaint:true, backgroundColor:bgColor, logging:false});
+        const canvas = await captureRootFrame(root, captureScale, bgColor);
         frames.push(canvas); durations.push(item.timing || 0.8);
       }
     }
 
     Object.values(domMap).forEach(({el}) => { el.style.display = ''; });
-    _origImgSrcs.forEach((src, img) => { img.src = src; });
-    _blobUrls.forEach(u => URL.revokeObjectURL(u));
     if (frames.length === 0) { document.getElementById('loading').classList.remove('show'); return; }
     document.getElementById('loading-progress').textContent = 'Encoding video…';
     // If stash item was unlocked after selection, pick up the File object now
@@ -2031,10 +2051,8 @@ async function generateSlideshow() {
 
   } catch (err) {
     Object.values(domMap).forEach(({el}) => { el.style.display = ''; });
-    _origImgSrcs.forEach((src, img) => { img.src = src; });
-    _blobUrls.forEach(u => URL.revokeObjectURL(u));
     console.error(err);
-    alert('Failed to generate slideshow. Please try Chrome or Edge.');
+    alert('Failed to generate slideshow. Please try again.');
   }
 
   document.getElementById('loading').classList.remove('show');
@@ -2557,8 +2575,8 @@ function createVideoFromFrames(frames, durations, audioFile, audioStart, audioEn
     ];
     const mimeType = mimeTypes.find(mt => {
       try { return MediaRecorder.isTypeSupported(mt); } catch(e) { return false; }
-    }) || 'video/webm';
-    const ext = mimeType.startsWith('video/mp4') ? 'mp4' : 'webm';
+    }) || 'video/mp4';
+    const ext = 'mp4';
 
     const isAndroid = /Android/i.test(navigator.userAgent);
     let mediaRecorder;
