@@ -1952,18 +1952,28 @@ async function generateSlideshow() {
   document.getElementById('loading-progress').textContent = 'Preloading images…';
   Object.values(domMap).forEach(({el}) => { el.style.display = 'none'; });
 
-  // Convert all URL-based images to data URIs once — stops html2canvas re-fetching on every frame
+  // Convert all img srcs to blob URLs — iOS can't handle large data URIs in html2canvas
   const _origImgSrcs = new Map();
+  const _blobUrls = [];
   await Promise.all(Array.from(root.querySelectorAll('img[src]')).map(async img => {
     const src = img.src;
-    if (!src || src.startsWith('data:') || src.startsWith('blob:')) return;
+    if (!src) return;
     try {
-      const blob = await fetch(src).then(r => r.blob());
-      const dataUrl = await new Promise(resolve => {
-        const fr = new FileReader(); fr.onload = () => resolve(fr.result); fr.readAsDataURL(blob);
-      });
+      let blob;
+      if (src.startsWith('data:')) {
+        const [header, b64] = src.split(',');
+        const mime = header.match(/:(.*?);/)[1];
+        const bin = atob(b64);
+        const arr = new Uint8Array(bin.length);
+        for (let i = 0; i < bin.length; i++) arr[i] = bin.charCodeAt(i);
+        blob = new Blob([arr], {type: mime});
+      } else {
+        blob = await fetch(src).then(r => r.blob());
+      }
+      const blobUrl = URL.createObjectURL(blob);
+      _blobUrls.push(blobUrl);
       _origImgSrcs.set(img, img.getAttribute('src'));
-      img.src = dataUrl;
+      img.src = blobUrl;
     } catch {}
   }));
 
@@ -2005,6 +2015,7 @@ async function generateSlideshow() {
 
     Object.values(domMap).forEach(({el}) => { el.style.display = ''; });
     _origImgSrcs.forEach((src, img) => { img.src = src; });
+    _blobUrls.forEach(u => URL.revokeObjectURL(u));
     if (frames.length === 0) { document.getElementById('loading').classList.remove('show'); return; }
     document.getElementById('loading-progress').textContent = 'Encoding video…';
     // If stash item was unlocked after selection, pick up the File object now
@@ -2021,6 +2032,7 @@ async function generateSlideshow() {
   } catch (err) {
     Object.values(domMap).forEach(({el}) => { el.style.display = ''; });
     _origImgSrcs.forEach((src, img) => { img.src = src; });
+    _blobUrls.forEach(u => URL.revokeObjectURL(u));
     console.error(err);
     alert('Failed to generate slideshow. Please try Chrome or Edge.');
   }
