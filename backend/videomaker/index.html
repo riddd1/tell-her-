@@ -1928,7 +1928,8 @@ async function generateSlideshow() {
   const hasContent = unifiedSlides.some(s => s.type === 'image' || (s.type === 'dm' && s.selected));
   if (!hasContent) { alert('Please select at least one item or add an image slide'); return; }
   const isAndroidDevice = /Android/i.test(navigator.userAgent);
-  const captureScale = isAndroidDevice ? 2 : 3;
+  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+  const captureScale = (isAndroidDevice || isIOS) ? 2 : 3;
 
   closeSlideshowModal();
 
