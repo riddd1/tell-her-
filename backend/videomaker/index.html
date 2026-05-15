@@ -2749,7 +2749,7 @@ async function renderMemeStash() {
   // Meme library images with category labels
   Object.entries(_memeLibrary || {}).forEach(([cat, urls]) => {
     urls.forEach(url => {
-      html += `<div class="meme-stash-card">
+      html += `<div class="meme-stash-card" data-src="${url.replace(/"/g,'&quot;')}" onclick="selectMemeFromLibrary(this.dataset.src)" style="cursor:pointer">
         <img src="${url}" alt="" loading="lazy">
         <div class="meme-stash-card-name meme-stash-cat-label">${cat}</div>
       </div>`;
@@ -2943,7 +2943,7 @@ function renderSmpGrid() {
     return;
   }
   grid.innerHTML = images.map(src =>
-    `<div class="smp-card" onclick="selectMemeFromLibrary(${JSON.stringify(src)})"><img src="${src}" alt="" loading="lazy"></div>`
+    `<div class="smp-card" data-src="${src.replace(/"/g,'&quot;')}" onclick="selectMemeFromLibrary(this.dataset.src)"><img src="${src}" alt="" loading="lazy"></div>`
   ).join('');
 }
 
