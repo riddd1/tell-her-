@@ -2731,36 +2731,19 @@ function setMemeCat(id, e) {
   renderMemeStash();
 }
 
-async function renderMemeStash() {
+function renderMemeStash() {
   const grid = document.getElementById('meme-stash-grid');
-  if (!_memeLibrary) await loadMemeLibrary();
-
-  let html = '';
-
-  // User-uploaded memes
-  memeStash.forEach(m => {
-    html += `<div class="meme-stash-card">
-      <img src="${m.src}" alt="">
-      <div class="meme-stash-card-name">${m.name.replace(/</g,'&lt;')}</div>
-      <button class="meme-stash-card-del" onclick="removeMemeFromStash(${m.id})">✕</button>
-    </div>`;
-  });
-
-  // Meme library images with category labels
-  Object.entries(_memeLibrary || {}).forEach(([cat, urls]) => {
-    urls.forEach(url => {
-      html += `<div class="meme-stash-card" data-src="${url.replace(/"/g,'&quot;')}" onclick="selectMemeFromLibrary(this.dataset.src)" style="cursor:pointer">
-        <img src="${url}" alt="" loading="lazy">
-        <div class="meme-stash-card-name meme-stash-cat-label">${cat}</div>
-      </div>`;
-    });
-  });
-
-  if (!html) {
+  if (!memeStash.length) {
     grid.innerHTML = '<div class="meme-stash-empty">No memes yet.<br>Click <b>+ Add Memes</b> to upload.</div>';
     return;
   }
-  grid.innerHTML = html;
+  grid.innerHTML = memeStash.map(m =>
+    `<div class="meme-stash-card">
+      <img src="${m.src}" alt="">
+      <div class="meme-stash-card-name">${m.name.replace(/</g,'&lt;')}</div>
+      <button class="meme-stash-card-del" onclick="removeMemeFromStash(${m.id})">✕</button>
+    </div>`
+  ).join('');
 }
 
 // ── AUDIO STASH ──
