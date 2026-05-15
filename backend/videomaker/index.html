@@ -2369,10 +2369,6 @@ async function loadAudioBytes(audioFile, audioUrl) {
 
 function createVideoFromFrames(frames, durations, audioFile, audioStart, audioEnd, audioUrl) {
   return new Promise(async (resolve) => {
-    // iOS Safari: audio capture APIs are broken — skip audio, generate silent video
-    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-    if (isIOS) { audioFile = null; audioUrl = null; }
-
     // ══════════════════════════════════════════════════════════════════
     // ── 1) AUDIO: try to obtain ArrayBuffer first (most reliable). ──
     //    If we can't, fall back to <audio>+captureStream. The bytes path
@@ -2390,6 +2386,7 @@ function createVideoFromFrames(frames, durations, audioFile, audioStart, audioEn
         // ── BufferSource path — sample-perfect, works on every origin ──
         try {
           audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          if (audioCtx.state === 'suspended') await audioCtx.resume();
           const audioBuf = await audioCtx.decodeAudioData(bytes);
           const dest = audioCtx.createMediaStreamDestination();
           audioStream = dest.stream;
@@ -2530,8 +2527,8 @@ function createVideoFromFrames(frames, durations, audioFile, audioStart, audioEn
     ];
     const mimeType = mimeTypes.find(mt => {
       try { return MediaRecorder.isTypeSupported(mt); } catch(e) { return false; }
-    }) || 'video/webm';
-    const ext = mimeType.startsWith('video/mp4') ? 'mp4' : 'webm';
+    }) || 'video/mp4';
+    const ext = 'mp4';
 
     const isAndroid = /Android/i.test(navigator.userAgent);
     let mediaRecorder;
