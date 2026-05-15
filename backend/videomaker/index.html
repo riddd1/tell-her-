@@ -507,6 +507,7 @@ button,input,select,textarea{transition-property:background,border-color,color,b
 .meme-stash-card:hover{border-color:rgba(139,92,246,0.45);background:rgba(139,92,246,0.08);transform:scale(1.02)}
 .meme-stash-card img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
 .meme-stash-card-name{font-size:9px;color:rgba(255,255,255,0.38);padding:4px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.meme-stash-cat-label{color:rgba(196,181,253,0.7);font-weight:700;text-transform:capitalize}
 .meme-stash-card-del{position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.65);border:none;color:rgba(255,120,120,0.85);border-radius:5px;width:18px;height:18px;font-size:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s}
 .meme-stash-card:hover .meme-stash-card-del{opacity:1}
 .meme-stash-empty{font-size:11px;color:rgba(255,255,255,0.22);text-align:center;padding:28px 12px;line-height:1.85;grid-column:1/-1}
@@ -2730,22 +2731,36 @@ function setMemeCat(id, e) {
   renderMemeStash();
 }
 
-function renderMemeStash() {
+async function renderMemeStash() {
   const grid = document.getElementById('meme-stash-grid');
-  if (!memeStash.length) {
+  if (!_memeLibrary) await loadMemeLibrary();
+
+  let html = '';
+
+  // User-uploaded memes
+  memeStash.forEach(m => {
+    html += `<div class="meme-stash-card">
+      <img src="${m.src}" alt="">
+      <div class="meme-stash-card-name">${m.name.replace(/</g,'&lt;')}</div>
+      <button class="meme-stash-card-del" onclick="removeMemeFromStash(${m.id})">✕</button>
+    </div>`;
+  });
+
+  // Meme library images with category labels
+  Object.entries(_memeLibrary || {}).forEach(([cat, urls]) => {
+    urls.forEach(url => {
+      html += `<div class="meme-stash-card">
+        <img src="${url}" alt="" loading="lazy">
+        <div class="meme-stash-card-name meme-stash-cat-label">${cat}</div>
+      </div>`;
+    });
+  });
+
+  if (!html) {
     grid.innerHTML = '<div class="meme-stash-empty">No memes yet.<br>Click <b>+ Add Memes</b> to upload.</div>';
     return;
   }
-  grid.innerHTML = memeStash.map(m => {
-    const cat = m.cat || 'meme';
-    return `
-    <div class="meme-stash-card">
-      <img src="${m.src}" alt="">
-      <div class="meme-stash-card-name">${m.name.replace(/</g,'&lt;')}</div>
-      <button class="meme-cat-badge ${cat}" onclick="setMemeCat(${m.id},event)">${cat === 'hook' ? 'hook' : 'meme'}</button>
-      <button class="meme-stash-card-del" onclick="removeMemeFromStash(${m.id})">✕</button>
-    </div>`;
-  }).join('');
+  grid.innerHTML = html;
 }
 
 // ── AUDIO STASH ──
@@ -2890,7 +2905,7 @@ function buildSmpTabs() {
   const tabs = document.getElementById('smp-tabs');
   const cats = ['ALL', ...Object.keys(_memeLibrary).sort()];
   tabs.innerHTML = cats.map(c =>
-    `<button class="smp-tab${c === _smpFilter ? ' active' : ''}" onclick="setSmpFilter(${JSON.stringify(c)})">${c}</button>`
+    `<button class="smp-tab${c === _smpFilter ? ' active' : ''}" data-cat="${c.replace(/"/g,'&quot;')}" onclick="setSmpFilter(this.dataset.cat)">${c}</button>`
   ).join('');
 }
 
