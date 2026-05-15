@@ -4,6 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const crypto = require('crypto');
 const path = require('path');
+const fs = require('fs');
 const cloudinary = require('cloudinary').v2;
 const { Pool } = require('pg');
 const { Resend } = require('resend'); 
@@ -902,6 +903,22 @@ app.get('/creatordash', (req, res) => {
 
 app.get('/videomaker', (req, res) => {
   res.sendFile(path.join(__dirname, 'videomaker', 'index.html'));
+});
+
+app.get('/api/meme-library', (req, res) => {
+  const libPath = path.join(__dirname, 'videomaker', 'meme-library');
+  try {
+    const categories = fs.readdirSync(libPath).filter(f => fs.statSync(path.join(libPath, f)).isDirectory());
+    const result = {};
+    categories.forEach(cat => {
+      result[cat] = fs.readdirSync(path.join(libPath, cat))
+        .filter(f => /\.(jpg|jpeg|png|gif|webp)$/i.test(f))
+        .map(f => `/videomaker/meme-library/${encodeURIComponent(cat)}/${encodeURIComponent(f)}`);
+    });
+    res.json(result);
+  } catch (e) {
+    res.json({});
+  }
 });
 
 // ── Script Maker ──────────────────────────────────────

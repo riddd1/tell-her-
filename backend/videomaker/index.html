@@ -547,10 +547,9 @@ button,input,select,textarea{transition-property:background,border-color,color,b
 #stash-meme-picker.show{display:flex}
 .smp-box{background:#0e0e1c;border:1px solid rgba(139,92,246,0.22);border-radius:22px;padding:28px;width:min(720px,92vw);max-height:92vh;display:flex;flex-direction:column;gap:14px;box-shadow:0 28px 90px rgba(0,0,0,0.8)}
 .smp-title{font-size:15px;font-weight:800;color:#fff}
-.smp-tabs{display:flex;gap:6px}
-.smp-tab{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.45);border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;letter-spacing:.3px}
+.smp-tabs{display:flex;gap:6px;flex-wrap:wrap}
+.smp-tab{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.45);border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;letter-spacing:.3px;white-space:nowrap}
 .smp-tab.active{background:rgba(139,92,246,0.25);border-color:rgba(139,92,246,0.6);color:#c4b5fd}
-.smp-tab.hook-tab.active{background:rgba(236,72,153,0.2);border-color:rgba(236,72,153,0.55);color:#f9a8d4}
 .smp-grid{columns:3;column-gap:10px;overflow-y:auto;flex:1;min-height:0}
 .smp-card{break-inside:avoid;margin-bottom:10px;border-radius:12px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:all .16s;background:rgba(255,255,255,0.05)}
 .smp-card:hover{border-color:rgba(139,92,246,0.7);transform:scale(1.04);box-shadow:0 6px 20px rgba(139,92,246,0.3)}
@@ -2864,48 +2863,94 @@ function showMemeSourcePicker(msgIdx) {
   document.getElementById('meme-source-modal').classList.add('show');
 }
 
-function selectMemeSource(source) {
+async function selectMemeSource(source) {
   document.getElementById('meme-source-modal').classList.remove('show');
   if (source === 'file') {
     pendingMsgIdx = _pendingMemeTarget;
     document.getElementById('msg-file').click();
   } else {
-    openStashMemePicker();
+    await openStashMemePicker();
   }
 }
 
-let _smpFilter = 'meme';
+let _smpFilter = 'ALL';
+let _memeLibrary = null; // { categoryName: [url, ...], ... }
+
+async function loadMemeLibrary() {
+  if (_memeLibrary) return;
+  try {
+    const data = await fetch('/api/meme-library').then(r => r.json());
+    _memeLibrary = data;
+  } catch(e) {
+    _memeLibrary = {};
+  }
+}
+
+function buildSmpTabs() {
+  const tabs = document.getElementById('smp-tabs');
+  const cats = ['ALL', ...Object.keys(_memeLibrary).sort()];
+  tabs.innerHTML = cats.map(c =>
+    `<button class="smp-tab${c === _smpFilter ? ' active' : ''}" onclick="setSmpFilter(${JSON.stringify(c)})">${c}</button>`
+  ).join('');
+}
 
 function setSmpFilter(f) {
   _smpFilter = f;
-  ['meme','hook'].forEach(k => {
-    document.getElementById('smp-tab-'+k).classList.toggle('active', k === f);
+  document.querySelectorAll('#smp-tabs .smp-tab').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent === f);
   });
   renderSmpGrid();
 }
 
+function interleave(map) {
+  const lists = Object.values(map).map(a => [...a]);
+  const result = [];
+  let any = true;
+  while (any) {
+    any = false;
+    lists.forEach(list => {
+      if (list.length) { result.push(list.shift()); any = true; }
+    });
+  }
+  return result;
+}
+
 function renderSmpGrid() {
   const grid = document.getElementById('smp-grid');
-  const filtered = memeStash.filter(m => (m.cat || 'meme') === _smpFilter);
-  if (!filtered.length) {
-    const msg = memeStash.length ? `No <b>${_smpFilter}</b> images yet — tap a badge in the Stash tab to change category.` : 'Your stash is empty!<br>Add memes via the <b>Stash</b> tab first.';
-    grid.innerHTML = `<div class="smp-empty">${msg}</div>`;
+  let images;
+  if (_smpFilter === 'ALL') {
+    images = interleave(_memeLibrary);
+  } else {
+    images = _memeLibrary[_smpFilter] || [];
+  }
+  if (!images.length) {
+    grid.innerHTML = '<div class="smp-empty">No images in this category.</div>';
     return;
   }
-  grid.innerHTML = filtered.map(m =>
-    `<div class="smp-card${(m.cat||'meme')==='hook'?' hook-card':''}" onclick="selectMemeFromStash(${m.id})"><img src="${m.src}" alt=""></div>`
+  grid.innerHTML = images.map(src =>
+    `<div class="smp-card" onclick="selectMemeFromLibrary(${JSON.stringify(src)})"><img src="${src}" alt="" loading="lazy"></div>`
   ).join('');
 }
 
-function openStashMemePicker() {
-  _smpFilter = 'meme';
-  ['meme','hook'].forEach(k => document.getElementById('smp-tab-'+k).classList.toggle('active', k === 'meme'));
+async function openStashMemePicker() {
+  await loadMemeLibrary();
+  _smpFilter = 'ALL';
+  buildSmpTabs();
   renderSmpGrid();
   document.getElementById('stash-meme-picker').classList.add('show');
 }
 
 function closeStashMemePicker() {
   document.getElementById('stash-meme-picker').classList.remove('show');
+}
+
+function selectMemeFromLibrary(src) {
+  if (_pendingMemeTarget >= 0) {
+    messages[_pendingMemeTarget].img = src;
+    renderMsgList(); render(); syncBuilderToCode();
+  }
+  closeStashMemePicker();
+  _pendingMemeTarget = -1;
 }
 
 function selectMemeFromStash(id) {
@@ -3672,16 +3717,13 @@ function clearSmHistory() {
   </div>
 </div>
 
-<!-- STASH MEME PICKER -->
+<!-- MEME LIBRARY PICKER -->
 <div id="stash-meme-picker">
   <div class="smp-box">
-    <div class="smp-title">Pick from Meme Stash</div>
-    <div class="smp-tabs">
-      <button class="smp-tab active" id="smp-tab-meme" onclick="setSmpFilter('meme')">Memes</button>
-      <button class="smp-tab hook-tab" id="smp-tab-hook" onclick="setSmpFilter('hook')">Hooks</button>
-    </div>
+    <div class="smp-title">Pick from Meme Library</div>
+    <div class="smp-tabs" id="smp-tabs"></div>
     <div class="smp-grid" id="smp-grid">
-      <div class="smp-empty">Loading stash…</div>
+      <div class="smp-empty">Loading…</div>
     </div>
     <button class="smp-cancel" onclick="closeStashMemePicker()">Cancel</button>
   </div>
