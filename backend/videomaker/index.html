@@ -1928,7 +1928,7 @@ async function generateSlideshow() {
   const hasContent = unifiedSlides.some(s => s.type === 'image' || (s.type === 'dm' && s.selected));
   if (!hasContent) { alert('Please select at least one item or add an image slide'); return; }
   const isAndroidDevice = /Android/i.test(navigator.userAgent);
-  const captureScale = isAndroidDevice ? 2 : 4;
+  const captureScale = isAndroidDevice ? 2 : 3;
 
   closeSlideshowModal();
 
@@ -1948,7 +1948,23 @@ async function generateSlideshow() {
   let frameCount = 0;
 
   document.getElementById('loading').classList.add('show');
+  document.getElementById('loading-progress').textContent = 'Preloading images…';
   Object.values(domMap).forEach(({el}) => { el.style.display = 'none'; });
+
+  // Convert all URL-based images to data URIs once — stops html2canvas re-fetching on every frame
+  const _origImgSrcs = new Map();
+  await Promise.all(Array.from(root.querySelectorAll('img[src]')).map(async img => {
+    const src = img.src;
+    if (!src || src.startsWith('data:') || src.startsWith('blob:')) return;
+    try {
+      const blob = await fetch(src).then(r => r.blob());
+      const dataUrl = await new Promise(resolve => {
+        const fr = new FileReader(); fr.onload = () => resolve(fr.result); fr.readAsDataURL(blob);
+      });
+      _origImgSrcs.set(img, img.getAttribute('src'));
+      img.src = dataUrl;
+    } catch {}
+  }));
 
   try {
     const batchVisible = []; // ids of currently shown DM elements
@@ -1980,13 +1996,14 @@ async function generateSlideshow() {
         if (item.id === 'story') continue; // show story but don't give it its own frame — first message frame includes it
         frameCount++;
         document.getElementById('loading-progress').textContent = `Capturing frame ${frameCount} / ${totalFrames}…`;
-        await new Promise(r => setTimeout(r, 150));
-        const canvas = await html2canvas(root, {scale:captureScale, useCORS:true, allowTaint:true, backgroundColor:bgColor, logging:false});
+        await new Promise(r => setTimeout(r, 30));
+        const canvas = await html2canvas(root, {scale:captureScale, allowTaint:true, backgroundColor:bgColor, logging:false});
         frames.push(canvas); durations.push(item.timing || 0.8);
       }
     }
 
     Object.values(domMap).forEach(({el}) => { el.style.display = ''; });
+    _origImgSrcs.forEach((src, img) => { img.src = src; });
     if (frames.length === 0) { document.getElementById('loading').classList.remove('show'); return; }
     document.getElementById('loading-progress').textContent = 'Encoding video…';
     // If stash item was unlocked after selection, pick up the File object now
@@ -2002,6 +2019,7 @@ async function generateSlideshow() {
 
   } catch (err) {
     Object.values(domMap).forEach(({el}) => { el.style.display = ''; });
+    _origImgSrcs.forEach((src, img) => { img.src = src; });
     console.error(err);
     alert('Failed to generate slideshow. Please try Chrome or Edge.');
   }
