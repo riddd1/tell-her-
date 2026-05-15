@@ -2369,6 +2369,10 @@ async function loadAudioBytes(audioFile, audioUrl) {
 
 function createVideoFromFrames(frames, durations, audioFile, audioStart, audioEnd, audioUrl) {
   return new Promise(async (resolve) => {
+    // iOS Safari: audio capture APIs are broken — skip audio, generate silent video
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (isIOS) { audioFile = null; audioUrl = null; }
+
     // ══════════════════════════════════════════════════════════════════
     // ── 1) AUDIO: try to obtain ArrayBuffer first (most reliable). ──
     //    If we can't, fall back to <audio>+captureStream. The bytes path
