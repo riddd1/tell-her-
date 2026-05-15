@@ -2886,7 +2886,8 @@ async function loadMemeLibrary() {
 
 function buildSmpTabs() {
   const tabs = document.getElementById('smp-tabs');
-  const cats = ['ALL', ...Object.keys(_memeLibrary).sort()];
+  const rest = Object.keys(_memeLibrary).filter(k => k !== 'hook').sort();
+  const cats = ['ALL', 'hook', ...rest];
   tabs.innerHTML = cats.map(c =>
     `<button class="smp-tab${c === _smpFilter ? ' active' : ''}" data-cat="${c.replace(/"/g,'&quot;')}" onclick="setSmpFilter(this.dataset.cat)">${c}</button>`
   ).join('');
