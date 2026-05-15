@@ -507,7 +507,6 @@ button,input,select,textarea{transition-property:background,border-color,color,b
 .meme-stash-card:hover{border-color:rgba(139,92,246,0.45);background:rgba(139,92,246,0.08);transform:scale(1.02)}
 .meme-stash-card img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
 .meme-stash-card-name{font-size:9px;color:rgba(255,255,255,0.38);padding:4px 6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.meme-stash-cat-label{color:rgba(196,181,253,0.7);font-weight:700;text-transform:capitalize}
 .meme-stash-card-del{position:absolute;top:4px;right:4px;background:rgba(0,0,0,0.65);border:none;color:rgba(255,120,120,0.85);border-radius:5px;width:18px;height:18px;font-size:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s}
 .meme-stash-card:hover .meme-stash-card-del{opacity:1}
 .meme-stash-empty{font-size:11px;color:rgba(255,255,255,0.22);text-align:center;padding:28px 12px;line-height:1.85;grid-column:1/-1}
@@ -548,9 +547,10 @@ button,input,select,textarea{transition-property:background,border-color,color,b
 #stash-meme-picker.show{display:flex}
 .smp-box{background:#0e0e1c;border:1px solid rgba(139,92,246,0.22);border-radius:22px;padding:28px;width:min(720px,92vw);max-height:92vh;display:flex;flex-direction:column;gap:14px;box-shadow:0 28px 90px rgba(0,0,0,0.8)}
 .smp-title{font-size:15px;font-weight:800;color:#fff}
-.smp-tabs{display:flex;gap:6px;flex-wrap:wrap}
-.smp-tab{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.45);border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;letter-spacing:.3px;white-space:nowrap}
+.smp-tabs{display:flex;gap:6px}
+.smp-tab{background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);color:rgba(255,255,255,0.45);border-radius:8px;padding:6px 14px;font-size:11px;font-weight:700;cursor:pointer;transition:all .15s;letter-spacing:.3px}
 .smp-tab.active{background:rgba(139,92,246,0.25);border-color:rgba(139,92,246,0.6);color:#c4b5fd}
+.smp-tab.hook-tab.active{background:rgba(236,72,153,0.2);border-color:rgba(236,72,153,0.55);color:#f9a8d4}
 .smp-grid{columns:3;column-gap:10px;overflow-y:auto;flex:1;min-height:0}
 .smp-card{break-inside:avoid;margin-bottom:10px;border-radius:12px;overflow:hidden;cursor:pointer;border:2px solid transparent;transition:all .16s;background:rgba(255,255,255,0.05)}
 .smp-card:hover{border-color:rgba(139,92,246,0.7);transform:scale(1.04);box-shadow:0 6px 20px rgba(139,92,246,0.3)}
@@ -1924,59 +1924,11 @@ function updateSlideshowUI() {
   document.getElementById('slideshow-generate-btn').disabled = !hasContent;
 }
 
-// Captures the root element by hiding data-URI/blob images, running html2canvas on
-// text+bubbles only (which works on all platforms), then drawing images back on top.
-async function captureRootFrame(root, scale, bgColor) {
-  const rootRect = root.getBoundingClientRect();
-  const imgData = [];
-  root.querySelectorAll('img').forEach(img => {
-    const src = img.src;
-    if (!src || (!src.startsWith('data:') && !src.startsWith('blob:'))) return;
-    const rect = img.getBoundingClientRect();
-    if (rect.width < 1 || rect.height < 1) return;
-    imgData.push({
-      img,
-      src,
-      x: Math.round((rect.left - rootRect.left) * scale),
-      y: Math.round((rect.top - rootRect.top) * scale),
-      w: Math.round(rect.width * scale),
-      h: Math.round(rect.height * scale),
-    });
-    img.style.visibility = 'hidden';
-  });
-
-  let canvas;
-  try {
-    canvas = await html2canvas(root, { scale, allowTaint:true, backgroundColor:bgColor, logging:false });
-  } finally {
-    imgData.forEach(d => { d.img.style.visibility = ''; });
-  }
-
-  if (!imgData.length) return canvas;
-  const ctx = canvas.getContext('2d');
-  await Promise.all(imgData.map(d => new Promise(resolve => {
-    const im = new Image();
-    im.onload = () => {
-      // object-fit: cover
-      const scaleW = d.w / im.naturalWidth, scaleH = d.h / im.naturalHeight;
-      const s = Math.max(scaleW, scaleH);
-      const srcW = d.w / s, srcH = d.h / s;
-      const srcX = (im.naturalWidth - srcW) / 2, srcY = (im.naturalHeight - srcH) / 2;
-      ctx.drawImage(im, srcX, srcY, srcW, srcH, d.x, d.y, d.w, d.h);
-      resolve();
-    };
-    im.onerror = resolve;
-    im.src = d.src;
-  })));
-  return canvas;
-}
-
 async function generateSlideshow() {
   const hasContent = unifiedSlides.some(s => s.type === 'image' || (s.type === 'dm' && s.selected));
   if (!hasContent) { alert('Please select at least one item or add an image slide'); return; }
   const isAndroidDevice = /Android/i.test(navigator.userAgent);
-  const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-  const captureScale = (isAndroidDevice || isIOS) ? 2 : 3;
+  const captureScale = isAndroidDevice ? 2 : 4;
 
   closeSlideshowModal();
 
@@ -1996,7 +1948,6 @@ async function generateSlideshow() {
   let frameCount = 0;
 
   document.getElementById('loading').classList.add('show');
-  document.getElementById('loading-progress').textContent = 'Preparing…';
   Object.values(domMap).forEach(({el}) => { el.style.display = 'none'; });
 
   try {
@@ -2029,8 +1980,8 @@ async function generateSlideshow() {
         if (item.id === 'story') continue; // show story but don't give it its own frame — first message frame includes it
         frameCount++;
         document.getElementById('loading-progress').textContent = `Capturing frame ${frameCount} / ${totalFrames}…`;
-        await new Promise(r => setTimeout(r, 30));
-        const canvas = await captureRootFrame(root, captureScale, bgColor);
+        await new Promise(r => setTimeout(r, 150));
+        const canvas = await html2canvas(root, {scale:captureScale, useCORS:true, allowTaint:true, backgroundColor:bgColor, logging:false});
         frames.push(canvas); durations.push(item.timing || 0.8);
       }
     }
@@ -2052,7 +2003,7 @@ async function generateSlideshow() {
   } catch (err) {
     Object.values(domMap).forEach(({el}) => { el.style.display = ''; });
     console.error(err);
-    alert('Failed to generate slideshow. Please try again.');
+    alert('Failed to generate slideshow. Please try Chrome or Edge.');
   }
 
   document.getElementById('loading').classList.remove('show');
@@ -2575,8 +2526,8 @@ function createVideoFromFrames(frames, durations, audioFile, audioStart, audioEn
     ];
     const mimeType = mimeTypes.find(mt => {
       try { return MediaRecorder.isTypeSupported(mt); } catch(e) { return false; }
-    }) || 'video/mp4';
-    const ext = 'mp4';
+    }) || 'video/webm';
+    const ext = mimeType.startsWith('video/mp4') ? 'mp4' : 'webm';
 
     const isAndroid = /Android/i.test(navigator.userAgent);
     let mediaRecorder;
@@ -2786,13 +2737,16 @@ function renderMemeStash() {
     grid.innerHTML = '<div class="meme-stash-empty">No memes yet.<br>Click <b>+ Add Memes</b> to upload.</div>';
     return;
   }
-  grid.innerHTML = memeStash.map(m =>
-    `<div class="meme-stash-card">
+  grid.innerHTML = memeStash.map(m => {
+    const cat = m.cat || 'meme';
+    return `
+    <div class="meme-stash-card">
       <img src="${m.src}" alt="">
       <div class="meme-stash-card-name">${m.name.replace(/</g,'&lt;')}</div>
+      <button class="meme-cat-badge ${cat}" onclick="setMemeCat(${m.id},event)">${cat === 'hook' ? 'hook' : 'meme'}</button>
       <button class="meme-stash-card-del" onclick="removeMemeFromStash(${m.id})">✕</button>
-    </div>`
-  ).join('');
+    </div>`;
+  }).join('');
 }
 
 // ── AUDIO STASH ──
@@ -2910,98 +2864,48 @@ function showMemeSourcePicker(msgIdx) {
   document.getElementById('meme-source-modal').classList.add('show');
 }
 
-async function selectMemeSource(source) {
+function selectMemeSource(source) {
   document.getElementById('meme-source-modal').classList.remove('show');
   if (source === 'file') {
     pendingMsgIdx = _pendingMemeTarget;
     document.getElementById('msg-file').click();
   } else {
-    await openStashMemePicker();
+    openStashMemePicker();
   }
 }
 
-let _smpFilter = 'ALL';
-let _memeLibrary = null; // { categoryName: [url, ...], ... }
-
-async function loadMemeLibrary() {
-  if (_memeLibrary) return;
-  if (typeof _MEME_LIB_HARDCODED !== 'undefined') {
-    _memeLibrary = _MEME_LIB_HARDCODED;
-  } else {
-    try {
-      _memeLibrary = await fetch('/api/meme-library').then(r => r.json());
-    } catch(e) {
-      _memeLibrary = {};
-    }
-  }
-}
-
-function buildSmpTabs() {
-  const tabs = document.getElementById('smp-tabs');
-  const rest = Object.keys(_memeLibrary).filter(k => k !== 'hook').sort();
-  const cats = ['ALL', 'hook', ...rest];
-  tabs.innerHTML = cats.map(c =>
-    `<button class="smp-tab${c === _smpFilter ? ' active' : ''}" data-cat="${c.replace(/"/g,'&quot;')}" onclick="setSmpFilter(this.dataset.cat)">${c}</button>`
-  ).join('');
-}
+let _smpFilter = 'meme';
 
 function setSmpFilter(f) {
   _smpFilter = f;
-  document.querySelectorAll('#smp-tabs .smp-tab').forEach(btn => {
-    btn.classList.toggle('active', btn.textContent === f);
+  ['meme','hook'].forEach(k => {
+    document.getElementById('smp-tab-'+k).classList.toggle('active', k === f);
   });
   renderSmpGrid();
 }
 
-function interleave(map) {
-  const lists = Object.values(map).map(a => [...a]);
-  const result = [];
-  let any = true;
-  while (any) {
-    any = false;
-    lists.forEach(list => {
-      if (list.length) { result.push(list.shift()); any = true; }
-    });
-  }
-  return result;
-}
-
 function renderSmpGrid() {
   const grid = document.getElementById('smp-grid');
-  let images;
-  if (_smpFilter === 'ALL') {
-    images = interleave(_memeLibrary);
-  } else {
-    images = _memeLibrary[_smpFilter] || [];
-  }
-  if (!images.length) {
-    grid.innerHTML = '<div class="smp-empty">No images in this category.</div>';
+  const filtered = memeStash.filter(m => (m.cat || 'meme') === _smpFilter);
+  if (!filtered.length) {
+    const msg = memeStash.length ? `No <b>${_smpFilter}</b> images yet — tap a badge in the Stash tab to change category.` : 'Your stash is empty!<br>Add memes via the <b>Stash</b> tab first.';
+    grid.innerHTML = `<div class="smp-empty">${msg}</div>`;
     return;
   }
-  grid.innerHTML = images.map(src =>
-    `<div class="smp-card" data-src="${src.replace(/"/g,'&quot;')}" onclick="selectMemeFromLibrary(this.dataset.src)"><img src="${src}" alt="" loading="lazy"></div>`
+  grid.innerHTML = filtered.map(m =>
+    `<div class="smp-card${(m.cat||'meme')==='hook'?' hook-card':''}" onclick="selectMemeFromStash(${m.id})"><img src="${m.src}" alt=""></div>`
   ).join('');
 }
 
-async function openStashMemePicker() {
-  await loadMemeLibrary();
-  _smpFilter = 'ALL';
-  buildSmpTabs();
+function openStashMemePicker() {
+  _smpFilter = 'meme';
+  ['meme','hook'].forEach(k => document.getElementById('smp-tab-'+k).classList.toggle('active', k === 'meme'));
   renderSmpGrid();
   document.getElementById('stash-meme-picker').classList.add('show');
 }
 
 function closeStashMemePicker() {
   document.getElementById('stash-meme-picker').classList.remove('show');
-}
-
-function selectMemeFromLibrary(src) {
-  if (_pendingMemeTarget >= 0) {
-    messages[_pendingMemeTarget].img = src;
-    renderMsgList(); render(); syncBuilderToCode();
-  }
-  closeStashMemePicker();
-  _pendingMemeTarget = -1;
 }
 
 function selectMemeFromStash(id) {
@@ -3768,13 +3672,16 @@ function clearSmHistory() {
   </div>
 </div>
 
-<!-- MEME LIBRARY PICKER -->
+<!-- STASH MEME PICKER -->
 <div id="stash-meme-picker">
   <div class="smp-box">
-    <div class="smp-title">Pick from Meme Library</div>
-    <div class="smp-tabs" id="smp-tabs"></div>
+    <div class="smp-title">Pick from Meme Stash</div>
+    <div class="smp-tabs">
+      <button class="smp-tab active" id="smp-tab-meme" onclick="setSmpFilter('meme')">Memes</button>
+      <button class="smp-tab hook-tab" id="smp-tab-hook" onclick="setSmpFilter('hook')">Hooks</button>
+    </div>
     <div class="smp-grid" id="smp-grid">
-      <div class="smp-empty">Loading…</div>
+      <div class="smp-empty">Loading stash…</div>
     </div>
     <button class="smp-cancel" onclick="closeStashMemePicker()">Cancel</button>
   </div>
@@ -3792,6 +3699,5 @@ function clearSmHistory() {
 </div>
 
 <script>renderMemeStash(); renderAudioStash();</script>
-<script src="/videomaker/meme-lib-data.js" async></script>
 </body>
 </html>
