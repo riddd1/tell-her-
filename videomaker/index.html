@@ -2153,10 +2153,20 @@ function _arrayBufToBase64(buf) {
 async function sendToServer(frames, durations, audioFile, audioStart, audioEnd) {
   document.getElementById('loading-progress').textContent = 'Preparing frames…';
 
-  const frameData = frames.map((canvas, i) => ({
-    data: canvas.toDataURL('image/jpeg', 0.85),
-    duration: durations[i]
-  }));
+  // Normalize all frames to 9:16 portrait (same as old MediaRecorder approach)
+  const videoW = frames[0].width;
+  const videoH = Math.round(videoW * 16 / 9);
+  const frameData = frames.map((src, i) => {
+    const c = document.createElement('canvas');
+    c.width = videoW; c.height = videoH;
+    const cx = c.getContext('2d');
+    cx.fillStyle = '#000000';
+    cx.fillRect(0, 0, videoW, videoH);
+    const sf = Math.min(videoW / src.width, videoH / src.height);
+    const dw = Math.round(src.width * sf), dh = Math.round(src.height * sf);
+    cx.drawImage(src, Math.round((videoW - dw) / 2), Math.round((videoH - dh) / 2), dw, dh);
+    return { data: c.toDataURL('image/jpeg', 0.85), duration: durations[i] };
+  });
 
   let audioData = null;
   if (audioFile) {
