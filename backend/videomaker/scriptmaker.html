@@ -483,80 +483,121 @@ Output the raw script only. Start with **IMAGE 1**. No other text.`;
 }
 
 function buildViralPrompt(platform, storyReply) {
-  const storyLine = storyReply
-    ? `1) ${storyReply}`
-    : `1) [Write the girlfriend's hook message to her friend. Two parts: (1) a varied "test" phrase — always different, never the same wording twice. Examples of the energy: "help me test my man" / "can u test him for me" / "i need u to check on my man" / "do me a favour and test him" / "slide in his dms and test him" / "can u loyalty check this man" / "test this man for me" / "i need eyes on my man" — completely free, rotate the phrasing every single time. (2) then ONE specific suspicious thing she noticed about him — short, real, casual. End with a single emoji matching the feeling 😐 🙃 🥺. The full message should read like a real text between friends. Never copy the topic or wording from any example in this prompt.]`;
+  const hooks = [
+    "i need you to test my bf, he's been acting different and i can't tell if i'm tripping 😐",
+    "can you test my man for me, he's been weird about his phone lately and i'm losing my mind 🙃",
+    "i need you to slide in my bf's dms, something feels off and i need to know 😭",
+    "do me a favour and test him, he went out last saturday and still hasn't told me where 😐",
+    "can you loyalty check my man, he started being really secretive about his weekends 🙃",
+    "test my bf for me, he got a new gym buddy he never wants to talk about 😭",
+    "i need eyes on my man, he's been leaving work late every thursday and it's not adding up 😐",
+    "slide in his dms and test him, he deleted a whole conversation and played dumb 🙃",
+    "help me test my man, he bought new cologne and i found it in his glove box not the bathroom 😭",
+    "can you check on my bf, he stopped posting me but he's still active every single day 😐",
+    "i need you to test him, he's a personal trainer and his female clients text him at night 🙃",
+    "test my man pls, he went from leaving his phone everywhere to never putting it down 😭",
+    "can you test my bf, he started going out with 'the boys' way more than usual and none of them know each other 😐",
+    "i need you to loyalty check him, i caught him smiling at his phone and he immediately flipped it 🙃",
+    "slide in and test him for me, he said he was done with his ex but she still comments on everything 😭",
+    "can you test my man, he booked a hotel for his birthday weekend and said it was a surprise for me but never mentioned it again 😐",
+    "test him pls, he's a bartender and the way certain girls talk about him at his job is not sitting right 🙃",
+    "i need you to check my bf, he changed his passcode and when i asked why he said his phone was glitching 😭",
+    "test my man for me, he started working from home but leaves the house for 'calls' 😐",
+    "can you slide in and test him, he went to a wedding last month and i still haven't seen one photo 🙃"
+  ];
 
-  return `You are a viral social media script writer. Write fake Instagram DM loyalty test scripts. Output ONLY the raw script. No stage directions, no brackets, no commentary, no caption block at the end. Just the script.
+  const defaultHook = hooks[Math.floor(Math.random() * hooks.length)];
+  const storyLine = storyReply ? `1) ${storyReply}` : `1) ${defaultHook}`;
 
-CRITICAL RULES:
+  return `You are a viral Instagram script writer. Your job is to write fake DM loyalty test scripts that feel so real, so addictive, and so alive that people cannot stop reading. Every script is a completely different story — different guy, different situation, different energy, different ending. Nothing carries over. Same writer, same quality, completely new world every time.
 
-UNIQUENESS: Every script is its own world. Different man, different situation, different hook, different setting, different manipulation, different kill line, different everything. Nothing carries over between scripts. Like a TV show — every episode completely standalone, but same voice and same quality every time.
+Output ONLY the raw script. No labels, no stage directions, no commentary, nothing before IMAGE 1, nothing after the final line. Just the script.
 
-RHYTHM: Every line pulls the reader into the next. Each line drops a crumb, raises a question, or reveals something small. No filler. No line sits still.
+---
 
 FORMAT:
+
 **IMAGE 1**
-2) STORY_REPLY:
+1) STORY_REPLY:
 ${storyLine}
-2) [short punchy reaction — 1 to 3 words + 🫶]
+2) [her reply — warm, short, she's got him]
 -b-
 **IMAGE 2**
-[her opener lines, each starting with 2)]
-[his response lines, each starting with 1)]
+[dialogue lines, each starting with 1) for him or 2) for her]
 -b-
-...and so on. End immediately after the kill line.
+[continue through final image]
 
-FORMAT RULES:
-- EVERY single dialogue line MUST start with either 1) or 2). No exceptions. Not a single line of dialogue can appear without its prefix. 1) = him. 2) = her. Always.
-- No apostrophes ever. Write: hes / shes / doesnt / thats / im / ur / u / wouldnt / havent
-- No specific names for people. No specific city names. Keep everything universal.
-- 7 to 10 images total
-- 2 to 4 lines per image. Vary the count — never uniform
-- Every line SHORT. One thought. Max 8 words. Split longer thoughts across two lines.
-- Group his lines together, her lines together. Never strict 2)/1)/2)/1) alternation.
-- -b- on its own line between every image
-- Memes go at the END of an image, right before the -b-. Never in the middle of a conversation exchange.
-- Meme format: -m- then on the next line: Caption: "his exact words" emoji. ONE word in ALL CAPS. Max 5 words. Emoji after the closing quote, never inside it.
-- Meme captions quote HIS words only — never her reaction or interpretation of the situation.
-- ONE meme per image maximum. Never two memes inside the same image.
-- 3 to 4 memes total across the whole script. Mid-script only — never on the final image.
-- Script ends clean on his kill line. She does not respond after it.
+---
 
-HIS CHARACTER:
-- Evasive, never explanatory. Drops crumbs, never the full picture.
-- Sounds like he is flirting and bragging — not confessing.
-- Never explains WHY or HOW. Short vague answers that make her ask more.
-- WRONG: "nobody gets hurt if nobody knows" / "i keep my worlds separate" — too direct, too much
-- RIGHT: "depends" / "some things u just dont share" / "it helps the situation" — short, vague, pulls her in
-- Audience figures it out before she does. That is what keeps them watching.
+FORMAT RULES — never break these:
 
-HER CHARACTER:
-- Innocent and curious. Never interrogating.
-- Never references a girlfriend or says "ur girl" until AFTER he has mentioned someone himself.
-- Occasionally says "sir" alone on its own line when genuinely shocked.
-- Uses CAPS on one key word when reacting: "a SCHEDULE??" / "TWO years??"
+- 1) = his messages (gray bubble, left). 2) = her messages (purple bubble, right). Every single dialogue line starts with one of these. No exceptions.
+- Use apostrophes naturally. He writes: it's, i'm, don't, you're, what's, that's. She writes the same. Real texting.
+- 8 to 12 images total. Never fewer than 8.
+- 2 to 4 dialogue lines per image. Vary the count — never the same every image.
+- His lines: short, vague, casual. Max one thought per bubble. Real guy texting energy.
+- Her lines: can be fuller, more natural. One bubble can hold a real sentence. She sounds like a real girl, not a robot.
+- -b- on its own line between every image. Every single time.
+- Memes go INSIDE an image, after the dialogue that triggered them, before the -b-. Format: -m- then the caption on the next line. Never two memes in the same image.
+- Meme captions are NARRATOR commentary reacting to what just happened. They are never quotes. They are the audience's internal reaction written out loud. Short, punchy, sometimes ALL CAPS, sometimes lowercase, always match the energy of the moment.
+- 4 to 6 memes total across the whole script. Spread them. Don't cluster them all at the end.
+- Script ends on his final reaction after she reveals it's a loyalty test. She reveals it. He reacts. Hard cut on his reaction. Nothing after.
 
-THE OPENER (Image 2):
-- She needs a believable natural reason to DM him. It can be anything — a sighting, a mutual connection, something on his page, a friend who mentioned him, anything creative.
-- Different every script. Not always a sighting. Not always 2 lines. Whatever the scenario needs.
+---
 
-THE KILL LINE:
-- His final 1 to 3 lines. Casual. Devastating. Like it means nothing to him.
-- Always shows what SHE (the unaware partner) believes while completely clueless.
-- No meme. Hard cut after it.
+MEME CAPTION STYLE — this is crucial:
 
-STRUCTURE:
-- Images 1-2: hook + opener, he gets comfortable
-- Images 3-4: small talk, seems normal
-- Images 5-7: she pulls layers out one question at a time, memes land here
-- Second to last: he says something so casually wrong viewers react before the kill even lands
-- Final image: kill line. Done.
+Meme captions are the audience talking to themselves while watching. They react, they gasp, they laugh, they scream internally. Examples of the energy:
 
-Platform: ${platform}
-Story reply: "${storyReply || 'test him pls something feels off 😐'}"
+Early memes (playful/curious): "time to find out 👀" / "let's see if he takes the bait" / "playing it casual" / "laying it on thick"
+Mid memes (things getting spicy): "oh he's noticing..." / "he's not making this easy" / "here comes the test" / "pushing him to see if he'll bite"
+Late memes (he's cooked): "sir you have a whole girlfriend" / "wait is he actually passing?" / "he's really doing this" / "THERE IT IS" / "COMPLICATED???" / "LADIES AND GENTLEMEN WE GOT HIM"
+End memes (verdict): "another day another FAIL 👎" / "and that's a wrap 💀" / "the audacity was FREE" / "his girlfriend deserves BETTER"
 
-Output the raw script only. Start with **IMAGE 1**. No other text.`;
+Rotate the energy. Not every meme is the same tone. Let them build.
+
+---
+
+HIS CHARACTER — the same rules every time, different man every time:
+
+- Charming and comfortable. He thinks he's smooth.
+- Vague when cornered. Never explains. Just deflects with confidence.
+- He brings up the girlfriend or relationship himself — she never asks directly until the reveal.
+- He keeps going deeper without realizing it. Ego does the work.
+- His texting: lowercase, relaxed. "yeah", "lol", "nah", "honestly", "it's complicated", "i mean", "fr", "bet", "lowkey"
+
+HER CHARACTER — the same rules every time, different energy every time:
+
+- Warm, curious, never pushy. She pulls without tugging.
+- Flirty enough to keep him talking. Never desperate.
+- She reacts with full sentences sometimes: "omg no way, that's actually kind of wild" — real girl energy, not scripted.
+- She never confronts. She leads him right off the cliff himself.
+- The reveal at the end is calm and matter-of-fact. Like she's done this before.
+
+---
+
+STRUCTURE — follow this every time, execute it differently every time:
+
+- Image 1: girlfriend's story reply hook + her warm "i got you" response
+- Image 2: she slides in with a natural reason to DM him — different every script (a story she saw, a mutual, something on his page, anything believable). He responds interested.
+- Images 3–5: normal conversation. He's charming. Nothing obviously wrong yet. But something feels slightly off to the audience.
+- Images 5–8: she starts pulling. Innocent questions. He starts revealing more than he should. Memes hit here.
+- Images 9–11: it's obvious he has someone. The audience knows. He doesn't realize he's cooked.
+- Second to last image: she drops the reveal — "loyalty test for your girlfriend" + context. He reacts.
+- Final image: his reaction. Caught, defensive, embarrassed. Hard cut.
+
+---
+
+OPEN LOOP RULE — every image must leave something unresolved:
+
+Every image must end on a line that makes the next image feel necessary. A question unanswered. A line that doesn't quite add up. A moment where the audience leans forward. Never let an image feel complete. The viewer must feel like they're missing something if they stop.
+
+---
+
+Platform context: ${platform}
+Story reply: "${storyReply || defaultHook}"
+
+Generate the script now. Start with **IMAGE 1**. Raw script only. Nothing else.`;
 }
 
 function buildVSV2Prompt(platform, storyReply) {
