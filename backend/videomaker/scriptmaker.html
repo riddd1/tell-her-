@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Script Maker — DM Studio</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/twemoji.min.js" crossorigin="anonymous"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -209,15 +208,6 @@ const API = '';  // same origin — backend serves this page
 
 let affCode = '';
 const history = [];
-
-function appleEmojify(el) {
-  if (typeof twemoji === 'undefined') return;
-  twemoji.parse(el, {
-    callback: (icon) => `https://cdn.jsdelivr.net/npm/emoji-datasource-apple/img/apple/64/${icon.toUpperCase()}.png`,
-    attributes: () => ({ style: 'height:1.1em;vertical-align:-0.15em;display:inline-block' }),
-    ext: '.png',
-  });
-}
 
 // ── Login gate ────────────────────────────────────────
 async function smLogin() {
@@ -730,8 +720,6 @@ async function generateScript() {
     if (!text) throw new Error('empty');
 
     outputBox.textContent = text;
-    outputBox.dataset.raw = text;
-    appleEmojify(outputBox);
     statusDot.className = 'status-dot ready';
     statusText.textContent = 'Done — copy and paste into your generator';
     updateCharCount(text);
@@ -781,11 +769,8 @@ function renderHistory() {
 
 function loadHistory(i) {
   const text = history[i].text;
-  const _ob = document.getElementById('outputBox');
-  _ob.textContent = text;
-  _ob.dataset.raw = text;
-  appleEmojify(_ob);
-  _ob.classList.remove('placeholder');
+  document.getElementById('outputBox').textContent = text;
+  document.getElementById('outputBox').classList.remove('placeholder');
   updateCharCount(text);
   document.getElementById('statusDot').className = 'status-dot ready';
   document.getElementById('statusText').textContent = 'Loaded from history';
@@ -794,7 +779,7 @@ function loadHistory(i) {
 function copyScript() {
   const box = document.getElementById('outputBox');
   if (box.classList.contains('placeholder') || !box.textContent.trim()) return;
-  navigator.clipboard.writeText(box.dataset.raw || box.textContent).then(() => showToast('Copied to clipboard ✓'));
+  navigator.clipboard.writeText(box.textContent).then(() => showToast('Copied to clipboard ✓'));
 }
 
 function clearOutput() {
