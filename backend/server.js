@@ -19,6 +19,22 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.static(path.join(__dirname)));
+app.use('/meme-assets/meme', express.static(path.join(__dirname, '../videomaker/meme')));
+app.use('/meme-assets/hook', express.static(path.join(__dirname, '../videomaker/hook')));
+
+const IMAGE_EXTS = /\.(jpg|jpeg|png|gif|webp)$/i;
+app.get('/api/local-memes', (req, res) => {
+  const cats = ['meme', 'hook'];
+  const result = [];
+  let pending = cats.length;
+  cats.forEach(cat => {
+    const dir = path.join(__dirname, '../videomaker', cat);
+    fs.readdir(dir, (err, files) => {
+      if (!err) files.filter(f => IMAGE_EXTS.test(f)).forEach(f => result.push({ name: f, cat, src: `/meme-assets/${cat}/${encodeURIComponent(f)}` }));
+      if (--pending === 0) res.json(result);
+    });
+  });
+});
 
 const CREATOR_MASTER_CODE = process.env.CREATOR_MASTER_CODE;
 
