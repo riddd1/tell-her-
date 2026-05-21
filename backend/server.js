@@ -22,6 +22,18 @@ app.use(express.static(path.join(__dirname)));
 app.use('/meme-assets/meme', express.static(path.join(__dirname, '../videomaker/meme')));
 app.use('/meme-assets/hook', express.static(path.join(__dirname, '../videomaker/hook')));
 
+// Serve Apple Color Emoji font if available locally (not pushed to git — too large for GitHub)
+app.get('/fonts/apple-emoji.ttc', (req, res) => {
+  const p = path.join(__dirname, '../videomaker/Apple Color Emoji.ttc');
+  if (fs.existsSync(p)) {
+    res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    res.setHeader('Content-Type', 'font/ttc');
+    res.sendFile(p);
+  } else {
+    res.status(404).end();
+  }
+});
+
 const IMAGE_EXTS = /\.(jpg|jpeg|png|gif|webp)$/i;
 app.get('/api/local-memes', (req, res) => {
   const cats = ['meme', 'hook'];
