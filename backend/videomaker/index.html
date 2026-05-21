@@ -1460,11 +1460,11 @@ function render() {
     container.appendChild(seenDiv);
   }
 
-  // Apply Twemoji
+  // Apply Apple emojis via emoji-datasource-apple on jsDelivr
   if (typeof twemoji !== 'undefined') {
     twemoji.parse(document.getElementById('capture-root'), {
-      folder:'svg', ext:'.svg',
-      base:'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/'
+      callback: (iconId) =>
+        `https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15.1.2/img/apple/64/${iconId}.png`
     });
   }
 }
