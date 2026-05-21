@@ -2136,21 +2136,22 @@ function openImgEditor(slideIdx) {
   const slide = unifiedSlides[slideIdx];
   if (!slide || !slide.src) { alert('No image on this slide. Upload an image first.'); return; }
   ieState.slideIdx = slideIdx;
-  ieState.activePreset = 1;
+  const isNewSlide = slide.editFont === undefined; // editFont only set by saveImgEdit, not auto-caption
+  ieState.activePreset = isNewSlide ? 1 : -1;
   ieState.txt = {
-    content:     slide.editText     || 'Add text here',
-    x:           slide.editTxtX     !== undefined ? slide.editTxtX  : 0.5,
-    y:           slide.editTxtY     !== undefined ? slide.editTxtY  : 0.5,
-    fontSize:    slide.editFontSize || 25,
-    color:       '#ffffff',
-    bold:        true,
-    italic:      false,
-    stroke:      true,
-    shadow:      false,
-    bg:          false,
-    bgColor:     slide.editBgColor  || 'rgba(0,0,0,0.65)',
-    rotation:    slide.editRotation || 0,
-    font:        slide.editFont     || '-apple-system,BlinkMacSystemFont,sans-serif',
+    content:   slide.editText     || 'Add text here',
+    x:         slide.editTxtX     !== undefined ? slide.editTxtX  : 0.5,
+    y:         slide.editTxtY     !== undefined ? slide.editTxtY  : 0.5,
+    fontSize:  slide.editFontSize || 25,
+    color:     slide.editColor    || '#ffffff',
+    bold:      slide.editBold     !== undefined ? slide.editBold  : true,
+    italic:    slide.editItalic   || false,
+    stroke:      slide.editStroke !== undefined ? slide.editStroke : true,
+    shadow:      slide.editShadow      || false,
+    bg:          slide.editBg          || false,
+    bgColor:     slide.editBgColor     || 'rgba(0,0,0,0.65)',
+    rotation:    slide.editRotation    || 0,
+    font:        slide.editFont        || '-apple-system,BlinkMacSystemFont,sans-serif',
     strokeWidth: slide.editStrokeWidth !== undefined ? slide.editStrokeWidth : 30,
     strokeColor: slide.editStrokeColor || '#000000'
   };
@@ -2163,7 +2164,7 @@ function openImgEditor(slideIdx) {
   ['bold','italic','stroke','shadow','bg'].forEach(p =>
     document.getElementById('ie-'+p+'-btn').classList.toggle('active', ieState.txt[p])
   );
-  // Build presets — preset 1 (outline) always active on open
+  // Build presets
   const pc = document.getElementById('ie-presets');
   pc.innerHTML = '';
   IE_PRESETS.forEach((p, i) => {
@@ -2173,7 +2174,7 @@ function openImgEditor(slideIdx) {
     btn.innerHTML = '<span style="' + p.fs + ';font-size:13px;pointer-events:none">Aa</span>';
     btn.title = 'Preset ' + (i+1);
     btn.onclick = () => applyIEPreset(i);
-    if (i === 1) btn.classList.add('active');
+    if (isNewSlide && i === 1) btn.classList.add('active');
     pc.appendChild(btn);
   });
   const imgEl = new Image();
