@@ -1247,9 +1247,10 @@ app.post('/api/render-video', async (req, res) => {
     }
 
     ffArgs.push(
-      '-c:v', 'libx264', '-preset', 'fast', '-crf', '23',
+      '-c:v', 'libx264', '-preset', 'fast', '-crf', '18',
       '-pix_fmt', 'yuv420p',
       '-vf', 'scale=trunc(iw/2)*2:trunc(ih/2)*2',
+      '-color_primaries', 'bt709', '-color_trc', 'bt709', '-colorspace', 'bt709',
       '-t', String(totalDur)
     );
 
