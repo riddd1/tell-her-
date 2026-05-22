@@ -1463,8 +1463,9 @@ function render() {
   // Apply Apple emojis via emoji-datasource-apple on jsDelivr
   if (typeof twemoji !== 'undefined') {
     twemoji.parse(document.getElementById('capture-root'), {
-      callback: (iconId) =>
-        `https://cdn.jsdelivr.net/npm/emoji-datasource-apple@16.0.0/img/apple/64/${iconId}.png`
+      base: 'https://cdn.jsdelivr.net/npm/emoji-datasource-apple@16.0.0/img/apple/',
+      folder: '64',
+      ext: '.png'
     });
   }
 }

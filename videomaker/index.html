@@ -1255,14 +1255,20 @@ function render() {
     container.appendChild(seenDiv);
   }
 
-  // Apply Apple emojis from hardcoded lookup, CDN fallback for any missing
+  // Apply Apple emojis via emoji-datasource-apple
   if (typeof twemoji !== 'undefined') {
     twemoji.parse(document.getElementById('capture-root'), {
-      callback: (iconId) =>
-        (typeof APPLE_EMOJI !== 'undefined' && APPLE_EMOJI[iconId])
-          ? APPLE_EMOJI[iconId]
-          : `https://cdn.jsdelivr.net/npm/emoji-datasource-apple@16.0.0/img/apple/64/${iconId}.png`
+      base: 'https://cdn.jsdelivr.net/npm/emoji-datasource-apple@16.0.0/img/apple/',
+      folder: '64',
+      ext: '.png'
     });
+    // Override with local base64 where available (instant load, no network)
+    if (typeof APPLE_EMOJI !== 'undefined') {
+      document.querySelectorAll('#capture-root img.emoji').forEach(img => {
+        const iconId = img.src.split('/').pop().replace('.png', '');
+        if (APPLE_EMOJI[iconId]) img.src = APPLE_EMOJI[iconId];
+      });
+    }
   }
 }
 
