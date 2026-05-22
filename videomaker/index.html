@@ -6,6 +6,7 @@
 <title>DM Studio — IG Conversation Creator</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="auddio.js"></script>
+<script src="apple-emoji.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -1254,11 +1255,13 @@ function render() {
     container.appendChild(seenDiv);
   }
 
-  // Apply Twemoji
+  // Apply Apple emojis from hardcoded lookup, CDN fallback for any missing
   if (typeof twemoji !== 'undefined') {
     twemoji.parse(document.getElementById('capture-root'), {
-      folder:'svg', ext:'.svg',
-      base:'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/'
+      callback: (iconId) =>
+        (typeof APPLE_EMOJI !== 'undefined' && APPLE_EMOJI[iconId])
+          ? APPLE_EMOJI[iconId]
+          : `https://cdn.jsdelivr.net/npm/emoji-datasource-apple@16.0.0/img/apple/64/${iconId}.png`
     });
   }
 }
