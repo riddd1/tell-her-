@@ -1463,9 +1463,9 @@ function render() {
   // Apply Apple emojis via emoji-datasource-apple on jsDelivr
   if (typeof twemoji !== 'undefined') {
     twemoji.parse(document.getElementById('capture-root'), {
-      callback: function(icon, options) {
-        return 'https://cdn.jsdelivr.net/npm/emoji-datasource-apple@16.0.0/img/apple/64/' + icon + '.png';
-      }
+      base: 'https://cdn.jsdelivr.net/npm/emoji-datasource-apple@16.0.0/img/apple/',
+      folder: '64',
+      ext: '.png'
     });
   }
 }
@@ -1940,6 +1940,17 @@ const CTA_IMAGES = [
 ];
 let ctaEnabled = true;
 
+async function applyAppleEmojis(el) {
+  if (typeof twemoji === 'undefined') return;
+  twemoji.parse(el, {
+    base: 'https://cdn.jsdelivr.net/npm/emoji-datasource-apple@16.0.0/img/apple/',
+    folder: '64',
+    ext: '.png'
+  });
+  const imgs = Array.from(el.querySelectorAll('img.emoji'));
+  await Promise.all(imgs.map(img => img.complete ? Promise.resolve() : new Promise(r => { img.onload = r; img.onerror = r; })));
+}
+
 async function generateSlideshow() {
   const hasContent = unifiedSlides.some(s => s.type === 'image' || (s.type === 'dm' && s.selected));
   if (!hasContent) { alert('Please select at least one item or add an image slide'); return; }
@@ -2006,6 +2017,7 @@ async function generateSlideshow() {
         frameCount++;
         document.getElementById('loading-progress').textContent = `Capturing frame ${frameCount} / ${totalFrames}…`;
         await new Promise(r => setTimeout(r, 150));
+        await applyAppleEmojis(root);
         const canvas = await html2canvas(root, {scale:captureScale, useCORS:true, allowTaint:true, backgroundColor:bgColor, logging:false});
         frames.push(canvas); durations.push(item.timing || 1.3);
 
