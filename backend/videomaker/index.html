@@ -3121,38 +3121,48 @@ function smBuildPrompt(platform) {
 }
 
 function smBuildSMv2(platform) {
-  const hooks = [
-    "test him pls he got a second phone and said it's for work 😐",
-    "test him pls he started going to the gym at 11pm 🙃",
-    "test him pls he changed his lock screen to a default wallpaper 😐",
-    "test him pls he comes home smelling like perfume 🙃",
-    "test him pls he deleted his instagram search history 😐",
-    "test him pls he stopped posting me 3 months ago 🙃",
-    "test him pls he leaves the room to take calls now 😐",
-    "test him pls he started using a password on his phone for the first time 🙃",
-    "test him pls his location is always off now 😐",
-    "test him pls he started caring about how he looks when he goes out alone 🙃",
-    "test him pls he gets defensive when i ask simple questions 😐",
-    "test him pls he came home with a hickey and said it was from a seatbelt 🙃",
-    "test him pls he has a contact saved as a man's name but the texts come in at 2am 😐",
-    "test him pls he started tilting his phone away when i walk past 🙃",
-    "test him pls he cleared his call log for the first time ever 😐",
-    "test him pls he goes out every other weekend and never says where 🙃",
-    "test him pls he has a second instagram i wasn't supposed to find 😐",
-    "test him pls he bought new cologne and hides it in his car 🙃",
-    "test him pls he started deleting his messages every night before bed 😐",
-    "test him pls his ring finger has a tan line and he says it's from a ring he lost 🙃"
-  ];
-  const defaultHook = hooks[Math.floor(Math.random()*hooks.length)];
-  const storyLine = `1) ${defaultHook}`;
   return `You are a viral social media script writer. You write fake Instagram DM loyalty test scripts where a girl (the tester) slides into a guy's DMs pretending to be a stranger, and through casual innocent conversation he slowly reveals he is cheating on or manipulating his girlfriend. Every script must feel completely real — written by a human, not AI. The audience must not be able to tell it was generated.
 
 Output ONLY the raw script. No stage directions. No brackets. No placeholder text like [mutual] or [name]. No commentary. No caption blocks at the end. No explanations. Just the script starting with **IMAGE 1**.
 
+FIRST — before writing anything else, invent the story reply hook for IMAGE 1. Use these examples ONLY as inspiration for the style and format — never copy them directly, never reuse the same topic:
+- "test him pls he got a second phone and said it's for work 😐"
+- "test him pls he started going to the gym at 11pm 🙃"
+- "test him pls he changed his lock screen to a default wallpaper 😐"
+- "test him pls he comes home smelling like perfume 🙃"
+- "test him pls he deleted his instagram search history 😐"
+- "test him pls he stopped posting me 3 months ago 🙃"
+- "test him pls he leaves the room to take calls now 😐"
+- "test him pls he started using a password on his phone for the first time 🙃"
+- "test him pls his location is always off now 😐"
+- "test him pls he started caring about how he looks when he goes out alone 🙃"
+- "test him pls he gets defensive when i ask simple questions 😐"
+- "test him pls he came home with a hickey and said it was from a seatbelt 🙃"
+- "test him pls he has a contact saved as a man's name but the texts come in at 2am 😐"
+- "test him pls he started tilting his phone away when i walk past 🙃"
+- "test him pls he cleared his call log for the first time ever 😐"
+- "test him pls he goes out every other weekend and never says where 🙃"
+- "test him pls he has a second instagram i wasn't supposed to find 😐"
+- "test him pls he bought new cologne and hides it in his car 🙃"
+- "test him pls he started deleting his messages every night before bed 😐"
+- "test him pls his ring finger has a tan line and he says it's from a ring he lost 🙃"
+- "test him pls he works nights but his coworkers never seen him there 😐"
+- "test him pls he said he's done with his ex but she still likes every photo 🙃"
+- "test him pls he asks me not to post him but his friends always tag him out 😐"
+- "test him pls he has a whole personality with his friends that i've never seen 🙃"
+- "test him pls he told me he's not on social media but i found his finsta 😐"
+- "test him pls i paid his rent last month and he still won't let me see his phone 😭"
+- "test him pls i feel like he's already checked out 😐"
+- "test him pls he's a cop and thinks every girl wants him 🙃"
+- "test him pls he's a massage therapist but only goes to girls houses 😐"
+- "test him pls he goes out of town every other weekend and never says why 😭"
+- "test him pls i just bought him a car and i need to know if he's loyal 😭"
+Your hook must be: specific, visual, something only a girlfriend would notice, and something the audience immediately understands. Never generic. Never a repeat of anything above. Invent something completely fresh every single time.
+
 EXACT FORMAT:
 **IMAGE 1**
 2) STORY_REPLY:
-${storyLine}
+1) [your invented hook here]
 2) [her short casual reply]
 -b-
 **IMAGE 2**
@@ -3202,7 +3212,6 @@ THE KILL LINE:
 - Cut immediately after it. Nothing after. Script over.
 
 Platform context: ${platform}
-Story reply from her friend: "${defaultHook}"
 
 Generate the script now. Start with **IMAGE 1**. Raw script only. Nothing else before or after it.`;
 }
