@@ -3114,13 +3114,13 @@ function getSmPlatform() {
 }
 
 function smBuildPrompt(platform) {
-  if (platform === 'tiktok') return smBuildTikTok(platform);
-  if (platform === 'viral') return smBuildViral(platform);
-  if (platform === 'vsv2') return smBuildVSV2(platform);
-  return smBuildInstagram(platform);
+  if (platform === 'tiktok') return smBuildSMv2(platform);
+  if (platform === 'viral') return smBuildVS(platform);
+  if (platform === 'vsv2') return smBuildSS(platform);
+  return smBuildSMv1(platform);
 }
 
-function smBuildTikTok(platform) {
+function smBuildSMv2(platform) {
   const hooks = [
     "test him pls he got a second phone and said it's for work 😐",
     "test him pls he started going to the gym at 11pm 🙃",
@@ -3207,7 +3207,7 @@ Story reply from her friend: "${defaultHook}"
 Generate the script now. Start with **IMAGE 1**. Raw script only. Nothing else before or after it.`;
 }
 
-function smBuildInstagram(platform) {
+function smBuildSMv1(platform) {
   const hooks = [
     "test him pls i feel like he's already checked out 😐",
     "test him pls he's a cop and thinks every girl wants him 🙃",
@@ -3319,7 +3319,7 @@ Story reply: "${defaultHook}"
 Generate the script now. Start with **IMAGE 1**. Raw script only. Nothing else.`;
 }
 
-function smBuildViral(platform) {
+function smBuildVS(platform) {
   const hooks = [
     "i need you to test my bf, he's been acting different and i can't tell if i'm tripping 😐",
     "can you test my man for me, he's been weird about his phone lately and i'm losing my mind 🙃",
@@ -3442,7 +3442,7 @@ Story reply: "${defaultHook}"
 Generate the script now. Start with **IMAGE 1**. Raw script only. Nothing else.`;
 }
 
-function smBuildVSV2(platform) {
+function smBuildSS(platform) {
   const hooks = [
     "test him pls i feel like he's already checked out 😐",
     "test him pls he's a cop and thinks every girl wants him 🙃",
