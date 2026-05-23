@@ -953,13 +953,6 @@ button,input,select,textarea{transition-property:background,border-color,color,b
       </div>
     </div>
     <div style="flex:1"></div>
-    <div>
-      <div class="sec-title" style="display:flex;align-items:center;gap:5px;margin-bottom:6px">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#e8a87c" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-        Story Reply
-      </div>
-      <textarea id="sm-storyReply" placeholder='what did your friend say? (e.g. "he parks down the street 🙃")' style="width:100%;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:9px 11px;color:#fff;font-size:12px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;resize:none;outline:none;height:60px;line-height:1.5;transition:border-color .15s" onfocus="this.style.borderColor='rgba(232,168,124,0.5)'" onblur="this.style.borderColor='rgba(255,255,255,0.12)'"></textarea>
-    </div>
     <button class="gbtn" id="sm-genBtn" onclick="smGenerate()" style="display:flex;align-items:center;justify-content:center;gap:7px;border-radius:12px;padding:13px;font-size:13px;font-weight:700;letter-spacing:.15px;will-change:transform">
       <div class="spinner" id="sm-spinner" style="display:none;width:13px;height:13px;border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite"></div>
       <svg id="sm-genIcon" viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
@@ -3120,14 +3113,14 @@ function getSmPlatform() {
   return a ? a.dataset.val : 'instagram';
 }
 
-function smBuildPrompt(platform, storyReply) {
-  if (platform === 'tiktok') return smBuildTikTok(platform, storyReply);
-  if (platform === 'viral') return smBuildViral(platform, storyReply);
-  if (platform === 'vsv2') return smBuildVSV2(platform, storyReply);
-  return smBuildInstagram(platform, storyReply);
+function smBuildPrompt(platform) {
+  if (platform === 'tiktok') return smBuildTikTok(platform);
+  if (platform === 'viral') return smBuildViral(platform);
+  if (platform === 'vsv2') return smBuildVSV2(platform);
+  return smBuildInstagram(platform);
 }
 
-function smBuildTikTok(platform, storyReply) {
+function smBuildTikTok(platform) {
   const hooks = [
     "test him pls he got a second phone and said it's for work 😐",
     "test him pls he started going to the gym at 11pm 🙃",
@@ -3151,7 +3144,7 @@ function smBuildTikTok(platform, storyReply) {
     "test him pls his ring finger has a tan line and he says it's from a ring he lost 🙃"
   ];
   const defaultHook = hooks[Math.floor(Math.random()*hooks.length)];
-  const storyLine = storyReply ? `1) ${storyReply}` : `1) ${defaultHook}`;
+  const storyLine = `1) ${defaultHook}`;
   return `You are a viral social media script writer. You write fake Instagram DM loyalty test scripts where a girl (the tester) slides into a guy's DMs pretending to be a stranger, and through casual innocent conversation he slowly reveals he is cheating on or manipulating his girlfriend. Every script must feel completely real — written by a human, not AI. The audience must not be able to tell it was generated.
 
 Output ONLY the raw script. No stage directions. No brackets. No placeholder text like [mutual] or [name]. No commentary. No caption blocks at the end. No explanations. Just the script starting with **IMAGE 1**.
@@ -3209,12 +3202,12 @@ THE KILL LINE:
 - Cut immediately after it. Nothing after. Script over.
 
 Platform context: ${platform}
-Story reply from her friend: "${storyReply || defaultHook}"
+Story reply from her friend: "${defaultHook}"
 
 Generate the script now. Start with **IMAGE 1**. Raw script only. Nothing else before or after it.`;
 }
 
-function smBuildInstagram(platform, storyReply) {
+function smBuildInstagram(platform) {
   const hooks = [
     "test him pls i feel like he's already checked out 😐",
     "test him pls he's a cop and thinks every girl wants him 🙃",
@@ -3248,7 +3241,7 @@ function smBuildInstagram(platform, storyReply) {
     "test him pls i paid his rent last month and he still won't let me see his phone 😭"
   ];
   const defaultHook = hooks[Math.floor(Math.random()*hooks.length)];
-  const storyLine = storyReply ? `1) ${storyReply}` : `1) ${defaultHook}`;
+  const storyLine = `1) ${defaultHook}`;
   return `You are a viral Instagram script writer. Your only job is to make the audience unable to stop reading. Every single image must end with an open loop — a detail, a hint, or an energy shift that makes it physically impossible to not swipe to the next one. The script is a fake Instagram DM loyalty test: a girl slides into a guy's DMs as a stranger, and through completely casual conversation he slowly, unknowingly reveals he is cheating on or manipulating his girlfriend. It must feel 100% real — written by a real person, not AI.
 
 Output ONLY the raw script. No stage directions. No brackets. No placeholder text. No commentary. Nothing before or after. Start immediately with **IMAGE 1**.
@@ -3321,12 +3314,12 @@ THE KILL LINE:
 - Cut immediately. Nothing after it. Script is over.
 
 Platform context: ${platform}
-Story reply: "${storyReply || defaultHook}"
+Story reply: "${defaultHook}"
 
 Generate the script now. Start with **IMAGE 1**. Raw script only. Nothing else.`;
 }
 
-function smBuildViral(platform, storyReply) {
+function smBuildViral(platform) {
   const hooks = [
     "i need you to test my bf, he's been acting different and i can't tell if i'm tripping 😐",
     "can you test my man for me, he's been weird about his phone lately and i'm losing my mind 🙃",
@@ -3351,7 +3344,7 @@ function smBuildViral(platform, storyReply) {
   ];
 
   const defaultHook = hooks[Math.floor(Math.random() * hooks.length)];
-  const storyLine = storyReply ? `1) ${storyReply}` : `1) ${defaultHook}`;
+  const storyLine = `1) ${defaultHook}`;
 
   return `You are a viral Instagram script writer. Write fake DM loyalty test scripts. Every script is a completely different story — different guy, different job, different situation, different ending. Nothing carries over between scripts. Same writer, same quality, new world every time.
 
@@ -3444,12 +3437,12 @@ Every image ends on something unresolved. A question hanging. A line that doesn'
 ---
 
 Platform context: ${platform}
-Story reply: "${storyReply || defaultHook}"
+Story reply: "${defaultHook}"
 
 Generate the script now. Start with **IMAGE 1**. Raw script only. Nothing else.`;
 }
 
-function smBuildVSV2(platform, storyReply) {
+function smBuildVSV2(platform) {
   const hooks = [
     "test him pls i feel like he's already checked out 😐",
     "test him pls he's a cop and thinks every girl wants him 🙃",
@@ -3483,7 +3476,7 @@ function smBuildVSV2(platform, storyReply) {
     "test him pls i paid his rent last month and he still won't let me see his phone 😭"
   ];
   const defaultHook = hooks[Math.floor(Math.random()*hooks.length)];
-  const storyLine = storyReply ? `1) ${storyReply}` : `1) ${defaultHook}`;
+  const storyLine = `1) ${defaultHook}`;
   return `You are a viral Instagram script writer. Your only job is to make the audience unable to stop reading. Every single image must end with an open loop — a detail, a hint, or an energy shift that makes it physically impossible to not swipe to the next one. The script is a fake Instagram DM loyalty test: a girl slides into a guy's DMs as a stranger, and through completely casual conversation he slowly, unknowingly reveals he is cheating on or manipulating his girlfriend. It must feel 100% real — written by a real person, not AI.
 
 Output ONLY the raw script. No stage directions. No brackets. No placeholder text. No commentary. Nothing before or after. Start immediately with **IMAGE 1**.
@@ -3551,7 +3544,7 @@ THE KILL LINE:
 - Cut immediately. Nothing after it. Script is over.
 
 Platform context: ${platform}
-Story reply: "${storyReply || defaultHook}"
+Story reply: "${defaultHook}"
 
 Generate the script now. Start with **IMAGE 1**. Raw script only. Nothing else.`;
 }
@@ -3562,7 +3555,6 @@ async function smGenerate() {
   const dot = document.getElementById('sm-dot');
   const stxt = document.getElementById('sm-stxt');
   const platform = getSmPlatform();
-  const storyReply = document.getElementById('sm-storyReply').value.trim();
 
   if (smAffCode) {
     try {
@@ -3588,7 +3580,7 @@ async function smGenerate() {
   try {
     const res = await fetch('/ai/generate', {
       method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({prompt: smBuildPrompt(platform, storyReply)})
+      body: JSON.stringify({prompt: smBuildPrompt(platform)})
     });
     const data = await res.json();
     const text = (data.content?.map(b=>b.text||'').join('')||'').trim();
@@ -3598,7 +3590,7 @@ async function smGenerate() {
     dot.className = 'status-dot ready';
     stxt.textContent = 'Done — copy and paste into your generator';
     smUpdateCharCount(text);
-    smAddToHistory(text, platform, storyReply);
+    smAddToHistory(text, platform);
 
     if (smAffCode) {
       try {
@@ -3627,9 +3619,9 @@ function smUpdateCharCount(text) {
   el.className = 'char-count'+(len>5000?' over':len>1200?' warn':'');
 }
 
-function smAddToHistory(text, platform, storyReply) {
+function smAddToHistory(text, platform) {
   const entries = smGetHistory();
-  entries.unshift({text, platform, storyReply, ts: Date.now()});
+  entries.unshift({text, platform, ts: Date.now()});
   if (entries.length > 50) entries.length = 50;
   localStorage.setItem(SM_HIST_KEY, JSON.stringify(entries));
   smRenderHistStrip(entries);
@@ -3643,7 +3635,7 @@ function smRenderHistStrip(entries) {
   const strip = document.getElementById('sm-histStrip');
   if (!entries || !entries.length) { strip.innerHTML=''; return; }
   strip.innerHTML = entries.slice(0,6).map((h,i)=>{
-    const preview = (h.storyReply||h.text).slice(0,40);
+    const preview = h.text.slice(0,40);
     return `<div class="history-chip" onclick="smLoadFromStrip(${i})" title="${preview.replace(/"/g,'&quot;')}">${preview}…</div>`;
   }).join('');
 }
