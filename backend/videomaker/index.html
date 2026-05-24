@@ -3202,40 +3202,69 @@ function smBuildSMv2(platform) {
     ]
   ];
 
+  const beginnings = [
+    "suggested or explore page: she says he came up on her suggested or explore page and she slid in",
+    "mutual connection: they have a mutual friend or follower and she uses that as her reason to reach out",
+    "school or hometown link: she recognizes him from somewhere they both went — school, hometown, same area",
+    "she replies to his story: something on his public story gives her a natural reason to message him",
+    "she compliments something specific on his page: a photo, a post, something visible publicly",
+    "aggressive flirty opener: she comes in confident and direct — no explanation, just energy",
+    "she pretends to need advice: she opens with something she needs help with that fits his vibe or job",
+    "neighborhood or regular spot: she says she sees him around somewhere they both frequent",
+    "friend mentioned him: a mutual mentioned him and she decided to reach out",
+    "she saw him tagged somewhere: he was tagged in a post or photo and she noticed him there"
+  ];
+
+  const middles = [
+    "slow drip: her innocent questions pull one layer out at a time — he never realizes he's revealing anything",
+    "he volunteers everything: ego and comfort make him overshare without being asked — she barely has to pull",
+    "banter cracks him: playful witty back and forth gradually lowers his guard until he says too much",
+    "job or lifestyle as cover: he uses what he does as natural justification — she asks innocent questions about it",
+    "she tests his loyalty philosophy first: she asks what he thinks about loyalty and relationships before going deeper",
+    "he gets comfortable fast: he opens up unusually quickly — she just listens and lets him dig",
+    "she mirrors his energy: she matches whatever he gives — calm when he's calm, flirty when he slips",
+    "he thinks he's winning: his ego is fully in charge — he's charming and bragging while costing himself everything",
+    "slow warmup then sudden crack: three images of nothing suspicious then one line that changes everything",
+    "she asks about his relationship directly early: she brings it up casually and his answer opens the whole thing"
+  ];
+
+  const endings = [
+    "he fails, hard cut: kill line lands, script ends immediately, no response from her",
+    "he passes, girlfriend emotional payoff: he shuts it down, tester reports back, girlfriend reacts with relief or tears",
+    "he passes but girlfriend is the villain: he passes completely, then girlfriend admits something that flips everything",
+    "action confession: he sends an address, makes a plan, books something — the action is the kill line",
+    "ambiguous tension: audience knows, he doesn't, script ends on that gap without confirming",
+    "double twist: he passes, then a second reveal recontextualizes the whole script for the audience",
+    "casual cruelty kill: one unbothered line delivered like nothing that makes the audience gasp",
+    "time scale reveal: kill line reveals how long this has been going on — reframes everything before it",
+    "implied scale: kill line suggests this isn't the first time or she isn't the only one",
+    "passive devastation: kill line shows what the girlfriend believes while being completely wrong about everything"
+  ];
+
   const selectedTier = hookTiers[Math.floor(Math.random() * hookTiers.length)];
   const selectedHook = selectedTier[Math.floor(Math.random() * selectedTier.length)];
+  const selectedBeginning = beginnings[Math.floor(Math.random() * beginnings.length)];
+  const selectedMiddle = middles[Math.floor(Math.random() * middles.length)];
+  const selectedEnding = endings[Math.floor(Math.random() * endings.length)];
 
   return `You are a viral social media script writer. You write fake Instagram DM loyalty test scripts where a girl (the tester) slides into a guy's DMs pretending to be a stranger, and through casual innocent conversation he slowly reveals he is cheating on or manipulating his girlfriend. Every script must feel completely real — written by a human, not AI. The audience must not be able to tell it was generated.
 
 Output ONLY the raw script. No stage directions. No brackets. No placeholder text like [mutual] or [name]. No commentary. No caption blocks at the end. No explanations. Just the script starting with **IMAGE 1**.
 
-BEFORE writing anything, secretly pick ONE from each category below and build the entire script around your choices. Never announce your picks. Never force them — they must feel completely natural.
+THIS SCRIPT MUST USE THESE EXACT CHOICES — they have already been decided. Build everything around them naturally:
+BEGINNING: ${selectedBeginning}
+MIDDLE: ${selectedMiddle}
+ENDING: ${selectedEnding}
 
-HIS PERSONALITY — pick one:
+These are locked. Do not swap them. Do not blend them with other options. Execute them as naturally as possible so the audience never feels the structure.
+
+HIS PERSONALITY — pick one secretly and never announce it:
 - Charming and gradually slipping: seems completely normal at first, cracks appear slowly through comfort
 - Unbothered and proud: has a whole situation going on, talks about it casually like it's logistics
 - Ego-driven and fast: moves quickly, volunteers information through confidence, thinks he's impressive
 - Quietly entitled: uses his job or lifestyle as cover, genuinely doesn't think he's doing anything wrong
 - Genuinely loyal: actually passes the test, shuts it down himself, twist comes from elsewhere
 - Resistant but warming up: pushes back at first, banter and her energy gradually cracks him open
-
-REVEAL STRUCTURE — pick one:
-- Slow drip: her innocent questions pull one layer out at a time, he never realizes he's revealing anything
-- He volunteers everything: ego or comfort makes him overshare without being asked
-- He shuts it down himself: he draws the line, the twist or kill line comes from an unexpected place
-- Banter cracks him: playful back and forth gradually lowers his guard until he says too much
-
-KILL LINE TYPE — pick one:
-- Action: he sends an address, books something, makes a concrete plan — the action is the confession
-- Casual cruelty: one unbothered line delivered like it means nothing that recontextualizes everything
-- He passes, emotional twist: he stays loyal but the girlfriend reveals something unexpected at the end
-- Implied attraction: he claims loyalty but admits enough that the audience already knows where this goes
-
-ENDING — pick one:
-- He fails, hard cut immediately after his kill line
-- He passes, girlfriend gets an emotional payoff
-- He passes, but the girlfriend is the villain
-- Ambiguous — the audience knows, he doesn't, script ends on that tension
 
 FIRST — before writing the script, create the story reply hook for IMAGE 1.
 Your reference hook is: "${selectedHook}"
@@ -3299,11 +3328,11 @@ CONTENT RULES — never break these:
 
 THE SLOW DRIP STRUCTURE:
 - Image 1: story reply + her casual reply — first meme can land here to hook immediately
-- Image 2: she slides in with a natural opener
+- Image 2: she slides in with a natural opener matching the BEGINNING chosen above
 - Images 3-4: normal small talk, no red flags yet — meme lands here to keep retention
 - Image 5: first ambiguous line from him — meme goes here
 - Images 6-8: her innocent questions pull one more layer out each time — memes spread through here
-- Final image: the kill line. Cut immediately. No meme on the final image.
+- Final image: the kill line matching the ENDING chosen above. Cut immediately. No meme on the final image.
 
 THE KILL LINE:
 - One short line he drops completely casually, like it's nothing
