@@ -3204,15 +3204,25 @@ function smBuildSMv2(platform) {
 
   const beginnings = [
     "suggested or explore page: she says he came up on her suggested or explore page and she slid in",
-    "mutual connection: they have a mutual friend or follower and she uses that as her reason to reach out",
+    "mutual connection: they share a mutual friend or follower and she uses that as her reason to reach out",
     "school or hometown link: she recognizes him from somewhere they both went — school, hometown, same area",
     "she replies to his story: something on his public story gives her a natural reason to message him",
-    "she compliments something specific on his page: a photo, a post, something visible publicly",
+    "she compliments something specific on his page: a photo, a post, a caption — something visible publicly",
     "aggressive flirty opener: she comes in confident and direct — no explanation, just energy",
     "she pretends to need advice: she opens with something she needs help with that fits his vibe or job",
     "neighborhood or regular spot: she says she sees him around somewhere they both frequent",
-    "friend mentioned him: a mutual mentioned him and she decided to reach out",
-    "she saw him tagged somewhere: he was tagged in a post or photo and she noticed him there"
+    "friend mentioned him: a mutual brought him up and she decided to reach out",
+    "she saw him tagged somewhere: he was tagged in a post or photo and she noticed him there",
+    "she compliments his profession or service: military, trade, creative work — something about what he does",
+    "she becomes a potential client: his job creates a natural professional reason to connect",
+    "she slid in after seeing him comment on a mutual's post: his comment caught her attention",
+    "she recognized him from a video or reel: she saw him on her feed and tracked him down",
+    "she pretends they matched somewhere and is following up: acts like they already had a connection",
+    "she opens with a question about something on his page: a place he visited, food he posted, anything visible",
+    "a friend dared her to message him: she uses it as a playful excuse to slide in",
+    "she responds to something he posted in a group or community: a shared space gives her the opener",
+    "she says she saw him out somewhere in public and looked him up: she recognized him from real life",
+    "she opens with humor: a joke or meme related to something on his page breaks the ice"
   ];
 
   const middles = [
@@ -3221,24 +3231,44 @@ function smBuildSMv2(platform) {
     "banter cracks him: playful witty back and forth gradually lowers his guard until he says too much",
     "job or lifestyle as cover: he uses what he does as natural justification — she asks innocent questions about it",
     "she tests his loyalty philosophy first: she asks what he thinks about loyalty and relationships before going deeper",
-    "he gets comfortable fast: he opens up unusually quickly — she just listens and lets him dig",
+    "he gets comfortable unusually fast: he opens up quickly — she just listens and lets him dig himself in",
     "she mirrors his energy: she matches whatever he gives — calm when he's calm, flirty when he slips",
     "he thinks he's winning: his ego is fully in charge — he's charming and bragging while costing himself everything",
     "slow warmup then sudden crack: three images of nothing suspicious then one line that changes everything",
-    "she asks about his relationship directly early: she brings it up casually and his answer opens the whole thing"
+    "she asks about his relationship directly early: she brings it up casually and his answer opens the whole thing",
+    "he hides the girlfriend entirely: claims to be single the whole time — audience only knows from the hook",
+    "she pushes hard from every angle but he holds: his resistance under pressure is the whole middle",
+    "she becomes a genuine client and the lines blur: professional becomes personal gradually and naturally",
+    "he reveals his beliefs and values gradually: his ideology is the red flag not his behavior",
+    "she plays vulnerable: shares something personal that makes him open up and reveal more than he should",
+    "he steers every topic back to meeting up: the agenda is always physical — she just lets him lead there",
+    "she asks hypothetical questions: what would you do if — pulls his real self out without direct confrontation",
+    "he gets defensive early then relaxes: the defensiveness itself is the tell — then comfort makes it worse",
+    "she goes silent between messages: his double texts and follow ups reveal exactly how interested he is",
+    "he starts giving her advice about her relationship problems while hiding his own: irony is the whole middle"
   ];
 
   const endings = [
-    "he fails, hard cut: kill line lands, script ends immediately, no response from her",
-    "he passes, girlfriend emotional payoff: he shuts it down, tester reports back, girlfriend reacts with relief or tears",
-    "he passes but girlfriend is the villain: he passes completely, then girlfriend admits something that flips everything",
+    "hard cut fail: kill line lands, script ends immediately, no response from her, audience does the math",
+    "girlfriend emotional payoff: he shuts it down, tester reports back, girlfriend reacts with relief or tears",
+    "girlfriend is the villain: he passes completely, then girlfriend admits something that flips everything",
     "action confession: he sends an address, makes a plan, books something — the action is the kill line",
     "ambiguous tension: audience knows, he doesn't, script ends on that gap without confirming",
     "double twist: he passes, then a second reveal recontextualizes the whole script for the audience",
     "casual cruelty kill: one unbothered line delivered like nothing that makes the audience gasp",
     "time scale reveal: kill line reveals how long this has been going on — reframes everything before it",
-    "implied scale: kill line suggests this isn't the first time or she isn't the only one",
-    "passive devastation: kill line shows what the girlfriend believes while being completely wrong about everything"
+    "implied scale: kill line suggests she isn't the only one or this isn't the first time",
+    "passive devastation: kill line shows what the girlfriend believes while being completely wrong about everything",
+    "audience debate: no clear answer, script ends in the gray zone, comments split on whether he failed",
+    "clean pass with past confession: he passes but reveals he cheated before — loyalty from guilt not virtue",
+    "immediate shutdown: he closes it firmly in image 2 and never opens back up — audience stunned by image 4",
+    "smooth lie ambiguity: he never mentions the girlfriend, claims to be single, audience only knows from the hook",
+    "distance justification: he makes plans while girlfriend exists but her absence makes her feel irrelevant to him",
+    "he exposes himself trying to expose her: his response to being tested reveals more than the test did",
+    "he passes but for the wrong reasons: stays loyal out of fear or convenience not love — audience unsettled",
+    "reverse trap: he knew it was a test the whole time, his last line confirms it, but he still failed anyway",
+    "slow fade: no dramatic kill line — he just keeps talking and the audience realizes he never intended to stop",
+    "screenshot ending: final image is her sending the whole conversation to the girlfriend with no words — hard cut"
   ];
 
   const personalities = [
@@ -3247,7 +3277,21 @@ function smBuildSMv2(platform) {
     "ego-driven and fast: moves quickly, volunteers information through confidence, thinks he's impressive and untouchable",
     "quietly entitled: uses his job or lifestyle as cover, genuinely doesn't think he's doing anything wrong",
     "genuinely loyal: actually passes the test, shuts it down himself, twist comes from somewhere else entirely",
-    "resistant but warming up: pushes back at first, banter and her energy gradually cracks him open"
+    "resistant but warming up: pushes back at first, banter and her energy gradually cracks him open",
+    "ideological manipulator: reveals control and psychological manipulation through his beliefs — never physically cheats",
+    "professional gray area: uses work as genuine cover, never clearly crosses a line, audience debate follows",
+    "reformed man: loyalty comes from guilt not virtue — passes but reveals he cheated before",
+    "disciplined and boundaried: firm from image 1, sets his own standards unprompted, never wavers once",
+    "emotionally committed: doesn't argue philosophy, just states his love simply and exits the conversation",
+    "smooth liar: hides girlfriend entirely from the start, claims to be single, audience only knows from the hook",
+    "deployment charmer: distance makes the girlfriend feel irrelevant — he makes plans without guilt",
+    "the keeper: shuts her down so well and so naturally the audience sends it to their own boyfriend",
+    "the philosopher: turns every question into a discussion about modern dating to deflect from his own situation",
+    "the provider: stays in the relationship because of what she does for him — not love, not loyalty, convenience",
+    "the coward: wants to but never commits — lives in the gray zone, never fails clearly, never passes cleanly",
+    "the projector: accuses her of bad intentions while doing exactly what he's guilty of — audience catches it",
+    "the emotional cheater: never physical but shares things with the tester he should only share with his girlfriend",
+    "the opportunist: loyal only when cheating is inconvenient — cracks the moment conditions are right"
   ];
 
   const selectedTier = hookTiers[Math.floor(Math.random() * hookTiers.length)];
@@ -3261,17 +3305,17 @@ function smBuildSMv2(platform) {
 
 Output ONLY the raw script. No stage directions. No brackets. No placeholder text like [mutual] or [name]. No commentary. No caption blocks at the end. No explanations. Just the script starting with **IMAGE 1**.
 
-THIS SCRIPT MUST USE THESE EXACT CHOICES — they have already been decided. Build everything around them naturally. Never announce them. Never force them. Execute them so the audience never feels the structure:
+THIS SCRIPT MUST USE THESE EXACT CHOICES — they have already been decided in JavaScript before this prompt ran. Build everything around them naturally. Never announce them. Never force them. Execute them so the audience never feels the structure:
 BEGINNING: ${selectedBeginning}
 MIDDLE: ${selectedMiddle}
 ENDING: ${selectedEnding}
 HIS PERSONALITY: ${selectedPersonality}
 
-These are locked. Do not swap them. Do not blend them with other options.
+These are locked. Do not swap them. Do not blend them with other options. If the combination feels unusual that is intentional — make it work naturally.
 
 FIRST — before writing the script, create the story reply hook for IMAGE 1.
 Your reference hook is: "${selectedHook}"
-The hook is always a girlfriend posting on her story asking someone to loyalty test her man. That is the only context it can ever exist in. Match the exact length and energy of the reference hook — if the reference is short and casual, invent something short and casual. If it's medium with a specific detail, match that. If it's long and emotional, match that. Never make the invented hook longer or shorter than the reference. Always keep the core meaning: a girl asking for a loyalty test because something feels wrong with her man.
+The hook is always a girlfriend posting on her story asking someone to loyalty test her man. That is the only context it can ever exist in. Match the exact length and energy of the reference hook — if the reference is short and casual, invent something short and casual. If it is medium with a specific detail, match that. If it is long and emotional, match that. Never make the invented hook longer or shorter than the reference. Always keep the core meaning: a girl asking for a loyalty test because something feels wrong with her man.
 Completely change the specific situation and wording. Never copy the reference. The invented hook must make sense as a story post from a girlfriend who suspects her man — nothing vague, nothing that could be about anything else, nothing that introduces other people. Never use workplace jargon, email terminology, abbreviations like cc, bcc, or any word that could look like a technical term or formatting error in the UI.
 
 EXACT FORMAT:
@@ -3326,7 +3370,7 @@ CONTENT RULES — never break these:
 - He uses casual lowercase texting: lmaoo, nah, ight, idk, wbu, fr, honestly, ngl, kinda, yeah, bet
 - HE brings up the girlfriend himself — she NEVER says "ur girl" or "wifey" or reveals she knows about a girlfriend BEFORE he mentions someone first.
 - She NEVER confronts him. NEVER says "so you're cheating". NEVER sounds like an interrogation.
-- Every script must prove HE is the one cheating or manipulating — never a story about someone else.
+- Every script must feel like a completely different world from the last — different guy, different situation, different energy, different ending. Nothing carries over.
 - Scenarios must be universal — understood by anyone worldwide. No specific city names.
 
 THE SLOW DRIP STRUCTURE:
@@ -3334,7 +3378,7 @@ THE SLOW DRIP STRUCTURE:
 - Image 2: she slides in with a natural opener matching the BEGINNING chosen above
 - Images 3-4: normal small talk, no red flags yet — meme lands here to keep retention
 - Image 5: first ambiguous line from him — meme goes here
-- Images 6-8: her innocent questions pull one more layer out each time — memes spread through here
+- Images 6-8: the MIDDLE chosen above drives how the reveal unfolds — memes spread through here
 - Final image: the kill line matching the ENDING chosen above. Cut immediately. No meme on the final image.
 
 THE KILL LINE:
