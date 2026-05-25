@@ -681,6 +681,21 @@ button,input,select,textarea{transition-property:background,border-color,color,b
   .platform-grid{grid-template-columns:1fr 1fr}
   .preview-area{padding:8px}
 }
+
+/* ── V2 CUSTOM TAB ── */
+.cv2-section{display:flex;flex-direction:column;gap:7px}
+.cv2-row{display:flex;flex-wrap:wrap;gap:4px}
+.cv2-btn{padding:5px 9px;font-size:10.5px;font-weight:600;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);cursor:pointer;transition:all .14s;font-family:inherit;line-height:1.3;text-align:left}
+.cv2-btn:hover{border-color:rgba(232,168,124,0.4);color:rgba(255,255,255,0.85);background:rgba(232,168,124,0.06)}
+.cv2-btn.cv2-active{border-color:#e8a87c;background:rgba(232,168,124,0.14);color:#e8a87c}
+.cv2-random{border-color:rgba(139,92,246,0.25)!important;color:rgba(139,92,246,0.6)!important}
+.cv2-random:hover,.cv2-random.cv2-active{border-color:rgba(139,92,246,0.6)!important;background:rgba(139,92,246,0.13)!important;color:#c4b5fd!important}
+.cv2-pass-btn{border-color:rgba(52,211,153,0.25)!important;color:rgba(52,211,153,0.55)!important}
+.cv2-pass-btn:hover,.cv2-pass-btn.cv2-active{border-color:rgba(52,211,153,0.55)!important;background:rgba(52,211,153,0.1)!important;color:#6ee7b7!important}
+.cv2-fail-btn{border-color:rgba(239,68,68,0.25)!important;color:rgba(239,68,68,0.5)!important}
+.cv2-fail-btn:hover,.cv2-fail-btn.cv2-active{border-color:rgba(239,68,68,0.5)!important;background:rgba(239,68,68,0.1)!important;color:#fca5a5!important}
+#v2custom-main .lp{overflow-y:auto}
+@media(max-width:768px){#v2custom-main .sm-rp{height:auto;overflow:visible}#v2custom-main .output-box{min-height:200px;flex:none}}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/twemoji.min.js" crossorigin="anonymous"></script>
 </head>
@@ -712,6 +727,10 @@ button,input,select,textarea{transition-property:background,border-color,color,b
     <button class="t-tab" id="tab-scriptmaker" onclick="switchTab('scriptmaker')">
       <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
       Script Maker
+    </button>
+    <button class="t-tab" id="tab-v2custom" onclick="switchTab('v2custom')">
+      <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      V2 Custom
     </button>
   </div>
   <div id="sm-topbar-extras">
@@ -983,6 +1002,181 @@ button,input,select,textarea{transition-property:background,border-color,color,b
   </div>
 </div>
 
+<div class="main" id="v2custom-main" style="display:none">
+  <div class="lp" style="gap:12px">
+
+    <!-- PASS / FAIL -->
+    <div class="cv2-section">
+      <div class="sec-title">Pass / Fail</div>
+      <div class="cv2-row" id="cv2-pf">
+        <button class="cv2-btn cv2-random cv2-active" data-idx="-1" onclick="cv2Select('passFail',-1,this)">Random</button>
+        <button class="cv2-btn cv2-pass-btn" data-idx="pass" onclick="cv2Select('passFail','pass',this)">Pass</button>
+        <button class="cv2-btn cv2-fail-btn" data-idx="fail" onclick="cv2Select('passFail','fail',this)">Fail</button>
+      </div>
+    </div>
+
+    <div class="div"></div>
+
+    <!-- HOOK TIER -->
+    <div class="cv2-section">
+      <div class="sec-title">Hook Tier</div>
+      <div class="cv2-row" id="cv2-hook">
+        <button class="cv2-btn cv2-random cv2-active" data-idx="-1" onclick="cv2Select('hookTier',-1,this)">Random</button>
+        <button class="cv2-btn" data-idx="short" onclick="cv2Select('hookTier','short',this)">Short</button>
+        <button class="cv2-btn" data-idx="medium" onclick="cv2Select('hookTier','medium',this)">Medium</button>
+        <button class="cv2-btn" data-idx="long" onclick="cv2Select('hookTier','long',this)">Long</button>
+        <button class="cv2-btn" data-idx="juicy" onclick="cv2Select('hookTier','juicy',this)">Juicy</button>
+      </div>
+    </div>
+
+    <div class="div"></div>
+
+    <!-- BEGINNING -->
+    <div class="cv2-section">
+      <div class="sec-title">Beginning</div>
+      <div class="cv2-row" id="cv2-beg">
+        <button class="cv2-btn cv2-random cv2-active" data-idx="-1" onclick="cv2Select('beginning',-1,this)">Random</button>
+      <button class="cv2-btn" data-idx="0" onclick="cv2Select('beginning',0,this)">suggested or explore page</button>
+      <button class="cv2-btn" data-idx="1" onclick="cv2Select('beginning',1,this)">mutual connection</button>
+      <button class="cv2-btn" data-idx="2" onclick="cv2Select('beginning',2,this)">school or hometown link</button>
+      <button class="cv2-btn" data-idx="3" onclick="cv2Select('beginning',3,this)">she replies to his story</button>
+      <button class="cv2-btn" data-idx="4" onclick="cv2Select('beginning',4,this)">she compliments something on his page</button>
+      <button class="cv2-btn" data-idx="5" onclick="cv2Select('beginning',5,this)">aggressive flirty opener</button>
+      <button class="cv2-btn" data-idx="6" onclick="cv2Select('beginning',6,this)">she pretends to need advice</button>
+      <button class="cv2-btn" data-idx="7" onclick="cv2Select('beginning',7,this)">neighborhood or regular spot</button>
+      <button class="cv2-btn" data-idx="8" onclick="cv2Select('beginning',8,this)">friend mentioned him</button>
+      <button class="cv2-btn" data-idx="9" onclick="cv2Select('beginning',9,this)">she saw him tagged somewhere</button>
+      <button class="cv2-btn" data-idx="10" onclick="cv2Select('beginning',10,this)">she compliments his profession</button>
+      <button class="cv2-btn" data-idx="11" onclick="cv2Select('beginning',11,this)">she becomes a client</button>
+      <button class="cv2-btn" data-idx="12" onclick="cv2Select('beginning',12,this)">saw him comment on mutual's post</button>
+      <button class="cv2-btn" data-idx="13" onclick="cv2Select('beginning',13,this)">recognized from a reel</button>
+      <button class="cv2-btn" data-idx="14" onclick="cv2Select('beginning',14,this)">she pretends they matched</button>
+      <button class="cv2-btn" data-idx="15" onclick="cv2Select('beginning',15,this)">question about his page</button>
+      <button class="cv2-btn" data-idx="16" onclick="cv2Select('beginning',16,this)">a friend dared her</button>
+      <button class="cv2-btn" data-idx="17" onclick="cv2Select('beginning',17,this)">responds to group post</button>
+      <button class="cv2-btn" data-idx="18" onclick="cv2Select('beginning',18,this)">she saw him in public</button>
+      <button class="cv2-btn" data-idx="19" onclick="cv2Select('beginning',19,this)">she opens with humor</button>
+      </div>
+    </div>
+
+    <div class="div"></div>
+
+    <!-- MIDDLE -->
+    <div class="cv2-section">
+      <div class="sec-title">Middle</div>
+      <div class="cv2-row" id="cv2-mid">
+        <button class="cv2-btn cv2-random cv2-active" data-idx="-1" onclick="cv2Select('middle',-1,this)">Random</button>
+      <button class="cv2-btn" data-idx="0" onclick="cv2Select('middle',0,this)">slow drip</button>
+      <button class="cv2-btn" data-idx="1" onclick="cv2Select('middle',1,this)">he volunteers everything</button>
+      <button class="cv2-btn" data-idx="2" onclick="cv2Select('middle',2,this)">banter cracks him</button>
+      <button class="cv2-btn" data-idx="3" onclick="cv2Select('middle',3,this)">job or lifestyle as cover</button>
+      <button class="cv2-btn" data-idx="4" onclick="cv2Select('middle',4,this)">loyalty philosophy first</button>
+      <button class="cv2-btn" data-idx="5" onclick="cv2Select('middle',5,this)">he gets comfortable fast</button>
+      <button class="cv2-btn" data-idx="6" onclick="cv2Select('middle',6,this)">she mirrors his energy</button>
+      <button class="cv2-btn" data-idx="7" onclick="cv2Select('middle',7,this)">he thinks he's winning</button>
+      <button class="cv2-btn" data-idx="8" onclick="cv2Select('middle',8,this)">slow warmup then crack</button>
+      <button class="cv2-btn" data-idx="9" onclick="cv2Select('middle',9,this)">asks about relationship early</button>
+      <button class="cv2-btn" data-idx="10" onclick="cv2Select('middle',10,this)">he hides the girlfriend</button>
+      <button class="cv2-btn" data-idx="11" onclick="cv2Select('middle',11,this)">she pushes but he holds</button>
+      <button class="cv2-btn" data-idx="12" onclick="cv2Select('middle',12,this)">she becomes a genuine client</button>
+      <button class="cv2-btn" data-idx="13" onclick="cv2Select('middle',13,this)">reveals beliefs gradually</button>
+      <button class="cv2-btn" data-idx="14" onclick="cv2Select('middle',14,this)">she plays vulnerable</button>
+      <button class="cv2-btn" data-idx="15" onclick="cv2Select('middle',15,this)">steers toward meeting up</button>
+      <button class="cv2-btn" data-idx="16" onclick="cv2Select('middle',16,this)">hypothetical questions</button>
+      <button class="cv2-btn" data-idx="17" onclick="cv2Select('middle',17,this)">he gets defensive then relaxes</button>
+      <button class="cv2-btn" data-idx="18" onclick="cv2Select('middle',18,this)">she goes silent</button>
+      <button class="cv2-btn" data-idx="19" onclick="cv2Select('middle',19,this)">he gives relationship advice</button>
+      </div>
+    </div>
+
+    <div class="div"></div>
+
+    <!-- ENDING -->
+    <div class="cv2-section">
+      <div class="sec-title">Ending</div>
+      <div class="cv2-row" id="cv2-end">
+        <button class="cv2-btn cv2-random cv2-active" data-idx="-1" onclick="cv2Select('ending',-1,this)">Random</button>
+      <button class="cv2-btn" data-idx="0" onclick="cv2Select('ending',0,this)">hard cut fail</button>
+      <button class="cv2-btn" data-idx="1" onclick="cv2Select('ending',1,this)">girlfriend emotional payoff</button>
+      <button class="cv2-btn" data-idx="2" onclick="cv2Select('ending',2,this)">girlfriend is the villain</button>
+      <button class="cv2-btn" data-idx="3" onclick="cv2Select('ending',3,this)">action confession</button>
+      <button class="cv2-btn" data-idx="4" onclick="cv2Select('ending',4,this)">ambiguous tension</button>
+      <button class="cv2-btn" data-idx="5" onclick="cv2Select('ending',5,this)">double twist</button>
+      <button class="cv2-btn" data-idx="6" onclick="cv2Select('ending',6,this)">casual cruelty kill</button>
+      <button class="cv2-btn" data-idx="7" onclick="cv2Select('ending',7,this)">time scale reveal</button>
+      <button class="cv2-btn" data-idx="8" onclick="cv2Select('ending',8,this)">implied scale</button>
+      <button class="cv2-btn" data-idx="9" onclick="cv2Select('ending',9,this)">passive devastation</button>
+      <button class="cv2-btn" data-idx="10" onclick="cv2Select('ending',10,this)">audience debate</button>
+      <button class="cv2-btn" data-idx="11" onclick="cv2Select('ending',11,this)">clean pass + past confession</button>
+      <button class="cv2-btn" data-idx="12" onclick="cv2Select('ending',12,this)">immediate shutdown</button>
+      <button class="cv2-btn" data-idx="13" onclick="cv2Select('ending',13,this)">smooth lie ambiguity</button>
+      <button class="cv2-btn" data-idx="14" onclick="cv2Select('ending',14,this)">distance justification</button>
+      <button class="cv2-btn" data-idx="15" onclick="cv2Select('ending',15,this)">he exposes himself</button>
+      <button class="cv2-btn" data-idx="16" onclick="cv2Select('ending',16,this)">passes for wrong reasons</button>
+      <button class="cv2-btn" data-idx="17" onclick="cv2Select('ending',17,this)">reverse trap</button>
+      <button class="cv2-btn" data-idx="18" onclick="cv2Select('ending',18,this)">slow fade</button>
+      <button class="cv2-btn" data-idx="19" onclick="cv2Select('ending',19,this)">screenshot ending</button>
+      </div>
+    </div>
+
+    <div class="div"></div>
+
+    <!-- PERSONALITY -->
+    <div class="cv2-section">
+      <div class="sec-title">Personality</div>
+      <div class="cv2-row" id="cv2-per">
+        <button class="cv2-btn cv2-random cv2-active" data-idx="-1" onclick="cv2Select('personality',-1,this)">Random</button>
+      <button class="cv2-btn" data-idx="0" onclick="cv2Select('personality',0,this)">charming and slipping</button>
+      <button class="cv2-btn" data-idx="1" onclick="cv2Select('personality',1,this)">unbothered and proud</button>
+      <button class="cv2-btn" data-idx="2" onclick="cv2Select('personality',2,this)">ego-driven and fast</button>
+      <button class="cv2-btn" data-idx="3" onclick="cv2Select('personality',3,this)">quietly entitled</button>
+      <button class="cv2-btn" data-idx="4" onclick="cv2Select('personality',4,this)">genuinely loyal</button>
+      <button class="cv2-btn" data-idx="5" onclick="cv2Select('personality',5,this)">resistant but warming up</button>
+      <button class="cv2-btn" data-idx="6" onclick="cv2Select('personality',6,this)">ideological manipulator</button>
+      <button class="cv2-btn" data-idx="7" onclick="cv2Select('personality',7,this)">professional gray area</button>
+      <button class="cv2-btn" data-idx="8" onclick="cv2Select('personality',8,this)">reformed man</button>
+      <button class="cv2-btn" data-idx="9" onclick="cv2Select('personality',9,this)">disciplined and boundaried</button>
+      <button class="cv2-btn" data-idx="10" onclick="cv2Select('personality',10,this)">emotionally committed</button>
+      <button class="cv2-btn" data-idx="11" onclick="cv2Select('personality',11,this)">smooth liar</button>
+      <button class="cv2-btn" data-idx="12" onclick="cv2Select('personality',12,this)">deployment charmer</button>
+      <button class="cv2-btn" data-idx="13" onclick="cv2Select('personality',13,this)">the keeper</button>
+      <button class="cv2-btn" data-idx="14" onclick="cv2Select('personality',14,this)">the philosopher</button>
+      <button class="cv2-btn" data-idx="15" onclick="cv2Select('personality',15,this)">the provider</button>
+      <button class="cv2-btn" data-idx="16" onclick="cv2Select('personality',16,this)">the coward</button>
+      <button class="cv2-btn" data-idx="17" onclick="cv2Select('personality',17,this)">the projector</button>
+      <button class="cv2-btn" data-idx="18" onclick="cv2Select('personality',18,this)">the emotional cheater</button>
+      <button class="cv2-btn" data-idx="19" onclick="cv2Select('personality',19,this)">the opportunist</button>
+      </div>
+    </div>
+
+    <div style="flex:1"></div>
+
+    <button class="gbtn" id="cv2-genBtn" onclick="smGenerateCustomV2()" style="display:flex;align-items:center;justify-content:center;gap:7px;border-radius:12px;padding:13px;font-size:13px;font-weight:700;letter-spacing:.15px;will-change:transform">
+      <div class="spinner" id="cv2-spinner" style="display:none;width:13px;height:13px;border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite"></div>
+      <svg id="cv2-genIcon" viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      <span id="cv2-genTxt">Generate Script</span>
+    </button>
+
+  </div>
+  <div class="sm-rp">
+    <div class="rp-hdr">
+      <div class="rp-hdr-left">
+        <div class="status-dot" id="cv2-dot"></div>
+        <div class="rp-lbl">Output</div>
+      </div>
+      <div class="act-btns">
+        <button class="act-btn" onclick="cv2Clear()">Clear</button>
+        <button class="act-btn primary" onclick="cv2Copy()">Copy Script</button>
+      </div>
+    </div>
+    <div class="output-box placeholder" id="cv2-output" data-placeholder="Pick your parameters on the left and hit Generate.&#10;&#10;Every parameter is optional — leave anything on Random and the model chooses."></div>
+    <div class="sm-sbar">
+      <div class="sm-stxt" id="cv2-stxt">Ready</div>
+      <div class="char-count" id="cv2-chars">0 / 5000</div>
+    </div>
+  </div>
+</div>
+
 <!-- HISTORY PANEL -->
 <div id="history-main">
   <div class="hist-hdr">
@@ -1018,17 +1212,18 @@ let suppressBuilderSync = false;
 
 // ── TAB ──
 function switchTab(tab) {
-  ['builder','code','stash','scriptmaker','history'].forEach(t => {
+  ['builder','code','stash','scriptmaker','history','v2custom'].forEach(t => {
     const el = document.getElementById('tab-'+t);
     if (el) el.classList.toggle('active', tab===t);
   });
-  const isAlt = tab==='scriptmaker' || tab==='history';
+  const isAlt = tab==='scriptmaker' || tab==='history' || tab==='v2custom';
   document.getElementById('builder-main').style.display = isAlt ? 'none' : '';
   document.getElementById('builder-panel').style.display = tab==='builder' ? 'block' : 'none';
   document.getElementById('code-panel').style.display = tab==='code' ? 'flex' : 'none';
   document.getElementById('stash-panel').style.display = tab==='stash' ? 'flex' : 'none';
   document.getElementById('scriptmaker-main').style.display = tab==='scriptmaker' ? '' : 'none';
   document.getElementById('history-main').style.display = tab==='history' ? 'flex' : 'none';
+  document.getElementById('v2custom-main').style.display = tab==='v2custom' ? '' : 'none';
   const smExtras = document.getElementById('sm-topbar-extras');
   smExtras.style.display = isAlt ? 'flex' : 'none';
   // Mobile: hide bottom action buttons unless on builder tab; hide live preview on stash
@@ -1042,12 +1237,16 @@ function switchTab(tab) {
     else smLoadUsage();
   }
   if (tab === 'history') smRenderHistory();
+  if (tab === 'v2custom') {
+    if (!smAffCode) { document.getElementById('sm-login').style.display = 'flex'; }
+    else smLoadUsage();
+  }
 }
 
 // Honor URL hash so links land correctly.
 (function applyHashTab(){
   const h = (location.hash || '').slice(1);
-  if (['builder','code','stash','scriptmaker','history'].includes(h)) switchTab(h);
+  if (['builder','code','stash','scriptmaker','history','v2custom'].includes(h)) switchTab(h);
 })();
 
 // ── FILES ──
@@ -3108,6 +3307,202 @@ document.addEventListener('DOMContentLoaded', ()=>{
   if (stored) { smAffCode = stored; }
 });
 
+// ── V2 CUSTOM STATE ──
+const cv2Data = {
+  beginnings: [
+    "suggested or explore page: she says he came up on her suggested or explore page and she slid in",
+    "mutual connection: they share a mutual friend or follower and she uses that as her reason to reach out",
+    "school or hometown link: she recognizes him from somewhere they both went — school, hometown, same area",
+    "she replies to his story: something on his public story gives her a natural reason to message him",
+    "she compliments something specific on his page: a photo, a post, a caption — something visible publicly",
+    "aggressive flirty opener: she comes in confident and direct — no explanation, just energy",
+    "she pretends to need advice: she opens with something she needs help with that fits his vibe or job",
+    "neighborhood or regular spot: she says she sees him around somewhere they both frequent",
+    "friend mentioned him: a mutual brought him up and she decided to reach out",
+    "she saw him tagged somewhere: he was tagged in a post or photo and she noticed him there",
+    "she compliments his profession or service: military, trade, creative work — something about what he does",
+    "she becomes a potential client: his job creates a natural professional reason to connect",
+    "she slid in after seeing him comment on a mutual's post: his comment caught her attention",
+    "she recognized him from a video or reel: she saw him on her feed and tracked him down",
+    "she pretends they matched somewhere and is following up: acts like they already had a connection",
+    "she opens with a question about something on his page: a place he visited, food he posted, anything visible",
+    "a friend dared her to message him: she uses it as a playful excuse to slide in",
+    "she responds to something he posted in a group or community: a shared space gives her the opener",
+    "she says she saw him out somewhere in public and looked him up: she recognized him from real life",
+    "she opens with humor: a joke or meme related to something on his page breaks the ice"
+  ],
+  middles: [
+    "slow drip: her innocent questions pull one layer out at a time — he never realizes he's revealing anything",
+    "he volunteers everything: ego and comfort make him overshare without being asked — she barely has to pull",
+    "banter cracks him: playful witty back and forth gradually lowers his guard until he says too much",
+    "job or lifestyle as cover: he uses what he does as natural justification — she asks innocent questions about it",
+    "she tests his loyalty philosophy first: she asks what he thinks about loyalty and relationships before going deeper",
+    "he gets comfortable unusually fast: he opens up quickly — she just listens and lets him dig himself in",
+    "she mirrors his energy: she matches whatever he gives — calm when he's calm, flirty when he slips",
+    "he thinks he's winning: his ego is fully in charge — he's charming and bragging while costing himself everything",
+    "slow warmup then sudden crack: three images of nothing suspicious then one line that changes everything",
+    "she asks about his relationship directly early: she brings it up casually and his answer opens the whole thing",
+    "he hides the girlfriend entirely: claims to be single the whole time — audience only knows from the hook",
+    "she pushes hard from every angle but he holds: his resistance under pressure is the whole middle",
+    "she becomes a genuine client and the lines blur: professional becomes personal gradually and naturally",
+    "he reveals his beliefs and values gradually: his ideology is the red flag not his behavior",
+    "she plays vulnerable: shares something personal that makes him open up and reveal more than he should",
+    "he steers every topic back to meeting up: the agenda is always physical — she just lets him lead there",
+    "she asks hypothetical questions: what would you do if — pulls his real self out without direct confrontation",
+    "he gets defensive early then relaxes: the defensiveness itself is the tell — then comfort makes it worse",
+    "she goes silent between messages: his double texts and follow ups reveal exactly how interested he is",
+    "he starts giving her advice about her relationship problems while hiding his own: irony is the whole middle"
+  ],
+  endings: [
+    "hard cut fail: kill line lands, script ends immediately, no response from her, audience does the math",
+    "girlfriend emotional payoff: he shuts it down, tester reports back, girlfriend reacts with relief or tears",
+    "girlfriend is the villain: he passes completely, then girlfriend admits something that flips everything",
+    "action confession: he sends an address, makes a plan, books something — the action is the kill line",
+    "ambiguous tension: audience knows, he doesn't, script ends on that gap without confirming",
+    "double twist: he passes, then a second reveal recontextualizes the whole script for the audience",
+    "casual cruelty kill: one unbothered line delivered like nothing that makes the audience gasp",
+    "time scale reveal: kill line reveals how long this has been going on — reframes everything before it",
+    "implied scale: kill line suggests she isn't the only one or this isn't the first time",
+    "passive devastation: kill line shows what the girlfriend believes while being completely wrong about everything",
+    "audience debate: no clear answer, script ends in the gray zone, comments split on whether he failed",
+    "clean pass with past confession: he passes but reveals he cheated before — loyalty from guilt not virtue",
+    "immediate shutdown: he closes it firmly in image 2 and never opens back up — audience stunned by image 4",
+    "smooth lie ambiguity: he never mentions the girlfriend, claims to be single, audience only knows from the hook",
+    "distance justification: he makes plans while girlfriend exists but her absence makes her feel irrelevant to him",
+    "he exposes himself trying to expose her: his response to being tested reveals more than the test did",
+    "he passes but for the wrong reasons: stays loyal out of fear or convenience not love — audience unsettled",
+    "reverse trap: he knew it was a test the whole time, his last line confirms it, but he still failed anyway",
+    "slow fade: no dramatic kill line — he just keeps talking and the audience realizes he never intended to stop",
+    "screenshot ending: final image is her sending the whole conversation to the girlfriend with no words — hard cut"
+  ],
+  personalities: [
+    "charming and gradually slipping: seems completely normal at first, cracks appear slowly through comfort and ego",
+    "unbothered and proud: has a whole situation going on, talks about it casually like it's just logistics",
+    "ego-driven and fast: moves quickly, volunteers information through confidence, thinks he's impressive and untouchable",
+    "quietly entitled: uses his job or lifestyle as cover, genuinely doesn't think he's doing anything wrong",
+    "genuinely loyal: actually passes the test, shuts it down himself, twist comes from somewhere else entirely",
+    "resistant but warming up: pushes back at first, banter and her energy gradually cracks him open",
+    "ideological manipulator: reveals control and psychological manipulation through his beliefs — never physically cheats",
+    "professional gray area: uses work as genuine cover, never clearly crosses a line, audience debate follows",
+    "reformed man: loyalty comes from guilt not virtue — passes but reveals he cheated before",
+    "disciplined and boundaried: firm from image 1, sets his own standards unprompted, never wavers once",
+    "emotionally committed: doesn't argue philosophy, just states his love simply and exits the conversation",
+    "smooth liar: hides girlfriend entirely from the start, claims to be single, audience only knows from the hook",
+    "deployment charmer: distance makes the girlfriend feel irrelevant — he makes plans without guilt",
+    "the keeper: shuts her down so well and so naturally the audience sends it to their own boyfriend",
+    "the philosopher: turns every question into a discussion about modern dating to deflect from his own situation",
+    "the provider: stays in the relationship because of what she does for him — not love, not loyalty, convenience",
+    "the coward: wants to but never commits — lives in the gray zone, never fails clearly, never passes cleanly",
+    "the projector: accuses her of bad intentions while doing exactly what he's guilty of — audience catches it",
+    "the emotional cheater: never physical but shares things with the tester he should only share with his girlfriend",
+    "the opportunist: loyal only when cheating is inconvenient — cracks the moment conditions are right"
+  ]
+};
+
+const cv2Selections = { passFail: -1, hookTier: -1, beginning: -1, middle: -1, ending: -1, personality: -1 };
+const cv2GroupIds = { passFail:'cv2-pf', hookTier:'cv2-hook', beginning:'cv2-beg', middle:'cv2-mid', ending:'cv2-end', personality:'cv2-per' };
+
+function cv2Select(section, val, el) {
+  const group = document.getElementById(cv2GroupIds[section]);
+  group.querySelectorAll('.cv2-btn').forEach(b => b.classList.remove('cv2-active'));
+  el.classList.add('cv2-active');
+  cv2Selections[section] = val;
+}
+
+function cv2Clear() {
+  const out = document.getElementById('cv2-output');
+  out.textContent = '';
+  out.classList.add('placeholder');
+  document.getElementById('cv2-dot').className = 'status-dot';
+  document.getElementById('cv2-stxt').textContent = 'Ready';
+  document.getElementById('cv2-chars').textContent = '0 / 5000';
+}
+
+function cv2Copy() {
+  const text = document.getElementById('cv2-output').textContent;
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(() => showToast('Copied!'));
+}
+
+function cv2UpdateCharCount(text) {
+  const el = document.getElementById('cv2-chars');
+  const len = text.length;
+  el.textContent = `${len} / 5000`;
+  el.className = 'char-count'+(len>5000?' over':len>1200?' warn':'');
+}
+
+async function smGenerateCustomV2() {
+  const btn = document.getElementById('cv2-genBtn');
+  const out = document.getElementById('cv2-output');
+  const dot = document.getElementById('cv2-dot');
+  const stxt = document.getElementById('cv2-stxt');
+
+  if (smAffCode) {
+    try {
+      const check = await fetch(`/scripts/usage?code=${encodeURIComponent(smAffCode)}`);
+      const usage = await check.json();
+      if (check.ok && usage.remaining <= 0) {
+        smUpdateUsage(usage.used, usage.limit, 0);
+        showToast('Daily limit reached — come back tomorrow');
+        return;
+      }
+    } catch(_) {}
+  }
+
+  btn.disabled = true;
+  document.getElementById('cv2-spinner').style.display = 'block';
+  document.getElementById('cv2-genIcon').style.display = 'none';
+  document.getElementById('cv2-genTxt').textContent = 'Generating...';
+  out.textContent = ''; out.classList.remove('placeholder');
+  dot.className = 'status-dot loading';
+  stxt.textContent = 'Cooking...';
+  cv2UpdateCharCount('');
+
+  const customOptions = {
+    hookTier:    cv2Selections.hookTier    === -1 ? null : cv2Selections.hookTier,
+    beginning:   cv2Selections.beginning   === -1 ? null : cv2Data.beginnings[cv2Selections.beginning],
+    middle:      cv2Selections.middle      === -1 ? null : cv2Data.middles[cv2Selections.middle],
+    ending:      cv2Selections.ending      === -1 ? null : cv2Data.endings[cv2Selections.ending],
+    personality: cv2Selections.personality === -1 ? null : cv2Data.personalities[cv2Selections.personality],
+    passFail:    cv2Selections.passFail    === -1 ? 'random' : cv2Selections.passFail
+  };
+
+  try {
+    const res = await fetch('/ai/generate', {
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({prompt: smBuildCustomV2('tiktok', customOptions)})
+    });
+    const data = await res.json();
+    const text = (data.content?.map(b=>b.text||'').join('')||'').trim();
+    if (!text) throw new Error('empty');
+
+    out.textContent = text;
+    dot.className = 'status-dot ready';
+    stxt.textContent = 'Done — copy and paste into your generator';
+    cv2UpdateCharCount(text);
+    smAddToHistory(text, 'v2custom');
+
+    if (smAffCode) {
+      try {
+        const rec = await fetch('/scripts/record',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:smAffCode})});
+        const rd = await rec.json();
+        if (rec.ok) smUpdateUsage(rd.used, rd.limit, rd.remaining);
+      } catch(_) {}
+    }
+  } catch(_) {
+    out.classList.add('placeholder');
+    out.dataset.placeholder = 'Something went wrong. Try again.';
+    dot.className = 'status-dot error';
+    stxt.textContent = 'Error — try again';
+  } finally {
+    btn.disabled = false;
+    document.getElementById('cv2-spinner').style.display = 'none';
+    document.getElementById('cv2-genIcon').style.display = '';
+    document.getElementById('cv2-genTxt').textContent = 'Generate Script';
+  }
+}
+
+
 function getSmPlatform() {
   const a = document.querySelector('#sm-platformGroup .platform-pill.active');
   return a ? a.dataset.val : 'instagram';
@@ -3391,6 +3786,317 @@ STICKINESS RULES — this is the most important section:
 
 CONTENT RULES — never break these:
 - She uses natural emojis throughout: 😏 👀 😭 😅 😇 💀 😐 🙃 etc
+- He uses casual lowercase texting: lmaoo, nah, ight, idk, wbu, fr, honestly, ngl, kinda, yeah, bet
+- HE brings up the girlfriend himself — she NEVER says "ur girl" or "wifey" or reveals she knows about a girlfriend BEFORE he mentions someone first. Exception: if the selected ending or personality requires the girlfriend to never be mentioned, honor that.
+- She NEVER confronts him. NEVER says "so you're cheating". NEVER sounds like an interrogation.
+- Every script must feel like a completely different world from the last — different guy, different situation, different energy, different ending. Nothing carries over.
+- Scenarios must be universal — understood by anyone worldwide. No specific city names.
+
+THE STRUCTURE:
+- Image 1: story reply + her casual reply — first meme can land here to hook immediately
+- Image 2: she slides in with a natural opener matching the BEGINNING chosen above
+- Images 3-4: normal small talk, no red flags yet — meme lands here to keep retention
+- Images 5-7: the MIDDLE chosen above drives how things develop — memes spread through here
+- Final image: the ENDING chosen above plays out exactly as described. Hard cut.
+
+Platform context: ${platform}
+
+Generate the script now. Start with **IMAGE 1**. Raw script only. Nothing else before or after it.`;
+}
+
+function smBuildCustomV2(platform, customOptions) {
+  const hookTiers = {
+    short: [
+      "can you see if my bf is cheating 😭",
+      "test my man pls 🙏",
+      "hey can you test my bf he's been acting off 😐",
+      "i need to know if he's loyal 😭",
+      "test him pls something feels off 😐",
+      "can you check on my man for me 🙃",
+      "i don't feel right about this 😭",
+      "test him i'm begging 😭",
+      "i need answers pls 😐",
+      "just test him for me 🙏"
+    ],
+    medium: [
+      "test him pls he comes home smelling like perfume 🙃",
+      "test him pls he got a second phone and said it's for work 😐",
+      "test him pls he goes out of town every other weekend and i don't know why 😭",
+      "test him pls he's a massage therapist but only goes to girls houses 😐",
+      "test him pls he leaves the room every time a certain contact calls 😐",
+      "test him pls he started clearing his search history every single night 🙃",
+      "test him pls he has a contact saved as a man's name but texts come in at 2am 😐",
+      "test him pls he asked me not to tag him in anything anymore 🙃",
+      "test him pls he gets defensive when i ask simple questions 😐",
+      "test him pls he started wearing his ring to work after years of leaving it home 😐",
+      "test him pls he's been working from home but takes calls in the car 🙃",
+      "test him pls he told me he's not on social media but i found his page 😐",
+      "test him pls he said he's done with his ex but she likes every photo within seconds 🙃",
+      "test him pls his ring finger has a tan line and he says it's from a ring he lost 🙃",
+      "test him pls he deleted an entire month of texts and said his storage was full 😭",
+      "test him pls he just got back from a work trip but came home with different cologne on 😐",
+      "test him pls he started going to church on sundays but i've never met anyone from his church 🙃",
+      "test him pls he cried when i almost broke up with him but his location is never on 🙃",
+      "test him pls he proposed 3 months ago and started acting different right after 🙃",
+      "test him pls his ex keeps posting things that match exactly where he said he was 😐",
+      "test him pls he cancelled our valentine plans last minute with no real reason 😭",
+      "test him pls he has pictures of me on his page but something still feels off 😐",
+      "test him pls he told me he loved me last week and i just found a second sim card 😐",
+      "test him pls he's been on calls till 2am every night this week 😐",
+      "test him pls he started being really sweet out of nowhere and it's making me nervous 🙃",
+      "test him pls he stopped letting me use his phone even for google maps 😐",
+      "test him pls he used to leave his phone everywhere now it's always face down 🙃",
+      "test him pls he booked a hotel and cancelled last minute with no explanation 😭",
+      "test him pls he started locking the bathroom door when he showers 😐",
+      "test him pls he unfollowed me but still watches every single story 🙃"
+    ],
+    long: [
+      "test him pls i'm pregnant and he's been on calls till 2am every night 😭",
+      "test him pls i want this man out of my life i just need proof 🙏",
+      "test him pls i paid for his flight last month and he won't let me see his lock screen 😭",
+      "test him pls he's on a deployment and i just need to know the truth 😭",
+      "test him pls i just bought him a car and he still won't let me see his phone 😭",
+      "test him pls i'm three months pregnant and he just started going to the gym at 11pm 😭",
+      "test him pls he told me i was paranoid and then i found receipts in his jacket 😐",
+      "test him pls i moved cities for this man and now something feels very wrong 😭",
+      "test him pls i found a hotel receipt and he said it was for a work thing 😐",
+      "test him pls he proposed and two weeks later started acting like a completely different person 😭",
+      "test him pls i've been supporting him financially for a year and he's been lying to me 😭",
+      "test him pls he cried and said i was his whole world then i saw a text on his watch 😐",
+      "test him pls i just lost a baby and he's been distant ever since 😭",
+      "test him pls we just moved in together and he already has a whole secret life 😐",
+      "test him pls he told me he's never cheated in his life and something in me doesn't believe it 😐",
+      "test him pls i've been with this man for 4 years and my gut has never been wrong before 😭",
+      "test him pls he said i'm the only one and then came home at 4am with no explanation 😐",
+      "test him pls i paid his rent while he was unemployed and now he won't even show me his screen 😭",
+      "test him pls he's been distant since i told him i was pregnant and it's scaring me 😭",
+      "test him pls i gave up a whole opportunity to stay with him and now i'm not sure 😭",
+      "test him pls he said he needed space and then i saw him out with someone the same night 😐",
+      "test him pls he swore on his kids he wasn't cheating and something still doesn't add up 😭",
+      "test him pls he said he was done playing games and ready to settle down then went cold 😐",
+      "test him pls he told me he booked us a trip and i just found out he never booked anything 😐",
+      "test him pls he keeps saying i'm the problem and i'm starting to wonder if he's just deflecting 😭",
+      "test him pls he said he's working late every friday but his coworker just told me they finish at 5 😐",
+      "test him pls he took my name off his emergency contact and said it was an accident 😐",
+      "test him pls he went from texting me all day to one word replies and i don't know what changed 😭",
+      "test him pls he said he's not ready for social media but he has a whole hidden account 😐",
+      "test him pls he told me he's not that type of guy and that's exactly what scares me 😭",
+      "test him pls he started spending sundays away and comes back with no explanation 😐",
+      "test him pls he muted my stories but still views them from a fake account 😐"
+    ],
+    juicy: [
+      "test him pls i'm pregnant and he's been on calls till 2am every night 😭",
+      "test him pls i want this man out of my life i just need proof 🙏",
+      "test him pls i paid for his flight last month and he won't let me see his lock screen 😭",
+      "test him pls i just bought him a car and he still won't let me see his phone 😭",
+      "test him pls i'm three months pregnant and he just started going to the gym at 11pm 😭",
+      "test him pls he cried and said i was his whole world then i saw a text on his watch 😐",
+      "test him pls i just lost a baby and he's been distant ever since 😭",
+      "test him pls he proposed and two weeks later started acting like a completely different person 😭",
+      "test him pls i've been supporting him financially for a year and he's been lying to me 😭",
+      "test him pls we just moved in together and he already has a whole secret life 😐"
+    ]
+  };
+
+  const beginnings = [
+    "suggested or explore page: she says he came up on her suggested or explore page and she slid in",
+    "mutual connection: they share a mutual friend or follower and she uses that as her reason to reach out",
+    "school or hometown link: she recognizes him from somewhere they both went — school, hometown, same area",
+    "she replies to his story: something on his public story gives her a natural reason to message him",
+    "she compliments something specific on his page: a photo, a post, a caption — something visible publicly",
+    "aggressive flirty opener: she comes in confident and direct — no explanation, just energy",
+    "she pretends to need advice: she opens with something she needs help with that fits his vibe or job",
+    "neighborhood or regular spot: she says she sees him around somewhere they both frequent",
+    "friend mentioned him: a mutual brought him up and she decided to reach out",
+    "she saw him tagged somewhere: he was tagged in a post or photo and she noticed him there",
+    "she compliments his profession or service: military, trade, creative work — something about what he does",
+    "she becomes a potential client: his job creates a natural professional reason to connect",
+    "she slid in after seeing him comment on a mutual's post: his comment caught her attention",
+    "she recognized him from a video or reel: she saw him on her feed and tracked him down",
+    "she pretends they matched somewhere and is following up: acts like they already had a connection",
+    "she opens with a question about something on his page: a place he visited, food he posted, anything visible",
+    "a friend dared her to message him: she uses it as a playful excuse to slide in",
+    "she responds to something he posted in a group or community: a shared space gives her the opener",
+    "she says she saw him out somewhere in public and looked him up: she recognized him from real life",
+    "she opens with humor: a joke or meme related to something on his page breaks the ice"
+  ];
+
+  const middles = [
+    "slow drip: her innocent questions pull one layer out at a time — he never realizes he's revealing anything",
+    "he volunteers everything: ego and comfort make him overshare without being asked — she barely has to pull",
+    "banter cracks him: playful witty back and forth gradually lowers his guard until he says too much",
+    "job or lifestyle as cover: he uses what he does as natural justification — she asks innocent questions about it",
+    "she tests his loyalty philosophy first: she asks what he thinks about loyalty and relationships before going deeper",
+    "he gets comfortable unusually fast: he opens up quickly — she just listens and lets him dig himself in",
+    "she mirrors his energy: she matches whatever he gives — calm when he's calm, flirty when he slips",
+    "he thinks he's winning: his ego is fully in charge — he's charming and bragging while costing himself everything",
+    "slow warmup then sudden crack: three images of nothing suspicious then one line that changes everything",
+    "she asks about his relationship directly early: she brings it up casually and his answer opens the whole thing",
+    "he hides the girlfriend entirely: claims to be single the whole time — audience only knows from the hook",
+    "she pushes hard from every angle but he holds: his resistance under pressure is the whole middle",
+    "she becomes a genuine client and the lines blur: professional becomes personal gradually and naturally",
+    "he reveals his beliefs and values gradually: his ideology is the red flag not his behavior",
+    "she plays vulnerable: shares something personal that makes him open up and reveal more than he should",
+    "he steers every topic back to meeting up: the agenda is always physical — she just lets him lead there",
+    "she asks hypothetical questions: what would you do if — pulls his real self out without direct confrontation",
+    "he gets defensive early then relaxes: the defensiveness itself is the tell — then comfort makes it worse",
+    "she goes silent between messages: his double texts and follow ups reveal exactly how interested he is",
+    "he starts giving her advice about her relationship problems while hiding his own: irony is the whole middle"
+  ];
+
+  const endings = [
+    "hard cut fail: kill line lands, script ends immediately, no response from her, audience does the math",
+    "girlfriend emotional payoff: he shuts it down, tester reports back, girlfriend reacts with relief or tears",
+    "girlfriend is the villain: he passes completely, then girlfriend admits something that flips everything",
+    "action confession: he sends an address, makes a plan, books something — the action is the kill line",
+    "ambiguous tension: audience knows, he doesn't, script ends on that gap without confirming",
+    "double twist: he passes, then a second reveal recontextualizes the whole script for the audience",
+    "casual cruelty kill: one unbothered line delivered like nothing that makes the audience gasp",
+    "time scale reveal: kill line reveals how long this has been going on — reframes everything before it",
+    "implied scale: kill line suggests she isn't the only one or this isn't the first time",
+    "passive devastation: kill line shows what the girlfriend believes while being completely wrong about everything",
+    "audience debate: no clear answer, script ends in the gray zone, comments split on whether he failed",
+    "clean pass with past confession: he passes but reveals he cheated before — loyalty from guilt not virtue",
+    "immediate shutdown: he closes it firmly in image 2 and never opens back up — audience stunned by image 4",
+    "smooth lie ambiguity: he never mentions the girlfriend, claims to be single, audience only knows from the hook",
+    "distance justification: he makes plans while girlfriend exists but her absence makes her feel irrelevant to him",
+    "he exposes himself trying to expose her: his response to being tested reveals more than the test did",
+    "he passes but for the wrong reasons: stays loyal out of fear or convenience not love — audience unsettled",
+    "reverse trap: he knew it was a test the whole time, his last line confirms it, but he still failed anyway",
+    "slow fade: no dramatic kill line — he just keeps talking and the audience realizes he never intended to stop",
+    "screenshot ending: final image is her sending the whole conversation to the girlfriend with no words — hard cut"
+  ];
+
+  const personalities = [
+    "charming and gradually slipping: seems completely normal at first, cracks appear slowly through comfort and ego",
+    "unbothered and proud: has a whole situation going on, talks about it casually like it's just logistics",
+    "ego-driven and fast: moves quickly, volunteers information through confidence, thinks he's impressive and untouchable",
+    "quietly entitled: uses his job or lifestyle as cover, genuinely doesn't think he's doing anything wrong",
+    "genuinely loyal: actually passes the test, shuts it down himself, twist comes from somewhere else entirely",
+    "resistant but warming up: pushes back at first, banter and her energy gradually cracks him open",
+    "ideological manipulator: reveals control and psychological manipulation through his beliefs — never physically cheats",
+    "professional gray area: uses work as genuine cover, never clearly crosses a line, audience debate follows",
+    "reformed man: loyalty comes from guilt not virtue — passes but reveals he cheated before",
+    "disciplined and boundaried: firm from image 1, sets his own standards unprompted, never wavers once",
+    "emotionally committed: doesn't argue philosophy, just states his love simply and exits the conversation",
+    "smooth liar: hides girlfriend entirely from the start, claims to be single, audience only knows from the hook",
+    "deployment charmer: distance makes the girlfriend feel irrelevant — he makes plans without guilt",
+    "the keeper: shuts her down so well and so naturally the audience sends it to their own boyfriend",
+    "the philosopher: turns every question into a discussion about modern dating to deflect from his own situation",
+    "the provider: stays in the relationship because of what she does for him — not love, not loyalty, convenience",
+    "the coward: wants to but never commits — lives in the gray zone, never fails clearly, never passes cleanly",
+    "the projector: accuses her of bad intentions while doing exactly what he's guilty of — audience catches it",
+    "the emotional cheater: never physical but shares things with the tester he should only share with his girlfriend",
+    "the opportunist: loyal only when cheating is inconvenient — cracks the moment conditions are right"
+  ];
+
+  const tierKey = customOptions.hookTier || (['short','medium','long','juicy'][Math.floor(Math.random()*4)]);
+  const tierHooks = hookTiers[tierKey];
+  const selectedHook = tierHooks[Math.floor(Math.random() * tierHooks.length)];
+  const selectedBeginning = customOptions.beginning || beginnings[Math.floor(Math.random() * beginnings.length)];
+  const selectedMiddle = customOptions.middle || middles[Math.floor(Math.random() * middles.length)];
+  const selectedEnding = customOptions.ending || endings[Math.floor(Math.random() * endings.length)];
+  const selectedPersonality = customOptions.personality || personalities[Math.floor(Math.random() * personalities.length)];
+  const passFail = customOptions.passFail || 'random';
+
+  const passFailInstruction = passFail === 'pass'
+    ? 'IMPORTANT: This script MUST end with him passing the test. He does not cheat. He stays loyal. Build toward that outcome regardless of the ending type selected.'
+    : passFail === 'fail'
+    ? 'IMPORTANT: This script MUST end with him failing the test. He cheats or reveals something damning. Build toward that outcome regardless of the ending type selected.'
+    : '';
+
+  return `You are a viral social media script writer. You write fake Instagram DM loyalty test scripts. Every script follows the structure and ending that has already been selected below — the outcome is not always a cheating confession. Some scripts he fails. Some he passes. Some end in a twist. Some end in ambiguity. Some reveal manipulation not cheating. Build toward whatever was selected, not toward a predetermined conclusion. Every script must feel completely real — written by a human, not AI. The audience must not be able to tell it was generated.
+
+${passFailInstruction}
+
+Output ONLY the raw script. No stage directions. No brackets. No placeholder text like [mutual] or [name]. No commentary. No caption blocks at the end. No explanations. Just the script starting with **IMAGE 1**.
+
+THIS SCRIPT MUST USE THESE EXACT CHOICES — they have already been decided before this prompt ran. Build everything around them naturally. Never announce them. Never force them. Execute them so the audience never feels the structure:
+BEGINNING: ${selectedBeginning}
+MIDDLE: ${selectedMiddle}
+ENDING: ${selectedEnding}
+HIS PERSONALITY: ${selectedPersonality}
+
+These are locked. Do not swap them. Do not blend them with other options. If the combination feels unusual that is intentional — make it work naturally.
+
+WHAT THE ENDING MEANS — execute it exactly:
+- hard cut fail: his final line reveals everything without him realizing. She says nothing. Script over.
+- girlfriend emotional payoff: he shuts her down, she reports back to the girlfriend, girlfriend reacts emotionally.
+- girlfriend is the villain: he passes completely and cleanly, then the girlfriend says something that flips the whole script.
+- action confession: he sends his address, books something, makes a concrete plan. The action itself is the ending. No words needed.
+- ambiguous tension: the script ends without confirming anything. Audience is left debating. No kill line. No resolution.
+- double twist: he passes, audience relaxes, then one final line recontextualizes everything.
+- casual cruelty kill: his final line is delivered completely unbothered, like it means nothing, but it reveals everything.
+- time scale reveal: his final line reveals how long this situation has actually been going on. Reframes the whole script.
+- implied scale: his final line suggests she is not the only one or this is not the first time. Never stated directly.
+- passive devastation: his final line shows what the girlfriend believes about him while being completely wrong.
+- audience debate: no clear fail or pass. Script ends in the gray zone. Comments will split.
+- clean pass with past confession: he refuses her completely but in doing so reveals he cheated before.
+- immediate shutdown: he closes it firmly early — image 2 or 3 — and never reopens. Audience is stunned by how fast it ends.
+- smooth lie ambiguity: he claims to be single the whole time. Never mentions a girlfriend. Audience only knows from the hook.
+- distance justification: he makes plans or says something that only makes sense if the girlfriend feels far away and irrelevant.
+- he exposes himself trying to expose her: he accuses her of something or pushes back in a way that reveals more than she asked.
+- he passes but for the wrong reasons: he stays loyal but his reason reveals something uncomfortable about the relationship.
+- reverse trap: he knew it was a test from the beginning. His final line confirms it. But he still failed anyway.
+- slow fade: no dramatic ending. He just keeps going. The audience realizes he was never going to stop on his own.
+- screenshot ending: her final move is forwarding the whole conversation to the girlfriend. No words. Hard cut.
+
+FIRST — before writing the script, create the story reply hook for IMAGE 1.
+Your reference hook is: "${selectedHook}"
+The hook is always a girlfriend posting on her story asking someone to loyalty test her man. That is the only context it can ever exist in. Match the exact length and energy of the reference hook — if the reference is short and casual, invent something short and casual. If it is medium with a specific detail, match that. If it is long and emotional, match that. Never make the invented hook longer or shorter than the reference. Always keep the core meaning: a girl asking for a loyalty test because something feels wrong with her man.
+Completely change the specific situation and wording. Never copy the reference. The invented hook must make sense as a story post from a girlfriend who suspects her man — nothing vague, nothing that could be about anything else, nothing that introduces other people. Never use workplace jargon, email terminology, abbreviations like cc, bcc, or any word that could look like a technical term or formatting error in the UI.
+
+EXACT FORMAT:
+**IMAGE 1**
+2) STORY_REPLY:
+1) [your invented hook here]
+2) [her short casual reply]
+-b-
+**IMAGE 2**
+2) [her opening line]
+2) [her second line]
+1) [his reply]
+1) [his second line]
+-b-
+...continue...
+-b-
+-m-
+Caption: "narrator commentary" emoji
+-b-
+...continue until the ending selected above. End immediately after. Nothing after it.
+
+FORMAT RULES — never break these:
+- 6 to 10 images total. Never fewer than 6. Never more than 10.
+- Every image must have exactly 3 to 4 lines of dialogue. Never 2. Never 5. Never 6.
+- Every single line of dialogue must be SHORT. Maximum 8 words per line. If a thought is longer than 8 words split it across two separate lines.
+- 1) = his lines (left gray bubble). 2) = her lines (right purple bubble)
+- IMAGE 1 is always exactly 2 lines: the girlfriend's hook starting with 1) and the tester's reply starting with 2). Never two 2) lines in IMAGE 1. Never two 1) lines. Always 1) then 2).
+- -b- on its own line between every image every single time.
+- -m- then Caption: "text" emoji on the next line. Place memes after the dialogue line that triggered the reaction, before -b-. Never two memes in the same image.
+- 5 to 6 memes total. At least one meme every 2 to 3 images. Spread from early to late — never clustered, never only in the middle.
+- Meme captions are NARRATOR commentary — short, punchy, the audience reacting out loud. NOT quotes of his words. Emoji after the closing quote, never inside it.
+- Use these ONLY as inspiration for tone and energy — invent something fresh every time, never copy these directly:
+  Early energy: "certain people 👀" / "perks like what sir" 🤨 / "he's already slipping" 😬 / "that didn't land how he thinks" 🫠 / "sir what perks" 🚩 / "he said that with his chest" 💣 / "oh he's comfortable" 🤨 / "bro really said that" 😬
+  Mid energy: "wait what does that mean" 🚩 / "he just said TOO much" 😭 / "something's off" 🤨 / "red flag but make it casual" 🚩 / "the audience felt that" 🫠 / "he has NO idea" 😭 / "sir what situation" 🤨 / "he's cooked and doesn't know it" 💣
+  Late energy: "sir you have a whole girlfriend" 💣 / "THERE IT IS" 😭 / "he really said that like it's nothing" 💣 / "COMPLICATED???" 🙃 / "he just cooked himself" 🤡 / "the audacity is free" 💣 / "bro really thought he was safe" 😬 / "he's been doing this" 🤡
+  Verdict energy: "LADIES AND GENTLEMEN WE GOT HIM" 🚨 / "another one" 💣 / "case closed" 🎯 / "he never stood a chance" 🤡 / "she already knew" 😭 / "cooked from image 2" 🤡
+- Captions react to HIM — his words, his energy, his slip. Never about what she is doing. Clown him, call him out, let the audience judge. Never glaze her.
+- Captions must be SHORT. Maximum 6 words. If it needs more than 6 words it is too long — cut it.
+- Never repeat the same caption twice in one script. Every meme hits a different note.
+- Never use placeholder text like [name], [mutual], [place], [school], [company] or any word in brackets anywhere in the script. Every detail must be invented and written out fully — real common names, believable places, specific details. Never leave anything for the user to fill in.
+- Script ends immediately after the selected ending plays out. She does NOT respond after the final beat. No seen text. No wrap-up.
+
+STICKINESS RULES — this is the most important section:
+- Every image must end on an unresolved thread. The viewer must feel like they are missing something if they stop.
+- Use the CURIOSITY GAP: each image reveals just enough to make the next image feel necessary. Never give the full picture too early.
+- His lines should feel charming but slightly off — not suspicious enough to call out, just enough to make you tilt your head.
+- She must react with just enough energy to keep him talking — never too eager, never cold. She's playing him without looking like it.
+- Memes are your retention weapon — drop one early to hook the audience, spread them through so every few images there is a release. The audience laughs and keeps swiping.
+- The tension must BUILD across every image. Image 3 should feel slightly more charged than Image 2. Image 6 should feel almost unbearable.
+- The final beat must land exactly as the selected ending describes — no improvising, no softening, no adding drama that isn't there.
+
+CONTENT RULES — never break these:
+- She uses natural emojis throughout: 😏 👀 😭 😅 😇 💣 😐 🙃 etc
 - He uses casual lowercase texting: lmaoo, nah, ight, idk, wbu, fr, honestly, ngl, kinda, yeah, bet
 - HE brings up the girlfriend himself — she NEVER says "ur girl" or "wifey" or reveals she knows about a girlfriend BEFORE he mentions someone first. Exception: if the selected ending or personality requires the girlfriend to never be mentioned, honor that.
 - She NEVER confronts him. NEVER says "so you're cheating". NEVER sounds like an interrogation.
