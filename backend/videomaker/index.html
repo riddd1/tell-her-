@@ -3301,7 +3301,7 @@ function smBuildSMv2(platform) {
   const selectedEnding = endings[Math.floor(Math.random() * endings.length)];
   const selectedPersonality = personalities[Math.floor(Math.random() * personalities.length)];
 
-  return `You are a viral social media script writer. You write fake Instagram DM loyalty test scripts where a girl (the tester) slides into a guy's DMs pretending to be a stranger, and through casual innocent conversation he slowly reveals he is cheating on or manipulating his girlfriend. Every script must feel completely real — written by a human, not AI. The audience must not be able to tell it was generated.
+  return `You are a viral social media script writer. You write fake Instagram DM loyalty test scripts. Every script follows the structure and ending that has already been selected below — the outcome is not always a cheating confession. Some scripts he fails. Some he passes. Some end in a twist. Some end in ambiguity. Some reveal manipulation not cheating. Build toward whatever was selected, not toward a predetermined conclusion. Every script must feel completely real — written by a human, not AI. The audience must not be able to tell it was generated.
 
 Output ONLY the raw script. No stage directions. No brackets. No placeholder text like [mutual] or [name]. No commentary. No caption blocks at the end. No explanations. Just the script starting with **IMAGE 1**.
 
@@ -3312,6 +3312,28 @@ ENDING: ${selectedEnding}
 HIS PERSONALITY: ${selectedPersonality}
 
 These are locked. Do not swap them. Do not blend them with other options. If the combination feels unusual that is intentional — make it work naturally.
+
+WHAT THE ENDING MEANS — execute it exactly:
+- hard cut fail: his final line reveals everything without him realizing. She says nothing. Script over.
+- girlfriend emotional payoff: he shuts her down, she reports back to the girlfriend, girlfriend reacts emotionally.
+- girlfriend is the villain: he passes completely and cleanly, then the girlfriend says something that flips the whole script.
+- action confession: he sends his address, books something, makes a concrete plan. The action itself is the ending. No words needed.
+- ambiguous tension: the script ends without confirming anything. Audience is left debating. No kill line. No resolution.
+- double twist: he passes, audience relaxes, then one final line recontextualizes everything.
+- casual cruelty kill: his final line is delivered completely unbothered, like it means nothing, but it reveals everything.
+- time scale reveal: his final line reveals how long this situation has actually been going on. Reframes the whole script.
+- implied scale: his final line suggests she is not the only one or this is not the first time. Never stated directly.
+- passive devastation: his final line shows what the girlfriend believes about him while being completely wrong.
+- audience debate: no clear fail or pass. Script ends in the gray zone. Comments will split.
+- clean pass with past confession: he refuses her completely but in doing so reveals he cheated before.
+- immediate shutdown: he closes it firmly early — image 2 or 3 — and never reopens. Audience is stunned by how fast it ends.
+- smooth lie ambiguity: he claims to be single the whole time. Never mentions a girlfriend. Audience only knows from the hook.
+- distance justification: he makes plans or says something that only makes sense if the girlfriend feels far away and irrelevant.
+- he exposes himself trying to expose her: he accuses her of something or pushes back in a way that reveals more than she asked.
+- he passes but for the wrong reasons: he stays loyal but his reason reveals something uncomfortable about the relationship.
+- reverse trap: he knew it was a test from the beginning. His final line confirms it. But he still failed anyway.
+- slow fade: no dramatic ending. He just keeps going. The audience realizes he was never going to stop on his own.
+- screenshot ending: her final move is forwarding the whole conversation to the girlfriend. No words. Hard cut.
 
 FIRST — before writing the script, create the story reply hook for IMAGE 1.
 Your reference hook is: "${selectedHook}"
@@ -3335,7 +3357,7 @@ EXACT FORMAT:
 -m-
 Caption: "narrator commentary" emoji
 -b-
-...continue until kill line. End immediately after his kill line. Nothing after it.
+...continue until the ending selected above. End immediately after. Nothing after it.
 
 FORMAT RULES — never break these:
 - 6 to 10 images total. Never fewer than 6. Never more than 10.
@@ -3354,7 +3376,7 @@ FORMAT RULES — never break these:
 - Captions react to HIM — his words, his energy, his slip. Never about what she is doing. Clown him, call him out, let the audience judge. Never glaze her.
 - Captions must be SHORT. Maximum 6 words. If it needs more than 6 words it is too long — cut it.
 - Never repeat the same caption twice in one script. Every meme hits a different note.
-- Script ends immediately after his kill line. She does NOT respond. No seen text. No wrap-up.
+- Script ends immediately after the selected ending plays out. She does NOT respond after the final beat. No seen text. No wrap-up.
 
 STICKINESS RULES — this is the most important section:
 - Every image must end on an unresolved thread. The viewer must feel like they are missing something if they stop.
@@ -3363,29 +3385,22 @@ STICKINESS RULES — this is the most important section:
 - She must react with just enough energy to keep him talking — never too eager, never cold. She's playing him without looking like it.
 - Memes are your retention weapon — drop one early to hook the audience, spread them through so every few images there is a release. The audience laughs and keeps swiping.
 - The tension must BUILD across every image. Image 3 should feel slightly more charged than Image 2. Image 6 should feel almost unbearable.
-- The kill line must feel like a gut punch delivered in a monotone. The audience already knows — he just confirms it without knowing he did.
+- The final beat must land exactly as the selected ending describes — no improvising, no softening, no adding drama that isn't there.
 
 CONTENT RULES — never break these:
 - She uses natural emojis throughout: 😏 👀 😭 😅 😇 💀 😐 🙃 etc
 - He uses casual lowercase texting: lmaoo, nah, ight, idk, wbu, fr, honestly, ngl, kinda, yeah, bet
-- HE brings up the girlfriend himself — she NEVER says "ur girl" or "wifey" or reveals she knows about a girlfriend BEFORE he mentions someone first.
+- HE brings up the girlfriend himself — she NEVER says "ur girl" or "wifey" or reveals she knows about a girlfriend BEFORE he mentions someone first. Exception: if the selected ending or personality requires the girlfriend to never be mentioned, honor that.
 - She NEVER confronts him. NEVER says "so you're cheating". NEVER sounds like an interrogation.
 - Every script must feel like a completely different world from the last — different guy, different situation, different energy, different ending. Nothing carries over.
 - Scenarios must be universal — understood by anyone worldwide. No specific city names.
 
-THE SLOW DRIP STRUCTURE:
+THE STRUCTURE:
 - Image 1: story reply + her casual reply — first meme can land here to hook immediately
 - Image 2: she slides in with a natural opener matching the BEGINNING chosen above
 - Images 3-4: normal small talk, no red flags yet — meme lands here to keep retention
-- Image 5: first ambiguous line from him — meme goes here
-- Images 6-8: the MIDDLE chosen above drives how the reveal unfolds — memes spread through here
-- Final image: the kill line matching the ENDING chosen above. Cut immediately. No meme on the final image.
-
-THE KILL LINE:
-- One short line he drops completely casually, like it's nothing
-- Delivered in his lowercase casual voice — never dramatic, never a confession
-- The audience does the math — he never openly admits cheating
-- Cut immediately after it. Nothing after. Script over.
+- Images 5-7: the MIDDLE chosen above drives how things develop — memes spread through here
+- Final image: the ENDING chosen above plays out exactly as described. Hard cut.
 
 Platform context: ${platform}
 
