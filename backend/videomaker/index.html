@@ -682,7 +682,7 @@ button,input,select,textarea{transition-property:background,border-color,color,b
   .preview-area{padding:8px}
 }
 
-/* ── V2 CUSTOM TAB ── */
+/* ── V2 CUSTOM ── */
 .cv2-section{display:flex;flex-direction:column;gap:7px}
 .cv2-row{display:flex;flex-wrap:wrap;gap:4px}
 .cv2-btn{padding:5px 9px;font-size:10.5px;font-weight:600;border-radius:6px;border:1px solid rgba(255,255,255,0.1);background:rgba(255,255,255,0.04);color:rgba(255,255,255,0.5);cursor:pointer;transition:all .14s;font-family:inherit;line-height:1.3;text-align:left}
@@ -694,8 +694,7 @@ button,input,select,textarea{transition-property:background,border-color,color,b
 .cv2-pass-btn:hover,.cv2-pass-btn.cv2-active{border-color:rgba(52,211,153,0.55)!important;background:rgba(52,211,153,0.1)!important;color:#6ee7b7!important}
 .cv2-fail-btn{border-color:rgba(239,68,68,0.25)!important;color:rgba(239,68,68,0.5)!important}
 .cv2-fail-btn:hover,.cv2-fail-btn.cv2-active{border-color:rgba(239,68,68,0.5)!important;background:rgba(239,68,68,0.1)!important;color:#fca5a5!important}
-#v2custom-main .lp{overflow-y:auto}
-@media(max-width:768px){#v2custom-main .sm-rp{height:auto;overflow:visible}#v2custom-main .output-box{min-height:200px;flex:none}}
+#cv2-options{overflow-y:visible}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/twemoji.min.js" crossorigin="anonymous"></script>
 </head>
@@ -727,10 +726,6 @@ button,input,select,textarea{transition-property:background,border-color,color,b
     <button class="t-tab" id="tab-scriptmaker" onclick="switchTab('scriptmaker')">
       <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
       Script Maker
-    </button>
-    <button class="t-tab" id="tab-v2custom" onclick="switchTab('v2custom')">
-      <svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
-      V2 Custom
     </button>
   </div>
   <div id="sm-topbar-extras">
@@ -969,7 +964,151 @@ button,input,select,textarea{transition-property:background,border-color,color,b
         <button class="platform-pill" data-val="tiktok"><svg viewBox="0 0 24 24"><path d="M19.6 6.3a4.6 4.6 0 01-3.4-1.5 4.6 4.6 0 01-1.1-3H12v13.4a2.6 2.6 0 11-2.6-2.6h.4V9.4a5.4 5.4 0 00-.4 0 5.6 5.6 0 105.6 5.6V9.7a7.6 7.6 0 004.6 1.6V8.5a4.6 4.6 0 010-2.2z"/></svg>SMv2</button>
         <button class="platform-pill" data-val="viral"><svg viewBox="0 0 24 24"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>VS</button>
         <button class="platform-pill" data-val="vsv2"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 8 12 12 14 14"/></svg>SS</button>
+        <button class="platform-pill" data-val="v2custom"><svg viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>V2 Custom</button>
       </div>
+    </div>
+    <!-- V2 Custom parameter panel -->
+    <div id="cv2-options" style="display:none;flex-direction:column;gap:10px;overflow-y:auto;flex:1;min-height:0">
+
+      <!-- PASS / FAIL -->
+      <div class="cv2-section">
+        <div class="sec-title" style="margin-bottom:4px">Pass / Fail</div>
+        <div class="cv2-row" id="cv2-pf">
+          <button class="cv2-btn cv2-random cv2-active" data-idx="-1" onclick="cv2Select('passFail',-1,this)">Random</button>
+          <button class="cv2-btn cv2-pass-btn" data-idx="pass" onclick="cv2Select('passFail','pass',this)">Pass</button>
+          <button class="cv2-btn cv2-fail-btn" data-idx="fail" onclick="cv2Select('passFail','fail',this)">Fail</button>
+        </div>
+      </div>
+      <div class="div"></div>
+
+      <!-- HOOK TIER -->
+      <div class="cv2-section">
+        <div class="sec-title" style="margin-bottom:4px">Hook Tier</div>
+        <div class="cv2-row" id="cv2-hook">
+          <button class="cv2-btn cv2-random cv2-active" data-idx="-1" onclick="cv2Select('hookTier',-1,this)">Random</button>
+          <button class="cv2-btn" data-idx="short" onclick="cv2Select('hookTier','short',this)">Short</button>
+          <button class="cv2-btn" data-idx="medium" onclick="cv2Select('hookTier','medium',this)">Medium</button>
+          <button class="cv2-btn" data-idx="long" onclick="cv2Select('hookTier','long',this)">Long</button>
+          <button class="cv2-btn" data-idx="juicy" onclick="cv2Select('hookTier','juicy',this)">Juicy</button>
+        </div>
+      </div>
+      <div class="div"></div>
+
+      <!-- BEGINNING -->
+      <div class="cv2-section">
+        <div class="sec-title" style="margin-bottom:4px">Beginning</div>
+        <div class="cv2-row" id="cv2-beg">
+          <button class="cv2-btn cv2-random cv2-active" data-idx="-1" onclick="cv2Select('beginning',-1,this)">Random</button>
+          <button class="cv2-btn" data-idx="0" onclick="cv2Select('beginning',0,this)">suggested or explore page</button>
+          <button class="cv2-btn" data-idx="1" onclick="cv2Select('beginning',1,this)">mutual connection</button>
+          <button class="cv2-btn" data-idx="2" onclick="cv2Select('beginning',2,this)">school or hometown link</button>
+          <button class="cv2-btn" data-idx="3" onclick="cv2Select('beginning',3,this)">she replies to his story</button>
+          <button class="cv2-btn" data-idx="4" onclick="cv2Select('beginning',4,this)">she compliments something on his page</button>
+          <button class="cv2-btn" data-idx="5" onclick="cv2Select('beginning',5,this)">aggressive flirty opener</button>
+          <button class="cv2-btn" data-idx="6" onclick="cv2Select('beginning',6,this)">she pretends to need advice</button>
+          <button class="cv2-btn" data-idx="7" onclick="cv2Select('beginning',7,this)">neighborhood or regular spot</button>
+          <button class="cv2-btn" data-idx="8" onclick="cv2Select('beginning',8,this)">friend mentioned him</button>
+          <button class="cv2-btn" data-idx="9" onclick="cv2Select('beginning',9,this)">she saw him tagged somewhere</button>
+          <button class="cv2-btn" data-idx="10" onclick="cv2Select('beginning',10,this)">she compliments his profession</button>
+          <button class="cv2-btn" data-idx="11" onclick="cv2Select('beginning',11,this)">she becomes a client</button>
+          <button class="cv2-btn" data-idx="12" onclick="cv2Select('beginning',12,this)">saw him comment on mutual's post</button>
+          <button class="cv2-btn" data-idx="13" onclick="cv2Select('beginning',13,this)">recognized from a reel</button>
+          <button class="cv2-btn" data-idx="14" onclick="cv2Select('beginning',14,this)">she pretends they matched</button>
+          <button class="cv2-btn" data-idx="15" onclick="cv2Select('beginning',15,this)">question about his page</button>
+          <button class="cv2-btn" data-idx="16" onclick="cv2Select('beginning',16,this)">a friend dared her</button>
+          <button class="cv2-btn" data-idx="17" onclick="cv2Select('beginning',17,this)">responds to group post</button>
+          <button class="cv2-btn" data-idx="18" onclick="cv2Select('beginning',18,this)">she saw him in public</button>
+          <button class="cv2-btn" data-idx="19" onclick="cv2Select('beginning',19,this)">she opens with humor</button>
+        </div>
+      </div>
+      <div class="div"></div>
+
+      <!-- MIDDLE -->
+      <div class="cv2-section">
+        <div class="sec-title" style="margin-bottom:4px">Middle</div>
+        <div class="cv2-row" id="cv2-mid">
+          <button class="cv2-btn cv2-random cv2-active" data-idx="-1" onclick="cv2Select('middle',-1,this)">Random</button>
+          <button class="cv2-btn" data-idx="0" onclick="cv2Select('middle',0,this)">slow drip</button>
+          <button class="cv2-btn" data-idx="1" onclick="cv2Select('middle',1,this)">he volunteers everything</button>
+          <button class="cv2-btn" data-idx="2" onclick="cv2Select('middle',2,this)">banter cracks him</button>
+          <button class="cv2-btn" data-idx="3" onclick="cv2Select('middle',3,this)">job or lifestyle as cover</button>
+          <button class="cv2-btn" data-idx="4" onclick="cv2Select('middle',4,this)">loyalty philosophy first</button>
+          <button class="cv2-btn" data-idx="5" onclick="cv2Select('middle',5,this)">he gets comfortable fast</button>
+          <button class="cv2-btn" data-idx="6" onclick="cv2Select('middle',6,this)">she mirrors his energy</button>
+          <button class="cv2-btn" data-idx="7" onclick="cv2Select('middle',7,this)">he thinks he's winning</button>
+          <button class="cv2-btn" data-idx="8" onclick="cv2Select('middle',8,this)">slow warmup then crack</button>
+          <button class="cv2-btn" data-idx="9" onclick="cv2Select('middle',9,this)">asks about relationship early</button>
+          <button class="cv2-btn" data-idx="10" onclick="cv2Select('middle',10,this)">he hides the girlfriend</button>
+          <button class="cv2-btn" data-idx="11" onclick="cv2Select('middle',11,this)">she pushes but he holds</button>
+          <button class="cv2-btn" data-idx="12" onclick="cv2Select('middle',12,this)">she becomes a genuine client</button>
+          <button class="cv2-btn" data-idx="13" onclick="cv2Select('middle',13,this)">reveals beliefs gradually</button>
+          <button class="cv2-btn" data-idx="14" onclick="cv2Select('middle',14,this)">she plays vulnerable</button>
+          <button class="cv2-btn" data-idx="15" onclick="cv2Select('middle',15,this)">steers toward meeting up</button>
+          <button class="cv2-btn" data-idx="16" onclick="cv2Select('middle',16,this)">hypothetical questions</button>
+          <button class="cv2-btn" data-idx="17" onclick="cv2Select('middle',17,this)">he gets defensive then relaxes</button>
+          <button class="cv2-btn" data-idx="18" onclick="cv2Select('middle',18,this)">she goes silent</button>
+          <button class="cv2-btn" data-idx="19" onclick="cv2Select('middle',19,this)">he gives relationship advice</button>
+        </div>
+      </div>
+      <div class="div"></div>
+
+      <!-- ENDING -->
+      <div class="cv2-section">
+        <div class="sec-title" style="margin-bottom:4px">Ending</div>
+        <div class="cv2-row" id="cv2-end">
+          <button class="cv2-btn cv2-random cv2-active" data-idx="-1" onclick="cv2Select('ending',-1,this)">Random</button>
+          <button class="cv2-btn" data-idx="0" onclick="cv2Select('ending',0,this)">hard cut fail</button>
+          <button class="cv2-btn" data-idx="1" onclick="cv2Select('ending',1,this)">girlfriend emotional payoff</button>
+          <button class="cv2-btn" data-idx="2" onclick="cv2Select('ending',2,this)">girlfriend is the villain</button>
+          <button class="cv2-btn" data-idx="3" onclick="cv2Select('ending',3,this)">action confession</button>
+          <button class="cv2-btn" data-idx="4" onclick="cv2Select('ending',4,this)">ambiguous tension</button>
+          <button class="cv2-btn" data-idx="5" onclick="cv2Select('ending',5,this)">double twist</button>
+          <button class="cv2-btn" data-idx="6" onclick="cv2Select('ending',6,this)">casual cruelty kill</button>
+          <button class="cv2-btn" data-idx="7" onclick="cv2Select('ending',7,this)">time scale reveal</button>
+          <button class="cv2-btn" data-idx="8" onclick="cv2Select('ending',8,this)">implied scale</button>
+          <button class="cv2-btn" data-idx="9" onclick="cv2Select('ending',9,this)">passive devastation</button>
+          <button class="cv2-btn" data-idx="10" onclick="cv2Select('ending',10,this)">audience debate</button>
+          <button class="cv2-btn" data-idx="11" onclick="cv2Select('ending',11,this)">clean pass + past confession</button>
+          <button class="cv2-btn" data-idx="12" onclick="cv2Select('ending',12,this)">immediate shutdown</button>
+          <button class="cv2-btn" data-idx="13" onclick="cv2Select('ending',13,this)">smooth lie ambiguity</button>
+          <button class="cv2-btn" data-idx="14" onclick="cv2Select('ending',14,this)">distance justification</button>
+          <button class="cv2-btn" data-idx="15" onclick="cv2Select('ending',15,this)">he exposes himself</button>
+          <button class="cv2-btn" data-idx="16" onclick="cv2Select('ending',16,this)">passes for wrong reasons</button>
+          <button class="cv2-btn" data-idx="17" onclick="cv2Select('ending',17,this)">reverse trap</button>
+          <button class="cv2-btn" data-idx="18" onclick="cv2Select('ending',18,this)">slow fade</button>
+          <button class="cv2-btn" data-idx="19" onclick="cv2Select('ending',19,this)">screenshot ending</button>
+        </div>
+      </div>
+      <div class="div"></div>
+
+      <!-- PERSONALITY -->
+      <div class="cv2-section">
+        <div class="sec-title" style="margin-bottom:4px">Personality</div>
+        <div class="cv2-row" id="cv2-per">
+          <button class="cv2-btn cv2-random cv2-active" data-idx="-1" onclick="cv2Select('personality',-1,this)">Random</button>
+          <button class="cv2-btn" data-idx="0" onclick="cv2Select('personality',0,this)">charming and slipping</button>
+          <button class="cv2-btn" data-idx="1" onclick="cv2Select('personality',1,this)">unbothered and proud</button>
+          <button class="cv2-btn" data-idx="2" onclick="cv2Select('personality',2,this)">ego-driven and fast</button>
+          <button class="cv2-btn" data-idx="3" onclick="cv2Select('personality',3,this)">quietly entitled</button>
+          <button class="cv2-btn" data-idx="4" onclick="cv2Select('personality',4,this)">genuinely loyal</button>
+          <button class="cv2-btn" data-idx="5" onclick="cv2Select('personality',5,this)">resistant but warming up</button>
+          <button class="cv2-btn" data-idx="6" onclick="cv2Select('personality',6,this)">ideological manipulator</button>
+          <button class="cv2-btn" data-idx="7" onclick="cv2Select('personality',7,this)">professional gray area</button>
+          <button class="cv2-btn" data-idx="8" onclick="cv2Select('personality',8,this)">reformed man</button>
+          <button class="cv2-btn" data-idx="9" onclick="cv2Select('personality',9,this)">disciplined and boundaried</button>
+          <button class="cv2-btn" data-idx="10" onclick="cv2Select('personality',10,this)">emotionally committed</button>
+          <button class="cv2-btn" data-idx="11" onclick="cv2Select('personality',11,this)">smooth liar</button>
+          <button class="cv2-btn" data-idx="12" onclick="cv2Select('personality',12,this)">deployment charmer</button>
+          <button class="cv2-btn" data-idx="13" onclick="cv2Select('personality',13,this)">the keeper</button>
+          <button class="cv2-btn" data-idx="14" onclick="cv2Select('personality',14,this)">the philosopher</button>
+          <button class="cv2-btn" data-idx="15" onclick="cv2Select('personality',15,this)">the provider</button>
+          <button class="cv2-btn" data-idx="16" onclick="cv2Select('personality',16,this)">the coward</button>
+          <button class="cv2-btn" data-idx="17" onclick="cv2Select('personality',17,this)">the projector</button>
+          <button class="cv2-btn" data-idx="18" onclick="cv2Select('personality',18,this)">the emotional cheater</button>
+          <button class="cv2-btn" data-idx="19" onclick="cv2Select('personality',19,this)">the opportunist</button>
+        </div>
+      </div>
+
     </div>
     <div style="flex:1"></div>
     <button class="gbtn" id="sm-genBtn" onclick="smGenerate()" style="display:flex;align-items:center;justify-content:center;gap:7px;border-radius:12px;padding:13px;font-size:13px;font-weight:700;letter-spacing:.15px;will-change:transform">
@@ -1002,180 +1141,6 @@ button,input,select,textarea{transition-property:background,border-color,color,b
   </div>
 </div>
 
-<div class="main" id="v2custom-main" style="display:none">
-  <div class="lp" style="gap:12px">
-
-    <!-- PASS / FAIL -->
-    <div class="cv2-section">
-      <div class="sec-title">Pass / Fail</div>
-      <div class="cv2-row" id="cv2-pf">
-        <button class="cv2-btn cv2-random cv2-active" data-idx="-1" onclick="cv2Select('passFail',-1,this)">Random</button>
-        <button class="cv2-btn cv2-pass-btn" data-idx="pass" onclick="cv2Select('passFail','pass',this)">Pass</button>
-        <button class="cv2-btn cv2-fail-btn" data-idx="fail" onclick="cv2Select('passFail','fail',this)">Fail</button>
-      </div>
-    </div>
-
-    <div class="div"></div>
-
-    <!-- HOOK TIER -->
-    <div class="cv2-section">
-      <div class="sec-title">Hook Tier</div>
-      <div class="cv2-row" id="cv2-hook">
-        <button class="cv2-btn cv2-random cv2-active" data-idx="-1" onclick="cv2Select('hookTier',-1,this)">Random</button>
-        <button class="cv2-btn" data-idx="short" onclick="cv2Select('hookTier','short',this)">Short</button>
-        <button class="cv2-btn" data-idx="medium" onclick="cv2Select('hookTier','medium',this)">Medium</button>
-        <button class="cv2-btn" data-idx="long" onclick="cv2Select('hookTier','long',this)">Long</button>
-        <button class="cv2-btn" data-idx="juicy" onclick="cv2Select('hookTier','juicy',this)">Juicy</button>
-      </div>
-    </div>
-
-    <div class="div"></div>
-
-    <!-- BEGINNING -->
-    <div class="cv2-section">
-      <div class="sec-title">Beginning</div>
-      <div class="cv2-row" id="cv2-beg">
-        <button class="cv2-btn cv2-random cv2-active" data-idx="-1" onclick="cv2Select('beginning',-1,this)">Random</button>
-      <button class="cv2-btn" data-idx="0" onclick="cv2Select('beginning',0,this)">suggested or explore page</button>
-      <button class="cv2-btn" data-idx="1" onclick="cv2Select('beginning',1,this)">mutual connection</button>
-      <button class="cv2-btn" data-idx="2" onclick="cv2Select('beginning',2,this)">school or hometown link</button>
-      <button class="cv2-btn" data-idx="3" onclick="cv2Select('beginning',3,this)">she replies to his story</button>
-      <button class="cv2-btn" data-idx="4" onclick="cv2Select('beginning',4,this)">she compliments something on his page</button>
-      <button class="cv2-btn" data-idx="5" onclick="cv2Select('beginning',5,this)">aggressive flirty opener</button>
-      <button class="cv2-btn" data-idx="6" onclick="cv2Select('beginning',6,this)">she pretends to need advice</button>
-      <button class="cv2-btn" data-idx="7" onclick="cv2Select('beginning',7,this)">neighborhood or regular spot</button>
-      <button class="cv2-btn" data-idx="8" onclick="cv2Select('beginning',8,this)">friend mentioned him</button>
-      <button class="cv2-btn" data-idx="9" onclick="cv2Select('beginning',9,this)">she saw him tagged somewhere</button>
-      <button class="cv2-btn" data-idx="10" onclick="cv2Select('beginning',10,this)">she compliments his profession</button>
-      <button class="cv2-btn" data-idx="11" onclick="cv2Select('beginning',11,this)">she becomes a client</button>
-      <button class="cv2-btn" data-idx="12" onclick="cv2Select('beginning',12,this)">saw him comment on mutual's post</button>
-      <button class="cv2-btn" data-idx="13" onclick="cv2Select('beginning',13,this)">recognized from a reel</button>
-      <button class="cv2-btn" data-idx="14" onclick="cv2Select('beginning',14,this)">she pretends they matched</button>
-      <button class="cv2-btn" data-idx="15" onclick="cv2Select('beginning',15,this)">question about his page</button>
-      <button class="cv2-btn" data-idx="16" onclick="cv2Select('beginning',16,this)">a friend dared her</button>
-      <button class="cv2-btn" data-idx="17" onclick="cv2Select('beginning',17,this)">responds to group post</button>
-      <button class="cv2-btn" data-idx="18" onclick="cv2Select('beginning',18,this)">she saw him in public</button>
-      <button class="cv2-btn" data-idx="19" onclick="cv2Select('beginning',19,this)">she opens with humor</button>
-      </div>
-    </div>
-
-    <div class="div"></div>
-
-    <!-- MIDDLE -->
-    <div class="cv2-section">
-      <div class="sec-title">Middle</div>
-      <div class="cv2-row" id="cv2-mid">
-        <button class="cv2-btn cv2-random cv2-active" data-idx="-1" onclick="cv2Select('middle',-1,this)">Random</button>
-      <button class="cv2-btn" data-idx="0" onclick="cv2Select('middle',0,this)">slow drip</button>
-      <button class="cv2-btn" data-idx="1" onclick="cv2Select('middle',1,this)">he volunteers everything</button>
-      <button class="cv2-btn" data-idx="2" onclick="cv2Select('middle',2,this)">banter cracks him</button>
-      <button class="cv2-btn" data-idx="3" onclick="cv2Select('middle',3,this)">job or lifestyle as cover</button>
-      <button class="cv2-btn" data-idx="4" onclick="cv2Select('middle',4,this)">loyalty philosophy first</button>
-      <button class="cv2-btn" data-idx="5" onclick="cv2Select('middle',5,this)">he gets comfortable fast</button>
-      <button class="cv2-btn" data-idx="6" onclick="cv2Select('middle',6,this)">she mirrors his energy</button>
-      <button class="cv2-btn" data-idx="7" onclick="cv2Select('middle',7,this)">he thinks he's winning</button>
-      <button class="cv2-btn" data-idx="8" onclick="cv2Select('middle',8,this)">slow warmup then crack</button>
-      <button class="cv2-btn" data-idx="9" onclick="cv2Select('middle',9,this)">asks about relationship early</button>
-      <button class="cv2-btn" data-idx="10" onclick="cv2Select('middle',10,this)">he hides the girlfriend</button>
-      <button class="cv2-btn" data-idx="11" onclick="cv2Select('middle',11,this)">she pushes but he holds</button>
-      <button class="cv2-btn" data-idx="12" onclick="cv2Select('middle',12,this)">she becomes a genuine client</button>
-      <button class="cv2-btn" data-idx="13" onclick="cv2Select('middle',13,this)">reveals beliefs gradually</button>
-      <button class="cv2-btn" data-idx="14" onclick="cv2Select('middle',14,this)">she plays vulnerable</button>
-      <button class="cv2-btn" data-idx="15" onclick="cv2Select('middle',15,this)">steers toward meeting up</button>
-      <button class="cv2-btn" data-idx="16" onclick="cv2Select('middle',16,this)">hypothetical questions</button>
-      <button class="cv2-btn" data-idx="17" onclick="cv2Select('middle',17,this)">he gets defensive then relaxes</button>
-      <button class="cv2-btn" data-idx="18" onclick="cv2Select('middle',18,this)">she goes silent</button>
-      <button class="cv2-btn" data-idx="19" onclick="cv2Select('middle',19,this)">he gives relationship advice</button>
-      </div>
-    </div>
-
-    <div class="div"></div>
-
-    <!-- ENDING -->
-    <div class="cv2-section">
-      <div class="sec-title">Ending</div>
-      <div class="cv2-row" id="cv2-end">
-        <button class="cv2-btn cv2-random cv2-active" data-idx="-1" onclick="cv2Select('ending',-1,this)">Random</button>
-      <button class="cv2-btn" data-idx="0" onclick="cv2Select('ending',0,this)">hard cut fail</button>
-      <button class="cv2-btn" data-idx="1" onclick="cv2Select('ending',1,this)">girlfriend emotional payoff</button>
-      <button class="cv2-btn" data-idx="2" onclick="cv2Select('ending',2,this)">girlfriend is the villain</button>
-      <button class="cv2-btn" data-idx="3" onclick="cv2Select('ending',3,this)">action confession</button>
-      <button class="cv2-btn" data-idx="4" onclick="cv2Select('ending',4,this)">ambiguous tension</button>
-      <button class="cv2-btn" data-idx="5" onclick="cv2Select('ending',5,this)">double twist</button>
-      <button class="cv2-btn" data-idx="6" onclick="cv2Select('ending',6,this)">casual cruelty kill</button>
-      <button class="cv2-btn" data-idx="7" onclick="cv2Select('ending',7,this)">time scale reveal</button>
-      <button class="cv2-btn" data-idx="8" onclick="cv2Select('ending',8,this)">implied scale</button>
-      <button class="cv2-btn" data-idx="9" onclick="cv2Select('ending',9,this)">passive devastation</button>
-      <button class="cv2-btn" data-idx="10" onclick="cv2Select('ending',10,this)">audience debate</button>
-      <button class="cv2-btn" data-idx="11" onclick="cv2Select('ending',11,this)">clean pass + past confession</button>
-      <button class="cv2-btn" data-idx="12" onclick="cv2Select('ending',12,this)">immediate shutdown</button>
-      <button class="cv2-btn" data-idx="13" onclick="cv2Select('ending',13,this)">smooth lie ambiguity</button>
-      <button class="cv2-btn" data-idx="14" onclick="cv2Select('ending',14,this)">distance justification</button>
-      <button class="cv2-btn" data-idx="15" onclick="cv2Select('ending',15,this)">he exposes himself</button>
-      <button class="cv2-btn" data-idx="16" onclick="cv2Select('ending',16,this)">passes for wrong reasons</button>
-      <button class="cv2-btn" data-idx="17" onclick="cv2Select('ending',17,this)">reverse trap</button>
-      <button class="cv2-btn" data-idx="18" onclick="cv2Select('ending',18,this)">slow fade</button>
-      <button class="cv2-btn" data-idx="19" onclick="cv2Select('ending',19,this)">screenshot ending</button>
-      </div>
-    </div>
-
-    <div class="div"></div>
-
-    <!-- PERSONALITY -->
-    <div class="cv2-section">
-      <div class="sec-title">Personality</div>
-      <div class="cv2-row" id="cv2-per">
-        <button class="cv2-btn cv2-random cv2-active" data-idx="-1" onclick="cv2Select('personality',-1,this)">Random</button>
-      <button class="cv2-btn" data-idx="0" onclick="cv2Select('personality',0,this)">charming and slipping</button>
-      <button class="cv2-btn" data-idx="1" onclick="cv2Select('personality',1,this)">unbothered and proud</button>
-      <button class="cv2-btn" data-idx="2" onclick="cv2Select('personality',2,this)">ego-driven and fast</button>
-      <button class="cv2-btn" data-idx="3" onclick="cv2Select('personality',3,this)">quietly entitled</button>
-      <button class="cv2-btn" data-idx="4" onclick="cv2Select('personality',4,this)">genuinely loyal</button>
-      <button class="cv2-btn" data-idx="5" onclick="cv2Select('personality',5,this)">resistant but warming up</button>
-      <button class="cv2-btn" data-idx="6" onclick="cv2Select('personality',6,this)">ideological manipulator</button>
-      <button class="cv2-btn" data-idx="7" onclick="cv2Select('personality',7,this)">professional gray area</button>
-      <button class="cv2-btn" data-idx="8" onclick="cv2Select('personality',8,this)">reformed man</button>
-      <button class="cv2-btn" data-idx="9" onclick="cv2Select('personality',9,this)">disciplined and boundaried</button>
-      <button class="cv2-btn" data-idx="10" onclick="cv2Select('personality',10,this)">emotionally committed</button>
-      <button class="cv2-btn" data-idx="11" onclick="cv2Select('personality',11,this)">smooth liar</button>
-      <button class="cv2-btn" data-idx="12" onclick="cv2Select('personality',12,this)">deployment charmer</button>
-      <button class="cv2-btn" data-idx="13" onclick="cv2Select('personality',13,this)">the keeper</button>
-      <button class="cv2-btn" data-idx="14" onclick="cv2Select('personality',14,this)">the philosopher</button>
-      <button class="cv2-btn" data-idx="15" onclick="cv2Select('personality',15,this)">the provider</button>
-      <button class="cv2-btn" data-idx="16" onclick="cv2Select('personality',16,this)">the coward</button>
-      <button class="cv2-btn" data-idx="17" onclick="cv2Select('personality',17,this)">the projector</button>
-      <button class="cv2-btn" data-idx="18" onclick="cv2Select('personality',18,this)">the emotional cheater</button>
-      <button class="cv2-btn" data-idx="19" onclick="cv2Select('personality',19,this)">the opportunist</button>
-      </div>
-    </div>
-
-    <div style="flex:1"></div>
-
-    <button class="gbtn" id="cv2-genBtn" onclick="smGenerateCustomV2()" style="display:flex;align-items:center;justify-content:center;gap:7px;border-radius:12px;padding:13px;font-size:13px;font-weight:700;letter-spacing:.15px;will-change:transform">
-      <div class="spinner" id="cv2-spinner" style="display:none;width:13px;height:13px;border:2px solid rgba(255,255,255,0.35);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite"></div>
-      <svg id="cv2-genIcon" viewBox="0 0 24 24" style="width:13px;height:13px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
-      <span id="cv2-genTxt">Generate Script</span>
-    </button>
-
-  </div>
-  <div class="sm-rp">
-    <div class="rp-hdr">
-      <div class="rp-hdr-left">
-        <div class="status-dot" id="cv2-dot"></div>
-        <div class="rp-lbl">Output</div>
-      </div>
-      <div class="act-btns">
-        <button class="act-btn" onclick="cv2Clear()">Clear</button>
-        <button class="act-btn primary" onclick="cv2Copy()">Copy Script</button>
-      </div>
-    </div>
-    <div class="output-box placeholder" id="cv2-output" data-placeholder="Pick your parameters on the left and hit Generate.&#10;&#10;Every parameter is optional — leave anything on Random and the model chooses."></div>
-    <div class="sm-sbar">
-      <div class="sm-stxt" id="cv2-stxt">Ready</div>
-      <div class="char-count" id="cv2-chars">0 / 5000</div>
-    </div>
-  </div>
-</div>
 
 <!-- HISTORY PANEL -->
 <div id="history-main">
@@ -1212,18 +1177,17 @@ let suppressBuilderSync = false;
 
 // ── TAB ──
 function switchTab(tab) {
-  ['builder','code','stash','scriptmaker','history','v2custom'].forEach(t => {
+  ['builder','code','stash','scriptmaker','history'].forEach(t => {
     const el = document.getElementById('tab-'+t);
     if (el) el.classList.toggle('active', tab===t);
   });
-  const isAlt = tab==='scriptmaker' || tab==='history' || tab==='v2custom';
+  const isAlt = tab==='scriptmaker' || tab==='history';
   document.getElementById('builder-main').style.display = isAlt ? 'none' : '';
   document.getElementById('builder-panel').style.display = tab==='builder' ? 'block' : 'none';
   document.getElementById('code-panel').style.display = tab==='code' ? 'flex' : 'none';
   document.getElementById('stash-panel').style.display = tab==='stash' ? 'flex' : 'none';
   document.getElementById('scriptmaker-main').style.display = tab==='scriptmaker' ? '' : 'none';
   document.getElementById('history-main').style.display = tab==='history' ? 'flex' : 'none';
-  document.getElementById('v2custom-main').style.display = tab==='v2custom' ? '' : 'none';
   const smExtras = document.getElementById('sm-topbar-extras');
   smExtras.style.display = isAlt ? 'flex' : 'none';
   // Mobile: hide bottom action buttons unless on builder tab; hide live preview on stash
@@ -1237,16 +1201,12 @@ function switchTab(tab) {
     else smLoadUsage();
   }
   if (tab === 'history') smRenderHistory();
-  if (tab === 'v2custom') {
-    if (!smAffCode) { document.getElementById('sm-login').style.display = 'flex'; }
-    else smLoadUsage();
-  }
 }
 
 // Honor URL hash so links land correctly.
 (function applyHashTab(){
   const h = (location.hash || '').slice(1);
-  if (['builder','code','stash','scriptmaker','history','v2custom'].includes(h)) switchTab(h);
+  if (['builder','code','stash','scriptmaker','history'].includes(h)) switchTab(h);
 })();
 
 // ── FILES ──
@@ -3300,6 +3260,8 @@ document.addEventListener('DOMContentLoaded', ()=>{
     pill.addEventListener('click', ()=>{
       document.querySelectorAll('#sm-platformGroup .platform-pill').forEach(p=>p.classList.remove('active'));
       pill.classList.add('active');
+      const cv2 = document.getElementById('cv2-options');
+      if (cv2) cv2.style.display = pill.dataset.val === 'v2custom' ? 'flex' : 'none';
     });
   });
   document.getElementById('sm-pass').addEventListener('keydown', e=>{ if(e.key==='Enter') smLogin(); });
@@ -3409,98 +3371,9 @@ function cv2Select(section, val, el) {
   cv2Selections[section] = val;
 }
 
-function cv2Clear() {
-  const out = document.getElementById('cv2-output');
-  out.textContent = '';
-  out.classList.add('placeholder');
-  document.getElementById('cv2-dot').className = 'status-dot';
-  document.getElementById('cv2-stxt').textContent = 'Ready';
-  document.getElementById('cv2-chars').textContent = '0 / 5000';
-}
 
-function cv2Copy() {
-  const text = document.getElementById('cv2-output').textContent;
-  if (!text) return;
-  navigator.clipboard.writeText(text).then(() => showToast('Copied!'));
-}
 
-function cv2UpdateCharCount(text) {
-  const el = document.getElementById('cv2-chars');
-  const len = text.length;
-  el.textContent = `${len} / 5000`;
-  el.className = 'char-count'+(len>5000?' over':len>1200?' warn':'');
-}
 
-async function smGenerateCustomV2() {
-  const btn = document.getElementById('cv2-genBtn');
-  const out = document.getElementById('cv2-output');
-  const dot = document.getElementById('cv2-dot');
-  const stxt = document.getElementById('cv2-stxt');
-
-  if (smAffCode) {
-    try {
-      const check = await fetch(`/scripts/usage?code=${encodeURIComponent(smAffCode)}`);
-      const usage = await check.json();
-      if (check.ok && usage.remaining <= 0) {
-        smUpdateUsage(usage.used, usage.limit, 0);
-        showToast('Daily limit reached — come back tomorrow');
-        return;
-      }
-    } catch(_) {}
-  }
-
-  btn.disabled = true;
-  document.getElementById('cv2-spinner').style.display = 'block';
-  document.getElementById('cv2-genIcon').style.display = 'none';
-  document.getElementById('cv2-genTxt').textContent = 'Generating...';
-  out.textContent = ''; out.classList.remove('placeholder');
-  dot.className = 'status-dot loading';
-  stxt.textContent = 'Cooking...';
-  cv2UpdateCharCount('');
-
-  const customOptions = {
-    hookTier:    cv2Selections.hookTier    === -1 ? null : cv2Selections.hookTier,
-    beginning:   cv2Selections.beginning   === -1 ? null : cv2Data.beginnings[cv2Selections.beginning],
-    middle:      cv2Selections.middle      === -1 ? null : cv2Data.middles[cv2Selections.middle],
-    ending:      cv2Selections.ending      === -1 ? null : cv2Data.endings[cv2Selections.ending],
-    personality: cv2Selections.personality === -1 ? null : cv2Data.personalities[cv2Selections.personality],
-    passFail:    cv2Selections.passFail    === -1 ? 'random' : cv2Selections.passFail
-  };
-
-  try {
-    const res = await fetch('/ai/generate', {
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({prompt: smBuildCustomV2('tiktok', customOptions)})
-    });
-    const data = await res.json();
-    const text = (data.content?.map(b=>b.text||'').join('')||'').trim();
-    if (!text) throw new Error('empty');
-
-    out.textContent = text;
-    dot.className = 'status-dot ready';
-    stxt.textContent = 'Done — copy and paste into your generator';
-    cv2UpdateCharCount(text);
-    smAddToHistory(text, 'v2custom');
-
-    if (smAffCode) {
-      try {
-        const rec = await fetch('/scripts/record',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({code:smAffCode})});
-        const rd = await rec.json();
-        if (rec.ok) smUpdateUsage(rd.used, rd.limit, rd.remaining);
-      } catch(_) {}
-    }
-  } catch(_) {
-    out.classList.add('placeholder');
-    out.dataset.placeholder = 'Something went wrong. Try again.';
-    dot.className = 'status-dot error';
-    stxt.textContent = 'Error — try again';
-  } finally {
-    btn.disabled = false;
-    document.getElementById('cv2-spinner').style.display = 'none';
-    document.getElementById('cv2-genIcon').style.display = '';
-    document.getElementById('cv2-genTxt').textContent = 'Generate Script';
-  }
-}
 
 
 function getSmPlatform() {
@@ -3508,10 +3381,22 @@ function getSmPlatform() {
   return a ? a.dataset.val : 'instagram';
 }
 
+function getCV2Options() {
+  return {
+    hookTier:    cv2Selections.hookTier    === -1 ? null : cv2Selections.hookTier,
+    beginning:   cv2Selections.beginning   === -1 ? null : cv2Data.beginnings[cv2Selections.beginning],
+    middle:      cv2Selections.middle      === -1 ? null : cv2Data.middles[cv2Selections.middle],
+    ending:      cv2Selections.ending      === -1 ? null : cv2Data.endings[cv2Selections.ending],
+    personality: cv2Selections.personality === -1 ? null : cv2Data.personalities[cv2Selections.personality],
+    passFail:    cv2Selections.passFail    === -1 ? 'random' : cv2Selections.passFail
+  };
+}
+
 function smBuildPrompt(platform) {
   if (platform === 'tiktok') return smBuildSMv2(platform);
   if (platform === 'viral') return smBuildVS(platform);
   if (platform === 'vsv2') return smBuildSS(platform);
+  if (platform === 'v2custom') return smBuildCustomV2('tiktok', getCV2Options());
   return smBuildSMv1(platform);
 }
 
