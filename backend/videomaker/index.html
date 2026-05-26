@@ -1586,7 +1586,7 @@ function render() {
       bbl.style.borderRadius=r;
       const txt=document.createElement('div');
       txt.className='ig-bubble-txt'+(bold?' bold':'');
-      txt.textContent=m.text;
+      txt.textContent=m.text.trim();
       bbl.appendChild(txt); bblWrap.appendChild(bbl);
     }
 
