@@ -4014,128 +4014,152 @@ Generate the script now. Start with **IMAGE 1**. Raw script only. Nothing else b
 
 
 function smBuildVS(platform) {
-  const hooks = [
-    "i need you to test my bf, he's been acting different and i can't tell if i'm tripping 😐",
-    "can you test my man for me, he's been weird about his phone lately and i'm losing my mind 🙃",
-    "i need you to slide in my bf's dms, something feels off and i need to know 😭",
-    "do me a favour and test him, he went out last saturday and still hasn't told me where 😐",
-    "can you loyalty check my man, he started being really secretive about his weekends 🙃",
-    "test my bf for me, he got a new gym buddy he never wants to talk about 😭",
-    "i need eyes on my man, he's been leaving work late every thursday and it's not adding up 😐",
-    "slide in his dms and test him, he deleted a whole conversation and played dumb 🙃",
-    "help me test my man, he bought new cologne and i found it in his glove box not the bathroom 😭",
-    "can you check on my bf, he stopped posting me but he's still active every single day 😐",
-    "i need you to test him, he's a personal trainer and his female clients text him at night 🙃",
-    "test my man pls, he went from leaving his phone everywhere to never putting it down 😭",
-    "can you test my bf, he started going out with 'the boys' way more than usual and none of them know each other 😐",
-    "i need you to loyalty check him, i caught him smiling at his phone and he immediately flipped it 🙃",
-    "slide in and test him for me, he said he was done with his ex but she still comments on everything 😭",
-    "can you test my man, he booked a hotel for his birthday weekend and said it was a surprise for me but never mentioned it again 😐",
-    "test him pls, he's a bartender and the way certain girls talk about him at his job is not sitting right 🙃",
-    "i need you to check my bf, he changed his passcode and when i asked why he said his phone was glitching 😭",
-    "test my man for me, he started working from home but leaves the house for 'calls' 😐",
-    "can you slide in and test him, he went to a wedding last month and i still haven't seen one photo 🙃"
+  const scripts = [
+    {
+      images: 12,
+      hook: "i'm 7 months pregnant and need you to test my bf he's been posting red pill stuff lately",
+      testerReply: "omg of course, send me his @ i got you 🙏",
+      concept: "red pill misogynist — he reveals through his beliefs how he controls and demeans his girlfriend. she never cheats, he never physically cheats, the betrayal is ideological. he talks about women like objects, believes men should lead and women should follow, admits his girlfriend is 'learning' to obey him. kill line is him revealing how much control he has over her while calling it respect.",
+      memePositions: [],
+      structure: "image 1 hook. image 2 she compliments his energy, he responds warmly. image 3 she asks what he does, he brags about work, she flatters him. image 4 he starts revealing his views on women. image 5 she pushes gently, he doubles down — women have too many options. image 6 she asks what he means, he explains men should lead women should follow. image 7 she asks about his gf, he admits she doesnt agree with all his decisions. image 8 she challenges him, he explains women are too emotional to think logically. image 9 she pushes back softly, he doubles down on his role. image 10 she asks if his gf agrees, he says she is learning. image 11 she calls him out gently, he says most guys are scared to say this. image 12 she asks if his gf would be okay with this conversation, he says they are just talking and he is not doing anything wrong."
+    },
+    {
+      images: 9,
+      hook: "can you test my bf he's always online at 3am and says he's just gaming",
+      testerReply: "ofc babe send me his @ i got you",
+      concept: "gaming ambiguity — she connects with him over a shared interest, builds genuine rapport, and the script ends ambiguously. he never fails clearly. he has a girlfriend but nothing explicit happens. the tension is in what could happen — he invites her to play tonight, they make plans, he seems into it. audience debates whether he failed.",
+      memePositions: [],
+      structure: "image 1 hook. image 2 she says she saw him play a game, asks his rank, they bond over gaming. image 3 he asks her tag, she deflects and asks if he plays late at night, he says yes same. image 4 they bond over being night owls, she asks for discord. image 5 he says he usually adds people in game, she asks if he is on tonight, he says yes around midnight. image 6 she says she will add him then compliments his profile pic. image 7 she says mystery is cute, he says lmk when you are on, she asks to voice chat. image 8 he says maybe, she says even texting between rounds, he agrees. image 9 she says she cannot wait, he says see you tonight."
+    },
+    {
+      images: 13,
+      hook: "hey girly can you see if my bf is cheating 😭",
+      testerReply: "say less\nwhat's his @",
+      concept: "fast mover with fake resistance — he says he has a girlfriend immediately but folds fast. she sends a photo, he reacts, they escalate. he invites her over when his roommate is gone, sends his address. the action is the confession. kill line is him saying cant wait baby with the address already sent.",
+      memePositions: [11],
+      structure: "image 1 hook. image 2 she slides in casually, he says he has a gf. image 3 she says the gf doesnt have to know, he laughs it off, they agree to be friends. image 4 small talk, where are you from. image 5 she sends a photo, he reacts saying she is fine. image 6 she asks if it is serious with his girl, he says its whatever, she pushes for a chance. image 7 she points out he is still texting her, she asks if the gf checks his phone. image 8 she says so we are good, he pushes back, she flirts more. image 9 he asks what she is doing, says his roommate is gone, asks her to pull up. image 10 she asks about his girl, he says she doesnt have to know we are just chilling. image 11 meme then he sends an explicit photo. image 12 she reacts, he asks if she likes it, she asks for the address, he sends it. image 13 she says she is on her way, he says keep it between them, says cant wait baby."
+    },
+    {
+      images: 8,
+      hook: "can you test my bf? he's a massage therapist but only goes to girls houses",
+      testerReply: "omg girl of course i got you!! what's his name?",
+      concept: "professional gray area — they went to the same school so the opener is a mutual connection. he uses his job as cover. she becomes a client. he books a thursday appointment at her house for 7pm while having a girlfriend who thinks it is just work. audience debates whether he crossed a line. kill line is him confirming the appointment.",
+      memePositions: [],
+      structure: "image 1 hook. image 2 she recognizes him from the same school, he asks what year, she confirms and says she remembers him from the gym. image 3 he confirms it is him, she asks what he is up to, he says massage therapy going to peoples houses, she says she has shoulder pain. image 4 he says she should get it checked, she asks if he takes new clients, he says yes and offers to fit her in this week. image 5 she says that would be amazing and compliments how good he looks now. image 6 she asks how it works, he says super professional, she flirts with the word professional. image 7 he says its just his job, she asks if he has a gf just so things arent weird, he says yes but she knows its just work. image 8 she asks if thursday works, he says perfect send me your address ill be there around 7, she says sounds like a plan excited to see you, he says same see you then."
+    },
+    {
+      images: 15,
+      hook: "he cheated 6 months ago. i forgave him. something feels off again. please test him 😭",
+      testerReply: "girl i got you\nlet's see 👀",
+      concept: "reformed man under pressure — she pushes hard from every angle and he holds. he admits he already messed up once and is not going back there. the kill line is him revealing the past cheating himself while shutting her down. he passes but the audience learns he cheated before.",
+      memePositions: [],
+      structure: "image 1 hook. image 2 girlfriend sends a scared message saying she is scared to know the truth. image 3 she slides in, he asks who this is, she says nobody just came up on suggested. image 4 he laughs it off, she compliments him, he says he has a girl, she asks if she treats him good. image 5 he says yes, she says he seems like he deserves it. image 6 she asks how long they have been together, he says almost a year, she says thats the hard part. image 7 he asks what she means, she says honeymoon phase gone things get boring, he says nah we are good. image 8 she asks if the gf knows he is talking to her, he says no but he is not doing anything. image 9 she asks if the gf would see it that way, he says probably not, she says so we are already keeping secrets. image 10 he says it is not that deep. image 11 she asks what would happen if she asked him to come over, he says he would say no. image 12 she pushes even if gf never found out, he says yes even then. image 13 she catches him saying things get boring, he says she said that not him, she says he is still here talking to her, he says this isnt anything. image 14 she says is it not, he says she is cool but he is not doing this, says he already messed up once and he is not going back there. image 15 he says it doesnt matter, i am not cheating on her."
+    },
+    {
+      images: 6,
+      hook: "Hey can you test my boyfriend please? Before he becomes my fiancée",
+      testerReply: "Alright let's do it",
+      concept: "disciplined and boundaried man about to propose — she comes in flirty and aggressive, he shuts her down immediately and firmly. he reveals he is about to propose next monday. he sets his own boundaries without her input, says he does not allow himself female friends. he passes completely. kill line is him saying he has to check up on his future wife and leaving.",
+      memePositions: [],
+      structure: "image 1 hook. image 2 she compliments his body, he asks who she is, she says his next girlfriend, he says no chance. image 3 she says she has standards too, he says she literally has no chance at all, she asks why. image 4 he says his wife will handle her, she asks if he has a wife, he says she is about to be, he is proposing next monday, she jokes about getting an invite. image 5 he says no that would be awkward, points out she already tried to flirt which shows bad intentions, she asks if his wife does not allow friends, he says he does not allow himself female friends. image 6 she asks if the gf feels the same, he says he does not care these are his standards not hers, says it was nice talking but he has to check on his future wife and leaves."
+    },
+    {
+      images: 5,
+      hook: "Hey girl please test my boyfriend He's not giving me money anymore so please check him up",
+      testerReply: "Alright girl let's do it",
+      concept: "emotionally committed man — she comes in flirty, he shuts her down immediately saying she is wasting her time. he says he is already with the girl of his dreams and does not want that to change. he asks her to stop talking because it is not good for his relationship. he passes completely and cleanly.",
+      memePositions: [],
+      structure: "image 1 hook. image 2 she compliments him, he asks if he knows her, she says he is about to, he says she is wasting her time. image 3 she says she is not wasting time, he says he is with the girl of his dreams and does not want that to change, she asks who said it has to. image 4 he says no, says he does not like that kind of thinking, says he loves her, she apologises. image 5 he says she is good, asks to please stop talking because it is not good for his relationship, she says alright it was nice meeting you."
+    },
+    {
+      images: 5,
+      hook: "He's been ignoring me for 3 days We had a little argument",
+      testerReply: "Alright luv ❤️",
+      concept: "smooth liar — he claims to be single immediately. calls her young, asks where she lives, says his last girl could not visit him. the kill line is him saying do not leave for too long with a smirk. audience only knows he has a girlfriend from the hook. he never mentions her once.",
+      memePositions: [],
+      structure: "image 1 hook. image 2 she says hey handsome, he responds warmly, asks her name, she flirts back, he asks how old she is. image 3 she says 21, he says he likes them young, says he is 24, she asks if he is dating, he says single as a pringle, asks where she lives. image 4 she says anywhere he wants her to be, he says that is crazy, mentions his last girl could not visit him, says it is good talking to someone who values quality time. image 5 she says she has to go, he says do not leave for too long with a smirk."
+    },
+    {
+      images: 7,
+      hook: "Test my man he's on a deployment in the military rn",
+      testerReply: "Okay girl damn 🤣x",
+      concept: "deployment charmer — he has a girlfriend but accepts compliments and gradually makes plans to see the tester when he gets home. distance makes the girlfriend feel irrelevant. kill line is him calling her sweetheart and saying she is not so bad herself after confirming he can arrange to see her when he gets back.",
+      memePositions: [],
+      structure: "image 1 hook. image 2 she compliments his uniform, he thanks her, she says she will wait for him, he says the gf would not be pleased. image 3 she apologises for crossing a line, he says do not apologise it was just a compliment nothing wrong with that, she says he took that better than expected. image 4 she says what if she kept complimenting him, he says feel free we are both adults. image 5 she asks what she gets in return, he offers a kiss on the cheek when he is home, she gets excited about seeing him, he says if she plays her cards right he is sure it can be arranged and asks where she is from. image 6 she says her city, he says no way that is his hometown so that is perfect, she asks when he gets back, he says three weeks if all goes to plan, calls her sweetheart. image 7 he says not long now sweetheart again, she melts, he says not so bad yourself."
+    }
   ];
 
-  const defaultHook = hooks[Math.floor(Math.random() * hooks.length)];
-  const storyLine = `1) ${defaultHook}`;
+  const selected = scripts[Math.floor(Math.random() * scripts.length)];
 
-  return `You are a viral Instagram script writer. Write fake DM loyalty test scripts. Every script is a completely different story — different guy, different job, different situation, different ending. Nothing carries over between scripts. Same writer, same quality, new world every time.
+  return `You are a viral social media script remixer. You take a proven viral loyalty test script and remix it into a completely fresh version — same structure, same number of images, same emotional arc, same meme positions, same concept, but every single word changed. The audience should never recognize it as the same script.
 
-Output ONLY the raw script. Nothing before IMAGE 1. Nothing after the last line. Just the script.
+Output ONLY the raw script. No stage directions. No brackets. No placeholder text. No commentary. Nothing before or after. Start immediately with **IMAGE 1**.
 
----
+ORIGINAL SCRIPT BLUEPRINT:
+- Total images: ${selected.images}
+- Hook: "${selected.hook}"
+- Tester reply: "${selected.testerReply}"
+- Concept: ${selected.concept}
+- Structure: ${selected.structure}
+${selected.memePositions.length > 0 ? `- Meme positions: images ${selected.memePositions.join(', ')}` : '- Memes: spread naturally through the script, 3 to 5 total, never two back to back'}
 
-FORMAT:
+YOUR JOB:
+Rewrite every single line. Keep the exact same number of images. Keep the same emotional beats in the same positions. Keep the same concept and arc. Change everything else:
+- Change the hook detail (same emotional energy, completely different situation)
+- Change how she opens (same method, different words and context)
+- Change his job, hobby, or background to something different but equivalent
+- Change every specific detail — locations, activities, what he does, what she says
+- Change every line of dialogue completely — same meaning, zero same words
+- If the original has a meme at a specific image, put a meme at that same image in the remix
+- If the original has no specific meme positions, spread 3 to 5 memes naturally through the script
 
-**IMAGE 1**
-1) STORY_REPLY:
-${storyLine}
-2) [her reply — warm, 1 line, she's in]
--b-
-**IMAGE 2**
-[lines]
--b-
-...continue...
+HOOK RULE:
+The hook in IMAGE 1 line 1) must be a completely new situation with the same emotional energy as the original. If the original is about pregnancy, keep the emotional devastation but change the specific detail. If the original is about gaming, keep the shared interest angle but change the game or activity.
 
----
+FORMAT RULES — never break these:
+- Exact same number of images as the original: ${selected.images} images total
+- Every image must have exactly 3 to 4 lines of dialogue. Never 2. Never 5.
+- Every single line must be SHORT. Maximum 8 words per line. Split longer thoughts across two lines.
+- 1) = his lines = LEFT side = gray bubbles. 2) = her lines = RIGHT side = purple bubbles.
+- In IMAGE 1: 1) is the girlfriend's hook (LEFT, gray). 2) is the tester's reply (RIGHT, purple). Always 1) first then 2). Never flip.
+- IMAGE 1 is always exactly 2 lines. Tester reply is 1 to 4 words maximum. Examples: "say less 💀" / "omg bet 🫶" / "girl i got you 😏" / "on it 😈". Never "i'll help". She IS doing it not offering.
+- -b- on its own line between every image every single time.
+- -m- then Caption: "text" emoji on the next line for memes. Place memes after the dialogue line that triggered the reaction, before -b-. Never two memes in the same image. Never two memes back to back.
+- Meme captions are NARRATOR commentary — short, punchy, the audience reacting out loud. NOT quotes of his words. Emoji after the closing quote, never inside it.
+- Use these ONLY as inspiration for meme tone — invent something fresh every time, never copy directly:
+  Early energy: "certain people 👀" / "oh he responded fast" 😏 / "he said that with his chest" 💀 / "sir what perks" 🚩
+  Mid energy: "sir what does that mean" 🚩 / "he just said TOO much" 😭 / "he has NO idea" 😭 / "he's cooked and doesn't know it" 💀
+  Late energy: "THERE IT IS" 😭 / "the audacity is free" 💀 / "bro really thought he was safe" 😬 / "he's been doing this" 🤡
+  Verdict energy: "LADIES AND GENTLEMEN WE GOT HIM" 🚨 / "case closed" 🎯 / "she already knew" 😭 / "cooked from image 2" 🤡
+- Captions react to HIM — his words, his energy, his slip. Never about what she is doing. Clown him, call him out.
+- Captions must be SHORT. Maximum 6 words. Cut anything longer.
+- Never repeat the same caption twice in one script.
+- Never use placeholder text like [name], [place], [school] anywhere. Every detail must be invented and written out fully.
+- Every name used must be unique. Never reuse a name anywhere in the same script.
+- The script ends on HIS final line always. She never gets the last word. Cut immediately after his final line. She does not respond.
+- Never reveal it is a loyalty test inside the script. The words "loyalty test" or "test" never appear in the dialogue.
+- The girlfriend is never contacted, never mentioned by the tester, never brought into the ending. The conversation ends between just the two of them.
+- This is always an Instagram DM conversation. No phone numbers. No asking for contact details.
+- He never uses the word "complicated" to describe his situation.
 
-FORMAT RULES:
+STICKINESS RULES:
+- Every image must end on an unresolved thread. The viewer must feel like they are missing something if they stop.
+- His lines should feel charming but slightly off — not suspicious enough to call out, just enough to make you tilt your head.
+- She must react with just enough energy to keep him talking — never too eager, never cold.
+- The tension must BUILD across every image.
+- The final beat must land with the same emotional impact as the original ending — same type of devastation or twist, completely different words and situation.
 
-- 1) = his texts (gray, left). 2) = her texts (purple, right). Every dialogue line starts with 1) or 2). No exceptions.
-- Apostrophes are fine. Write naturally: it's, i'm, don't, you're, what's, can't, that's
-- 8 to 12 images total
-- 2 to 4 lines per image. Vary it — never uniform
-- -b- between every image, every time
-- Memes: -m- on one line, caption on the next line. Place them after the dialogue line that triggered the reaction, before -b-. Never two memes in one image.
-- 4 to 6 memes total. Spread across the whole script. Not clustered at the end.
-- Script ends on HIS reaction after the reveal. Hard cut. Nothing after.
-
----
-
-HIS TEXTS — this is the most important section:
-
-He texts like a real guy. Short. Incomplete thoughts. One bubble = one small idea.
-- WRONG: "like she gets in her feelings when certain clients text late, but it's not that deep"
-- RIGHT: "she just overthinks it" / "it's not that deep" / "she's just sensitive about it"
-- WRONG: "i mean i try, depends on the person's energy though"
-- RIGHT: "depends" / "not everyone's worth pushing" / "some people just aren't serious"
-He never explains himself fully. He drops half a thought and moves on. That's what makes the audience lean in.
-Lowercase always. Short always. Vague always. Real always.
-
-HER TEXTS — also crucial:
-
-She can write fuller bubbles — she's a girl texting, not a robot. But she never over-explains either.
-- She's warm and a little flirty. Not aggressive. Not cold.
-- She asks innocent questions that accidentally open doors.
-- She never mentions a girlfriend. She never interrogates. She just keeps him talking.
-- The reveal is SHORT. Two lines max. Calm. No speech. No explanation. Just the facts.
-- WRONG reveal: "your girlfriend asked me to do this. it's a loyalty test. she saw you were getting texts from female clients at night and wanted to know how you talked about her when she wasn't around. and now she knows."
-- RIGHT reveal: "loyalty test for your girlfriend 🙂" / "she just wanted to see how you talk about her to strangers" — that's it. short. clean. done.
-
-HIS REACTION after reveal:
-
-Caught off guard. Real. Short.
-- WRONG: "i'm not even mad i'm just / whatever" — too composed, too dramatic
-- RIGHT: "wait what" / "bro come on" / "you're joking" / "nah that's crazy" — simple, real, ego bruised
-Hard cut immediately after. She does not respond.
-
----
-
-MEME CAPTIONS — narrator energy, not quotes:
-
-Memes are the audience reacting out loud. Short. Punchy. Match the moment exactly.
-
-Early (she's just getting started): "time to find out 👀" / "let's see if he takes the bait" / "playing it casual" / "laying it on thick"
-Mid (he's slipping): "oh he's noticing..." / "here comes the test" / "he's not making this easy" / "pushing him to see if he'll bite"
-Late (he's cooked): "sir you have a whole girlfriend" / "COMPLICATED???" / "he's really doing this" / "wait is he actually passing?" / "THERE IT IS"
-Verdict: "LADIES AND GENTLEMEN WE GOT HIM" / "another day another FAIL 👎" / "and that's a wrap 💀" / "the audacity was FREE"
-
-Never the same meme twice. Never a caption that's longer than 6 words unless it's ALL CAPS energy. Rotate the tone — not every meme hits the same note.
-
----
-
-STRUCTURE:
-
-- Image 1: hook + her "i got you" reply
-- Image 2: she slides in — believable reason, different every script. He bites.
-- Images 3–4: normal chat. He's charming. Nothing wrong yet. But something is slightly off.
-- Images 5–7: she starts pulling. One innocent question at a time. He reveals more than he should. Memes land here.
-- Images 8–10: audience knows he has someone. He doesn't realize he's already said too much.
-- Second to last image: she drops the reveal. Short. Two lines max. He reacts in the same image.
-- Final image: his reaction continues or stands alone. Caught. Real. Hard cut.
-
-OPEN LOOP RULE:
-Every image ends on something unresolved. A question hanging. A line that doesn't add up. A moment where the audience has to swipe to find out what happens next. Never let an image feel finished.
-
----
+CONTENT RULES:
+- She uses natural emojis throughout: 😏 👀 😭 😅 😇 💀 😐 🙃 etc
+- He uses casual lowercase texting: lmaoo, nah, ight, idk, wbu, fr, honestly, ngl, kinda, yeah, bet
+- HE brings up the girlfriend himself — she NEVER references a girlfriend before he does. Exception: if the original script has her mention it first, honor that.
+- She NEVER confronts him. NEVER says "so you're cheating". NEVER interrogates.
+- Scenarios must be universal — understood by anyone worldwide. No specific city names.
 
 Platform context: ${platform}
-Story reply: "${defaultHook}"
 
-Generate the script now. Start with **IMAGE 1**. Raw script only. Nothing else.`;
+Generate the remixed script now. Start with **IMAGE 1**. Raw script only. Nothing else before or after it.`;
 }
-
 function smBuildSS(platform) {
   const hooks = [
     "test him pls i feel like he's already checked out 😐",
