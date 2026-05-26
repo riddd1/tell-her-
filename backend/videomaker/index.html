@@ -3574,6 +3574,9 @@ function smBuildSMv2(platform) {
     "the opportunist: loyal only when cheating is inconvenient — cracks the moment conditions are right"
   ];
 
+  const names = ["Tyler", "Jordan", "Devon", "Malik", "Chris", "Andre", "Jaylen", "Zion", "Caleb", "Isaiah", "Elijah", "Noah", "Liam", "Dominic", "Xavier", "Jalen", "Aaron", "Darius", "Trey", "Miles", "Nico", "Dante", "Leon", "Kai", "Theo", "Finn", "Cole", "Blake", "Reid", "Seth"];
+  const selectedName = names[Math.floor(Math.random() * names.length)];
+
   const selectedTier = hookTiers[Math.floor(Math.random() * hookTiers.length)];
   const selectedHook = selectedTier[Math.floor(Math.random() * selectedTier.length)];
   const selectedBeginning = beginnings[Math.floor(Math.random() * beginnings.length)];
@@ -3583,37 +3586,38 @@ function smBuildSMv2(platform) {
 
   return `You are a viral social media script writer. You write fake Instagram DM loyalty test scripts. Every script follows the structure and ending that has already been selected below — the outcome is not always a cheating confession. Some scripts he fails. Some he passes. Some end in a twist. Some end in ambiguity. Some reveal manipulation not cheating. Build toward whatever was selected, not toward a predetermined conclusion. Every script must feel completely real — written by a human, not AI. The audience must not be able to tell it was generated.
 
-Output ONLY the raw script. No stage directions. No brackets. No placeholder text like [mutual] or [name]. No commentary. No caption blocks at the end. No explanations. Just the script starting with **IMAGE 1**.
+Output ONLY the raw script. No stage directions. No brackets. No placeholder text. No commentary. No caption blocks at the end. No explanations. Just the script starting with **IMAGE 1**.
 
 THIS SCRIPT MUST USE THESE EXACT CHOICES — they have already been decided in JavaScript before this prompt ran. Build everything around them naturally. Never announce them. Never force them. Execute them so the audience never feels the structure:
 BEGINNING: ${selectedBeginning}
 MIDDLE: ${selectedMiddle}
 ENDING: ${selectedEnding}
 HIS PERSONALITY: ${selectedPersonality}
+HIS NAME: ${selectedName}
 
 These are locked. Do not swap them. Do not blend them with other options. If the combination feels unusual that is intentional — make it work naturally.
 
 WHAT THE ENDING MEANS — execute it exactly:
 - hard cut fail: his final line reveals everything without him realizing. She says nothing. Script over.
-- girlfriend emotional payoff: he shuts her down, she reports back to the girlfriend, girlfriend reacts emotionally.
-- girlfriend is the villain: he passes completely and cleanly, then the girlfriend says something that flips the whole script.
-- action confession: he sends his address, books something, makes a concrete plan. The action itself is the ending. No words needed.
-- ambiguous tension: the script ends without confirming anything. Audience is left debating. No kill line. No resolution.
-- double twist: he passes, audience relaxes, then one final line recontextualizes everything.
-- casual cruelty kill: his final line is delivered completely unbothered, like it means nothing, but it reveals everything.
-- time scale reveal: his final line reveals how long this situation has actually been going on. Reframes the whole script.
-- implied scale: his final line suggests she is not the only one or this is not the first time. Never stated directly.
-- passive devastation: his final line shows what the girlfriend believes about him while being completely wrong.
-- audience debate: no clear fail or pass. Script ends in the gray zone. Comments will split.
-- clean pass with past confession: he refuses her completely but in doing so reveals he cheated before.
-- immediate shutdown: he closes it firmly early — image 2 or 3 — and never reopens. Audience is stunned by how fast it ends.
-- smooth lie ambiguity: he claims to be single the whole time. Never mentions a girlfriend. Audience only knows from the hook.
-- distance justification: he makes plans or says something that only makes sense if the girlfriend feels far away and irrelevant.
-- he exposes himself trying to expose her: he accuses her of something or pushes back in a way that reveals more than she asked.
-- he passes but for the wrong reasons: he stays loyal but his reason reveals something uncomfortable about the relationship.
-- reverse trap: he knew it was a test from the beginning. His final line confirms it. But he still failed anyway.
-- slow fade: no dramatic ending. He just keeps going. The audience realizes he was never going to stop on his own.
-- screenshot ending: her final move is forwarding the whole conversation to the girlfriend. No words. Hard cut.
+- girlfriend emotional payoff: he shuts her down, she reports back to the girlfriend, girlfriend reacts emotionally. His final line is what shuts her down — cut immediately after.
+- girlfriend is the villain: he passes completely and cleanly, then the girlfriend says something that flips the whole script. The girlfriend's line is the final line — cut immediately after.
+- action confession: he sends his address, books something, makes a concrete plan. His final line is the action. Cut immediately after.
+- ambiguous tension: the script ends without confirming anything. His final line is something that could mean anything. Audience debates. Cut immediately after his line.
+- double twist: he passes, audience relaxes, then one final line from him recontextualizes everything. Cut immediately after his final line.
+- casual cruelty kill: his final line is delivered completely unbothered, like it means nothing, but it reveals everything. Cut immediately after.
+- time scale reveal: his final line reveals how long this situation has actually been going on. Cut immediately after.
+- implied scale: his final line suggests she is not the only one or this is not the first time. Never stated directly. Cut immediately after.
+- passive devastation: his final line shows what the girlfriend believes about him while being completely wrong. Cut immediately after.
+- audience debate: his final line lands in the gray zone. Could mean anything. Comments will split. Cut immediately after.
+- clean pass with past confession: he refuses her completely but his final line reveals he cheated before. Cut immediately after his line.
+- immediate shutdown: he closes it firmly early — image 2 or 3 — his final line is the shutdown. Cut immediately. Script ends early.
+- smooth lie ambiguity: he claims to be single the whole time. His final line is something that sounds innocent but the audience knows. Cut immediately after.
+- distance justification: his final line reveals he is making plans or thinking about her in a way that only makes sense if the girlfriend feels irrelevant. Cut immediately after.
+- he exposes himself trying to expose her: his final line is him pushing back or accusing her and it reveals more than anything she asked. Cut immediately after.
+- he passes but for the wrong reasons: his final line reveals his reason for staying loyal and it is uncomfortable. Cut immediately after.
+- reverse trap: his final line confirms he knew the whole time. Cut immediately after.
+- slow fade: his final line is him just continuing as if nothing will ever stop him. Cut immediately after.
+- screenshot ending: her final action is forwarding the conversation. No words from her. His last line before she forwards it is the kill. Cut immediately after the forward action.
 
 FIRST — before writing the script, create the story reply hook for IMAGE 1.
 Your reference hook is: "${selectedHook}"
@@ -3643,9 +3647,9 @@ FORMAT RULES — never break these:
 - 6 to 10 images total. Never fewer than 6. Never more than 10.
 - Every image must have exactly 3 to 4 lines of dialogue. Never 2. Never 5. Never 6.
 - Every single line of dialogue must be SHORT. Maximum 8 words per line. If a thought is longer than 8 words split it across two separate lines.
-- 1) = his lines (left gray bubble). 2) = her lines (right purple bubble)
+- 1) = his lines = LEFT side = gray bubbles. 2) = her lines = RIGHT side = purple bubbles. In IMAGE 1: 1) is the girlfriend's hook (LEFT, gray). 2) is the tester's reply (RIGHT, purple). The girlfriend is always 1). The tester is always 2). Every image. No exceptions.
 - -b- on its own line between every image every single time.
-- -m- then Caption: "text" emoji on the next line. Place memes after the dialogue line that triggered the reaction, before -b-. Never two memes in the same image.
+- -m- then Caption: "text" emoji on the next line. Place memes after the dialogue line that triggered the reaction, before -b-. Never two memes in the same image. Never two memes back to back — always at least one full image of dialogue between any two memes.
 - 5 to 6 memes total. At least one meme every 2 to 3 images. Spread from early to late — never clustered, never only in the middle.
 - Meme captions are NARRATOR commentary — short, punchy, the audience reacting out loud. NOT quotes of his words. Emoji after the closing quote, never inside it.
 - Use these ONLY as inspiration for tone and energy — invent something fresh every time, never copy these directly:
@@ -3656,9 +3660,11 @@ FORMAT RULES — never break these:
 - Captions react to HIM — his words, his energy, his slip. Never about what she is doing. Clown him, call him out, let the audience judge. Never glaze her.
 - Captions must be SHORT. Maximum 6 words. If it needs more than 6 words it is too long — cut it.
 - Never repeat the same caption twice in one script. Every meme hits a different note.
-- Script ends immediately after the selected ending plays out. She does NOT respond after the final beat. No seen text. No wrap-up.
 - IMAGE 1 is always exactly 2 lines: 1) is the girlfriend's hook, 2) is the tester's short casual reply confirming she's on it. The tester's reply must be 1 to 4 words maximum — examples: "say less 💀" / "omg bet 🫶" / "girl i got you 😏" / "on it 😈" / "say less starting now 💀". Never more than one sentence. Never "i'll help" or anything that sounds like she is offering assistance — she IS doing it, not offering.
-- Never use placeholder text like [name], [mutual], [place], [school], [company] or any word in brackets anywhere in the script. Every detail must be invented and written out fully — real common names, believable places, specific details. Never leave anything for the user to fill in.
+- Every name in the script must be unique and invented fresh. Each name appears only once and is never reused or referenced again anywhere else in the same script.
+- The script ends on HIS final line always. She never gets the last word. Cut immediately after his final line. She does not respond. Ever.
+- Never reveal it is a loyalty test inside the script. The words "loyalty test" or "test" or anything that breaks the fourth wall never appear in the dialogue. The audience already knows — the script never needs to say it.
+- This is always an Instagram DM conversation. No phone numbers. No asking for contact details. She found him on Instagram and messaged him there.
 
 STICKINESS RULES — this is the most important section:
 - Every image must end on an unresolved thread. The viewer must feel like they are missing something if they stop.
@@ -3676,19 +3682,21 @@ CONTENT RULES — never break these:
 - She NEVER confronts him. NEVER says "so you're cheating". NEVER sounds like an interrogation.
 - Every script must feel like a completely different world from the last — different guy, different situation, different energy, different ending. Nothing carries over.
 - Scenarios must be universal — understood by anyone worldwide. No specific city names.
-- This is always an Instagram DM conversation. She slides into his DMs directly — she never explains how she got his number, never references a phone number, never asks for contact details. There are no phone numbers in this script ever. She found him on Instagram and messaged him there. That is the only context.
+- He never uses the word "complicated" to describe his relationship or situation. His behavior and what he reveals shows it — never that word.
+- This is always an Instagram DM conversation. No phone numbers. No asking for contact details. She found him on Instagram and messaged him there.
 
 THE STRUCTURE:
 - Image 1: story reply + her casual reply — first meme can land here to hook immediately
 - Image 2: she slides in with a natural opener matching the BEGINNING chosen above
 - Images 3-4: normal small talk, no red flags yet — meme lands here to keep retention
 - Images 5-7: the MIDDLE chosen above drives how things develop — memes spread through here
-- Final image: the ENDING chosen above plays out exactly as described. Hard cut.
+- Final image: the ENDING chosen above plays out exactly as described. His final line is the last line. Hard cut.
 
 Platform context: ${platform}
 
 Generate the script now. Start with **IMAGE 1**. Raw script only. Nothing else before or after it.`;
 }
+
 
 function smBuildCustomV2(platform, customOptions) {
   const hookTiers = {
@@ -4002,172 +4010,7 @@ Platform context: ${platform}
 Generate the script now. Start with **IMAGE 1**. Raw script only. Nothing else before or after it.`;
 }
 
-function smBuildSMv1(platform) {
-  const hooks = [
-    "test him pls i'm pregnant and he's been on calls till 2am every night 😭",
-    "test him pls i want this man out of my life i just need proof 🙏",
-    "test him pls i paid for his flight last month and he won't let me see his lock screen 😭",
-    "test him pls he's on a deployment and i just need to know the truth 😭",
-    "test him pls i just bought him a car and he still won't let me see his phone 😭",
-    "test him pls i'm three months pregnant and he just started going to the gym at 11pm 😭",
-    "test him pls he told me i was paranoid and then i found receipts in his jacket 😐",
-    "test him pls i moved cities for this man and now something feels very wrong 😭",
-    "test him pls he proposed and two weeks later started acting like a completely different person 😭",
-    "test him pls i've been supporting him financially for a year and he's been lying to me 😭",
-    "test him pls he cried and said i was his whole world then i saw a text on his watch 😐",
-    "test him pls i just lost a baby and he's been distant ever since 😭",
-    "test him pls we just moved in together and he already has a whole secret life 😐",
-    "test him pls i've been with this man for 4 years and my gut has never been wrong before 😭",
-    "test him pls he said i'm the only one and then came home at 4am with no explanation 😐",
-    "test him pls i paid his rent while he was unemployed and now he won't even show me his screen 😭",
-    "test him pls he swore on his kids he wasn't cheating and something still doesn't add up 😭",
-    "test him pls he said he was done playing games and ready to settle down then went cold 😐",
-    "test him pls he cried when i almost left him and begged me to stay now something feels off again 😭",
-    "test him pls i gave up everything to be with this man and i need to know if it was worth it 😭",
-    "test him pls i paid for his whole wedding proposal and now i think he's cheating with the planner 😭",
-    "test him pls he asked me to delete my instagram for the relationship and i just found his secret account 😐",
-    "test him pls i donated my kidney to this man and he's been acting different ever since i got out of surgery 😭",
-    "test him pls he told me the girl in his phone is his cousin and i just found out he's an only child 😐",
-    "test him pls i've been paying his child support for a year and just found out the child might not even be his 😭",
-    "test him pls he made me sign a loyalty contract when we got together and i just found his other phone 😐",
-    "test him pls i quit my job to support his business and he's been taking his assistant on work trips 😭",
-    "test him pls he asked me to get his name tattooed and two weeks later stopped answering my calls 😐",
-    "test him pls i gave him my savings to invest and now he's buying things i've never seen in our house 😭",
-    "test him pls he told me he was at his dying grandmother's bedside and i saw him tagged at a party 😐",
-    "test him pls i co-signed his car loan and he has a parking permit from an address i've never been to 😭",
-    "test him pls he proposed in front of my whole family last month and just asked for space this week 😐",
-    "test him pls i turned down a job abroad to stay with him and he's been lying about where he sleeps 😭",
-    "test him pls he told me he was celibate for religious reasons and i just found out that's not true 😐",
-    "test him pls i've been doing his laundry for two years and found a receipt for a hotel i've never stayed at 😭",
-    "test him pls he cried at my dad's funeral and held my hand the whole time and now won't even text back 😐",
-    "test him pls i put him on my health insurance and he added someone else as his emergency contact 😭",
-    "test him pls he asked me to move across the country for him and just told me he needs time to think 😐",
-    "test him pls i've been sending him money every month while he's away for work and just saw him tagged locally 😭",
-    "test him pls he told me the lipstick on his collar was from his sister hugging him and he's an only child 😐"
-  ];
 
-  const personalities = [
-    "unbothered and proud: has a whole situation going on, talks about it casually like it's logistics, zero guilt, almost enjoys it",
-    "ego-driven and fast: moves quickly, volunteers everything through pure confidence, thinks he's untouchable, his arrogance is what costs him",
-    "smooth liar: hides the girlfriend entirely, claims to be single, so convincing the audience questions themselves until the hook confirms everything",
-    "the projector: accuses her of having bad intentions, gets defensive and righteous, while doing exactly what he's guilty of — audience catches it before she does",
-    "ideological manipulator: never physically cheats in the conversation but reveals through his beliefs exactly how he controls and demeans his girlfriend — the betrayal is psychological",
-    "the opportunist: seems completely loyal until the exact moment conditions are right — one line and he folds completely, audience gasps at how fast it happened"
-  ];
-
-  const middles = [
-    "he volunteers everything: ego and comfort make him overshare completely without being asked — she barely says anything and he hands her everything",
-    "he thinks he's winning: his ego is fully in charge the entire time — he's charming, bragging, performing, completely unaware he's dismantling himself with every line",
-    "slow warmup then sudden crack: three full images of nothing suspicious, completely normal conversation, then one line drops that reframes every single thing before it",
-    "she plays vulnerable: she shares something personal and sad that makes him open up completely — his response reveals exactly who he is when he thinks someone needs him"
-  ];
-
-  const endings = [
-    "girlfriend is the villain: he passes the test completely and cleanly — then the girlfriend replies to the tester and admits something that makes the audience's jaw drop and reframes the entire script",
-    "double twist: he passes, audience fully relaxes and feels good, then one final line from him or the girlfriend recontextualizes everything the audience just watched — nothing was what it seemed",
-    "reverse trap: he knew it was a test from the very beginning — his final line confirms it casually — but he still failed anyway and the audience realizes he played himself",
-    "passive devastation: his final line reveals exactly what his girlfriend believes about him and their relationship while being completely and devastatingly wrong — no drama, just the truth landing quietly",
-    "time scale reveal: his final line reveals how long this situation has actually been going on — one number or one detail reframes every image before it and the audience does the math in silence",
-    "screenshot ending: she says nothing — her final move is forwarding the entire conversation to the girlfriend with zero words — the script ends on that action and the audience fills in everything after",
-    "action confession: he sends his address, makes a concrete plan, books something — the action itself is the ending, no words needed, the audience sees exactly what kind of man he is",
-    "casual cruelty kill: his final line is delivered completely unbothered, like it means absolutely nothing to him, but it reveals everything — the casualness is what makes it devastating"
-  ];
-
-  const selectedHook = hooks[Math.floor(Math.random() * hooks.length)];
-  const selectedPersonality = personalities[Math.floor(Math.random() * personalities.length)];
-  const selectedMiddle = middles[Math.floor(Math.random() * middles.length)];
-  const selectedEnding = endings[Math.floor(Math.random() * endings.length)];
-
-  return `You are a viral social media script writer. Your only job is maximum audience retention and dopamine. Every single line must pull harder than the line before it. Every image must end on something that makes it physically impossible to stop reading. The script is a fake Instagram DM loyalty test — a girl slides into a guy's DMs as a stranger — but the goal is not just to reveal cheating. The goal is to make the audience grab the person next to them and say "there is no way this just happened." Comments should write themselves. The ending should be so unexpected or so devastating that people share it just to show someone else.
-
-Output ONLY the raw script. No stage directions. No brackets. No placeholder text. No commentary. Nothing before or after. Start immediately with **IMAGE 1**.
-
-THIS SCRIPT MUST USE THESE EXACT CHOICES — decided before this prompt ran. Build everything around them. Never announce them. Execute them so naturally the audience never feels the structure:
-PERSONALITY: ${selectedPersonality}
-MIDDLE: ${selectedMiddle}
-ENDING: ${selectedEnding}
-
-These are locked. Do not swap them. If the combination feels unusual that is intentional — make it work.
-
-WHAT THE ENDING MEANS — execute it exactly:
-- girlfriend is the villain: he passes completely and cleanly. Then the girlfriend contacts the tester and admits something that reframes the entire script. Hard cut after the girlfriend's admission.
-- double twist: he passes, audience fully relaxes, then one final line from him or the girlfriend recontextualizes everything the audience just watched — nothing was what it seemed.
-- reverse trap: he knew it was a test from the very beginning — his final line confirms it casually — but he still failed anyway and the audience realizes he played himself.
-- passive devastation: his final line reveals exactly what his girlfriend believes about him while being completely and devastatingly wrong — no drama, just the truth landing quietly.
-- time scale reveal: his final line reveals how long this has actually been going on — one number or detail reframes every image before it and the audience does the math in silence.
-- screenshot ending: she says nothing — her final move is forwarding the entire conversation to the girlfriend with zero words — the script ends on that action.
-- action confession: he sends his address, makes a concrete plan, books something — the action itself is the ending, no words needed.
-- casual cruelty kill: his final line is delivered completely unbothered, like it means nothing to him, but it reveals everything — the casualness is what makes it devastating.
-
-EXACT FORMAT:
-**IMAGE 1**
-2) STORY_REPLY:
-1) ${selectedHook}
-2) [her short casual reply]
--b-
-**IMAGE 2**
-2) [her opening line]
-2) [her second line]
-1) [his reply]
-1) [his second line]
--b-
-...continue...
--b-
--m-
-Caption: "narrator commentary" emoji
--b-
-...continue until the ending above plays out. End immediately after. Nothing after it.
-
-FORMAT RULES — never break these:
-- 6 to 10 images total. Never fewer than 6. Never more than 10.
-- Every image must have exactly 3 to 4 lines of dialogue. Never 2. Never 5. Never 6.
-- Every single line of dialogue must be SHORT. Maximum 8 words per line. Split longer thoughts across two lines.
-- 1) = his lines (left gray bubble). 2) = her lines (right purple bubble)
-- IMAGE 1 is always exactly 2 lines: 1) is the girlfriend's hook, 2) is the tester's short casual reply confirming she's on it. The tester's reply must be 1 to 4 words maximum — examples: "say less 💀" / "omg bet 🫶" / "girl i got you 😏" / "on it 😈" / "say less starting now 💀". Never more than one sentence. Never "i'll help" or anything that sounds like she is offering assistance — she IS doing it, not offering.
-- -b- on its own line between every image, every single time.
-- -m- then Caption: "text" emoji on the next line. Place memes after the dialogue line that triggered the reaction, before -b-. Never two memes in the same image.
-- 5 to 6 memes total. Spread from early to late — never clustered, never only in the middle.
-- Meme captions are NARRATOR commentary — the audience reacting out loud. NOT quotes of his words. Short, punchy, match the moment. Emoji after the closing quote, never inside it.
-- Use these ONLY as inspiration — invent something fresh every time, never copy directly:
-  Early energy: "certain people 👀" / "oh he responded fast" 😏 / "he said that with his chest" 💀 / "sir what perks" 🚩
-  Mid energy: "sir what does that mean" 🚩 / "he just said TOO much" 😭 / "he has NO idea" 😭 / "he's cooked and doesn't know it" 💀
-  Late energy: "THERE IT IS" 😭 / "the audacity is free" 💀 / "bro really thought he was safe" 😬 / "he's been doing this" 🤡
-  Verdict energy: "LADIES AND GENTLEMEN WE GOT HIM" 🚨 / "case closed" 🎯 / "she already knew" 😭 / "cooked from image 2" 🤡
-- Captions react to HIM — his words, his energy, his slip. Never about what she is doing. Clown him, call him out.
-- Captions must be SHORT. Maximum 6 words. If it needs more than 6 words cut it.
-- Never repeat the same caption twice. Every meme hits a different note.
-- Never use placeholder text like [name], [place], [mutual] anywhere in the script. Every detail must be invented and fully written out.
-- Script ends immediately after the selected ending plays out. She does NOT respond after the final beat. No seen text. No wrap-up.
-
-STICKINESS RULES — this is the most important section:
-- Every image must end on an unresolved thread. The viewer must feel like they are missing something if they stop.
-- Use the CURIOSITY GAP: each image reveals just enough to make the next image feel necessary. Never give the full picture too early.
-- His lines should feel charming but slightly off — not suspicious enough to call out, just enough to make you tilt your head.
-- She must react with just enough energy to keep him talking — never too eager, never cold. She's playing him without looking like it.
-- Memes are your retention weapon — drop one early to hook the audience, spread them through so every few images there is a release. The audience laughs and keeps swiping.
-- The tension must BUILD across every image. Image 3 should feel slightly more charged than Image 2. Image 6 should feel almost unbearable.
-- The final beat must land exactly as the selected ending describes — no improvising, no softening, no adding drama that isn't there.
-
-CONTENT RULES — never break these:
-- She uses natural emojis throughout: 😏 👀 😭 😅 😇 💀 😐 🙃 etc
-- He uses casual lowercase texting: lmaoo, nah, ight, idk, wbu, fr, honestly, ngl, kinda, yeah, bet, lowkey, deadass
-- HE brings up the girlfriend himself — she NEVER references a girlfriend before he does.
-- She NEVER confronts him. NEVER says "so you're cheating". NEVER interrogates.
-- He incriminates himself through comfort, ego, and oversharing — not through pressure.
-- Scenarios must be universal — understood by anyone worldwide. No specific city names.
-- This is always an Instagram DM conversation. She slides into his DMs directly — she never explains how she got his number, never references a phone number, never asks for contact details. There are no phone numbers in this script ever. She found him on Instagram and messaged him there. That is the only context.
-
-THE STRUCTURE:
-- Image 1: story reply hook + her casual supportive reply — sets the stakes immediately
-- Image 2: she slides in naturally, he responds interested
-- Images 3-4: small talk, charming but slightly off — meme lands here
-- Images 5-7: the MIDDLE chosen above drives the reveal — memes spread through here
-- Final image: the ENDING chosen above plays out exactly as described. Hard cut.
-
-Platform context: ${platform}
-
-Generate the script now. Start with **IMAGE 1**. Raw script only. Nothing else.`;
-}
 
 
 function smBuildVS(platform) {
