@@ -528,6 +528,27 @@ app.post('/track/visit', async (req, res) => {
   }
 });
 
+// ── Onboarding funnel step tracking ──────────────────
+app.post('/track/step', async (req, res) => {
+  const { userId, step } = req.body;
+  if (!step) return res.json({ ok: true });
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS onboarding_steps (
+        id TEXT PRIMARY KEY,
+        user_id TEXT,
+        step TEXT NOT NULL,
+        tracked_at TIMESTAMPTZ DEFAULT NOW()
+      )
+    `);
+    await pool.query(
+      'INSERT INTO onboarding_steps (id, user_id, step, tracked_at) VALUES ($1, $2, $3, NOW())',
+      [Date.now() + '_' + Math.random().toString(36).slice(2), userId || null, step]
+    );
+  } catch (e) {}
+  res.json({ ok: true });
+});
+
 // ── Affiliate ─────────────────────────────────────────
 app.post('/affiliate/click', async (req, res) => {
   const { affiliateCode, userId } = req.body;
@@ -632,6 +653,13 @@ app.post('/admin/stats', async (req, res) => {
         video_posts_30d: parseInt(videoPosts30.rows[0].count),
       };
     }));
+    const funnelRaw = await pool.query(`
+      SELECT step, COUNT(DISTINCT user_id) as cnt
+      FROM onboarding_steps
+      GROUP BY step
+    `).catch(() => ({ rows: [] }));
+    const funnel = {};
+    funnelRaw.rows.forEach(r => { funnel[r.step] = parseInt(r.cnt); });
     res.json({
       totalUsers: parseInt(totalUsers.rows[0].count),
       paidUsers: parseInt(paidUsers.rows[0].count),
@@ -639,6 +667,7 @@ app.post('/admin/stats', async (req, res) => {
       totalSales: parseInt(totalSales.rows[0].count),
       revenue: totalRevenue,
       affiliates: affiliateStats,
+      funnel,
     });
   } catch (e) {
     res.status(500).json({ error: 'Failed to get stats' });

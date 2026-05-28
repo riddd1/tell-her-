@@ -262,6 +262,10 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
       <div class="stat-card"><div class="stat-num" id="a-paid">—</div><div class="stat-lbl">Paid Users</div></div>
       <div class="stat-card"><div class="stat-num" id="a-rev">—</div><div class="stat-lbl">Total Revenue</div></div>
     </div>
+    <div class="section-hd" style="margin-top:20px">
+      <div class="section-title">Onboarding Funnel</div>
+    </div>
+    <div id="funnel-wrap" style="background:var(--card);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:16px;margin-bottom:16px;font-size:.82rem"></div>
     <div class="section-hd">
       <div class="section-title">Affiliates</div>
       <button class="btn-sm" onclick="toggleCreateForm()"><i data-lucide="plus" style="width:13px;height:13px"></i> Create</button>
@@ -461,6 +465,7 @@ async function loadAdminStats(){
     document.getElementById('a-total').textContent=d.totalUsers??'—';
     document.getElementById('a-paid').textContent=d.paidUsers??'—';
     document.getElementById('a-rev').textContent=d.revenue!=null?'$'+d.revenue:'—';
+    renderFunnel(d.funnel||{},d.paidUsers||0);
     renderAffList(d.affiliates||[]);
     const gFrom=document.getElementById('ov-global-from');
     const gTo=document.getElementById('ov-global-to');
@@ -468,6 +473,37 @@ async function loadAdminStats(){
     if(!gTo.value) gTo.value=defaultTo();
     loadOverview();
   }catch(_){}
+}
+
+function renderFunnel(f,paid){
+  const steps=[
+    ['quiz_start','Quiz Start'],['q1','Q1 Answered'],['q2','Q2'],['q3','Q3'],['q4','Q4'],['q5','Q5'],['q6','Q6'],
+    ['t1','Transition 1'],['q7','Q7'],['q8','Q8'],['q9','Q9'],['q10','Q10'],
+    ['t2','Transition 2'],['t3','Transition 3'],['collect','Email Captured'],['offer','Paywall Seen'],
+  ];
+  const top=f['quiz_start']||1;
+  const rows=steps.map(([key,label])=>{
+    const n=f[key]||0;
+    const pct=top?Math.round(n/top*100):0;
+    return `<div style="display:flex;align-items:center;gap:8px;padding:5px 0;border-bottom:1px solid rgba(255,255,255,.04)">
+      <div style="width:120px;color:var(--sub);font-size:.75rem">${label}</div>
+      <div style="flex:1;background:rgba(255,255,255,.06);border-radius:4px;height:6px;overflow:hidden">
+        <div style="width:${pct}%;background:var(--pink);height:100%;border-radius:4px"></div>
+      </div>
+      <div style="width:40px;text-align:right;color:var(--txt);font-weight:600">${n}</div>
+      <div style="width:36px;text-align:right;color:var(--sub);font-size:.72rem">${pct}%</div>
+    </div>`;
+  });
+  const paidRow=`<div style="display:flex;align-items:center;gap:8px;padding:5px 0">
+    <div style="width:120px;color:#22c55e;font-size:.75rem;font-weight:600">Paid</div>
+    <div style="flex:1;background:rgba(255,255,255,.06);border-radius:4px;height:6px;overflow:hidden">
+      <div style="width:${top?Math.round(paid/top*100):0}%;background:#22c55e;height:100%;border-radius:4px"></div>
+    </div>
+    <div style="width:40px;text-align:right;color:#22c55e;font-weight:600">${paid}</div>
+    <div style="width:36px;text-align:right;color:var(--sub);font-size:.72rem">${top?Math.round(paid/top*100):0}%</div>
+  </div>`;
+  const el=document.getElementById('funnel-wrap');
+  if(el)el.innerHTML=rows.join('')+paidRow;
 }
 
 function renderAffList(affs){

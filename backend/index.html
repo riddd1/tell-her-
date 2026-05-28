@@ -46,11 +46,15 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
 .land-footer a{color:#2a2a35;text-decoration:underline}
 
 /* QUIZ */
-.q-progress-track{height:3px;background:#1a1a1f;width:100%}
-.q-progress-line{height:3px;background:var(--pink);transition:width .5s ease}
+.q-progress-wrap{position:relative;width:100%;padding-top:12px}
+.q-progress-bubble{position:absolute;top:0;transform:translateX(-50%);background:var(--pink);color:#fff;font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap;transition:left .5s ease;pointer-events:none;z-index:1}
+.q-progress-track{height:4px;background:rgba(255,255,255,.1);border-radius:4px;width:100%;margin-top:14px}
+.q-progress-line{height:4px;background:var(--pink);border-radius:4px;transition:width .5s ease}
 .q-top{display:flex;align-items:center;justify-content:space-between;padding:16px 24px 0;max-width:520px;margin:0 auto}
 .q-logo{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.4rem;color:var(--txt)}
-.q-num-label{font-size:.72rem;color:var(--sub);font-weight:500;letter-spacing:.5px}
+.quiz-login-link{font-size:.72rem;color:var(--sub)}
+.quiz-login-link span{color:var(--pink);cursor:pointer;text-decoration:underline}
+.opt-emoji{font-size:1.15rem;width:26px;text-align:center;flex-shrink:0;line-height:1}
 .q-body{padding:24px 24px 100px;position:relative;min-height:80svh;display:flex;flex-direction:column;justify-content:center}
 .q-watermark{font-family:'Cormorant Garamond',serif;font-size:9rem;font-weight:700;color:rgba(247,37,133,.04);position:absolute;top:0;left:16px;line-height:1;pointer-events:none;user-select:none}
 .q-cat{font-size:.65rem;font-weight:600;text-transform:uppercase;letter-spacing:2px;color:var(--pink);margin-bottom:12px;position:relative}
@@ -293,7 +297,7 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
 <body>
 
 <!-- LANDING -->
-<div id="s-landing" class="screen active">
+<div id="s-landing" class="screen">
   <div class="land-wrap">
 
     <div class="land-topbar">
@@ -332,10 +336,15 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
 
 <!-- QUIZ -->
 <div id="s-quiz" class="screen">
-  <div class="q-progress-track"><div class="q-progress-line" id="q-prog-fill" style="width:8%"></div></div>
+  <div style="padding:max(16px,env(safe-area-inset-top)) 24px 0">
+    <div class="q-progress-wrap">
+      <div class="q-progress-bubble" id="q-prog-bubble">7%</div>
+      <div class="q-progress-track"><div class="q-progress-line" id="q-prog-fill" style="width:7%"></div></div>
+    </div>
+  </div>
   <div class="q-top">
     <div class="q-logo">Tell Her<span style="color:var(--pink)">.</span></div>
-    <div class="q-num-label" id="q-num-label">1 of 12</div>
+    <div class="quiz-login-link">Already signed up? <span onclick="showScreen('s-login')">Log in</span></div>
   </div>
   <div class="q-body">
     <div class="q-watermark" id="q-watermark">01</div>
@@ -348,9 +357,10 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
 <!-- TRANSITION 1 -->
 <div id="s-t1" class="screen">
   <div class="t-screen">
-    <div class="t-icon-wrap"><i data-lucide="search" style="width:32px;height:32px"></i></div>
+    <div class="t-icon-wrap"><span style="font-size:2rem">🔍</span></div>
     <div class="t-line"></div>
-    <p class="t-quote">real love shouldn't feel like a part-time investigation.</p>
+    <p class="t-quote">talk is cheap. what he does when you're not looking is where the truth lives.</p>
+    <p class="t-sub">you've felt the shift. let's find out where it leads.</p>
     <div class="timer-wrap" id="t1-wrap" onclick="nextFromT1()">
       <div class="timer-svg-w">
         <svg class="timer-svg" viewBox="0 0 50 50">
@@ -367,10 +377,10 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
 <!-- TRANSITION 2 -->
 <div id="s-t2" class="screen">
   <div class="t-screen">
-    <div class="t-icon-wrap"><i data-lucide="hourglass" style="width:32px;height:32px"></i></div>
+    <div class="t-icon-wrap"><span style="font-size:2rem">⏳</span></div>
     <div class="t-line"></div>
-    <p class="t-quote">if the numbers haven't added up, he's hiding them.</p>
-    <p class="t-sub">let's stop guessing and get to what's actually real.</p>
+    <p class="t-quote">when the numbers stop adding up and keep not adding up, that is not a coincidence.</p>
+    <p class="t-sub">let's stop guessing and actually find out what's going on.</p>
     <div class="timer-wrap" id="t2-wrap" onclick="nextFromT2()">
       <div class="timer-svg-w">
         <svg class="timer-svg" viewBox="0 0 50 50">
@@ -386,15 +396,12 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
 
 <!-- POST-QUIZ BRIDGE -->
 <div id="s-t3" class="screen">
-  <div style="min-height:100svh;display:flex;flex-direction:column;justify-content:center;padding:48px 32px;max-width:440px;margin:0 auto">
-    <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.4rem;color:var(--txt);margin-bottom:48px">Tell Her<span style="color:var(--pink)">.</span></div>
-    <p style="font-size:.95rem;color:var(--sub);line-height:2;margin-bottom:0">those questions weren't easy.</p>
-    <p style="font-size:.95rem;color:var(--sub);line-height:2;margin-bottom:0">a few of them probably hit closer than you expected.</p>
-    <p style="font-size:.95rem;color:var(--sub);line-height:2;margin-bottom:0">most women close out here. it's easier to stay comfortable than face what's right in front of you.</p>
-    <p style="font-size:.95rem;color:var(--sub);line-height:2;margin-bottom:4px">you're still here.</p>
-    <p style="font-size:.95rem;color:var(--pink);font-weight:600;line-height:2;margin-bottom:32px">that tells me you aren't most women.</p>
-    <div style="background:rgba(247,37,133,.06);border-left:3px solid var(--pink);padding:16px 20px;border-radius:0 12px 12px 0;margin-bottom:40px;font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.05rem;line-height:1.65;color:var(--txt)">that's not insecurity. that's your gut doing exactly what it's supposed to do.</div>
-    <button class="t-btn" onclick="nextFromT3()">show me <i data-lucide="arrow-right" style="width:15px;height:15px"></i></button>
+  <div style="min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 32px;max-width:440px;margin:0 auto;text-align:center">
+    <span style="font-size:3rem;margin-bottom:20px">🔥</span>
+    <div style="width:48px;height:1px;background:var(--pink);margin:0 auto 24px"></div>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;line-height:1.7;color:var(--txt)">most people close out right here. but you didn't. you're here because you're done lying to yourself. let's get you your answer.</p>
+    <div style="width:48px;height:1px;background:var(--pink);margin:24px auto"></div>
+    <button class="t-btn" onclick="nextFromT3()">continue <i data-lucide="arrow-right" style="width:15px;height:15px"></i></button>
   </div>
 </div>
 
@@ -805,21 +812,52 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
 </div>
 
 <script>
-const QUESTIONS=[{n:1,pct:7,text:'first things first — are you <span class="hl">with him</span> right now?',opts:[['','yes, we\'re together'],['','yes, we\'re married or engaged'],['','it\'s complicated... we\'re somewhere in between'],['','not officially, but he\'s still on my mind constantly']]},{n:2,pct:13,text:'how long have the two of you been <span class="hl">doing this</span>?',opts:[['','under 6 months — still figuring each other out'],['','6 months to 2 years — past the early butterflies'],['','2 to 5 years — we\'ve built something real together'],['','5+ years — this is my whole world, not just a relationship']]},{n:3,pct:20,text:'right now, if you\'re being real — how does it actually <span class="hl">feel</span>?',opts:[['','honestly fine, i\'m just curious what this says'],['','mostly good, but something quiet keeps nagging at me'],['','strange. like he\'s become a slightly different person lately'],['','heavy. i can\'t stop turning it over in my head'],['','honestly? i\'m exhausted from trying to figure out what\'s real']]},{n:4,pct:27,text:'what do you actually want to feel when you <span class="hl">reach for him</span>?',opts:[['','completely at home — like nothing in the world could shake us'],['','certain. not one second of wondering where he is or who he\'s with'],['','like i\'m the only woman he even sees'],['','just calm. to breathe again without that weight in my chest']]},{n:5,pct:33,text:'what does your version of <span class="hl">love</span> actually look like?',opts:[['','two people who have each other\'s backs and never play games'],['','something so solid i never need to verify what i already feel'],['','going back to when i was genuinely his whole world'],['','finally feeling settled instead of always bracing for something'],['','a man who gives because he wants to, not because i had to ask']]},{n:6,pct:40,text:'the man i want is someone who...',opts:[['','makes me feel like the most important woman in every room'],['','protects my peace instead of quietly stealing it'],['','shows up because he genuinely chooses to, not because i reminded him'],['','does what he says, every single time'],['','is exactly the same whether i\'m watching or not'],['','picks me — every day, without needing to be convinced']]},{n:7,pct:47,text:'where do the two of you <span class="hl">actually stand</span> right now?',opts:[['','fully committed — we have the life, the plans, the future'],['','together, but the energy between us has quietly shifted'],['','just started and i\'m genuinely unsure where i land'],['','in a rough patch i need to understand before it breaks everything']]},{n:8,pct:53,text:'does his <span class="hl">past</span> ever keep you up at night?',opts:[['','yes — he\'s cheated before, on me or on someone else'],['','no history, but he collects female attention like it\'s nothing'],['','he has a whole world of people i\'ve never been introduced to'],['','no, but i\'ve noticed who he follows and watches online'],['','nothing on paper, but my gut just won\'t let this go']]},{n:9,pct:60,text:'when he starts acting <span class="hl">differently</span>, what do you actually do?',opts:[['','stay completely calm on the outside while my brain runs overtime'],['','pull back quietly to see if he even notices the distance'],['','go through his social media looking for anything that makes sense'],['','start a small argument just to see how defensive he gets'],['','try to bring it up but somehow always end up the one who apologizes']]},{n:10,pct:67,text:'how long have you been <span class="hl">sitting with this</span>?',opts:[['','just started — something shifted out of nowhere'],['','a few months now. started small, now it takes up everything'],['','over a year. too many things that have never added up'],['','honestly? since the beginning. i\'ve been filling the gaps for him']]},{n:11,pct:73,text:'lately i spend more time <span class="hl">doing this</span> than actually enjoying my relationship',opts:[['','checking his status wondering why he\'s online but not replying to me'],['','replaying our last conversation looking for the exact moment it changed'],['','calling just to quietly check where he actually is'],['','venting to people i trust because i can\'t say it to him directly'],['','watching his follower count waiting for the number to move'],['','something else']]},{n:12,pct:80,text:'i feel it most when i catch myself being someone who...',opts:[['','keeps searching for a truth she\'s terrified to actually find'],['','plays completely unbothered while falling apart on the inside'],['','defends behavior she used to warn her friends to run from'],['','is completely drained from carrying all of this alone'],['','something else']]},{n:13,pct:87,text:'i\'ve tried to fix this. every time it ends with me...',opts:[['','asking him directly and somehow being the one who apologizes'],['','going quiet and hoping he finally decides to step up'],['','going through his socials at 2am looking for something real'],['','blaming myself and wondering if i\'m actually the problem'],['','shutting down and just stopping the questions completely'],['','something else']]},{n:14,pct:93,text:'deep down, my <span class="hl">biggest fear</span> is that...',opts:[['','i\'ll waste another year on someone who was never actually loyal to me'],['','i\'m just the placeholder while he keeps his options open'],['','i\'ll find out the truth from someone else and look like a fool'],['','my gut is right and i don\'t know who i am without him'],['','if this is a lie, i\'ll never be able to fully trust anyone again'],['','something else']]},{n:15,pct:100,text:'be honest — what i actually <span class="hl">want</span> is...',opts:[['','the proof. show me what\'s real so i know i\'m not going crazy'],['','peace. just to finally know so the noise in my head stops'],['','the reason. if he\'s pulling away i need to understand before i lose myself'],['','to be wrong. i want him to pass so i can finally breathe and just love him'],['','something else']]}];
+const QUESTIONS=[
+  {n:1,pct:7,text:'are you <span class="hl">seeing someone</span> right now?',opts:[['👫',"yeah, we're together"],['💍',"yes, we're married or engaged"],['🤷',"it's a weird middle ground, kind of \"something\""],['💔',"not anymore, but he still crosses my mind"]]},
+  {n:2,pct:13,text:'how long have the two of you been <span class="hl">a thing</span>?',opts:[['🌱',"under 6 months, still in the early stages"],['⏰',"6 months to 2 years, past the butterflies"],['🏠',"2 to 5 years, we've put real time in"],['💎',"5+ years, this is my actual life"]]},
+  {n:3,pct:20,text:'how does it <span class="hl">feel</span> between you two these days?',opts:[['💗',"honestly fine, i'm just here out of curiosity"],['☀️',"mostly okay, but something keeps nagging at me"],['🌧️',"strange. like he became a different person"],['🪶',"heavy. it's all i can think about"],['🖤',"i'm just tired of not knowing what's real anymore"]]},
+  {n:4,pct:27,text:'what do you really <span class="hl">want to feel</span> when you roll over and see him?',opts:[['🏠',"safe. like he's genuinely my person"],['🔒',"certain. no more wondering where he is or who he's talking to"],['👑',"like i'm the only one he even notices"],['🕊️',"like i can finally exhale, no more weight sitting on my chest"]]},
+  {n:5,pct:33,text:'in your head, what does the <span class="hl">right relationship</span> actually look like?',opts:[['🤝',"two people who choose each other and actually talk through everything"],['✨',"so secure that i never feel the urge to check a single thing"],['🔄',"like the beginning again, when i actually felt like his priority"],['🌿',"peaceful. i'm so done living inside my own head"],['💎',"someone who shows up without me having to beg for the basics"]]},
+  {n:6,pct:40,text:'the man i <span class="hl">want to be with</span>...',opts:[['🪞',"makes me feel like the most beautiful woman wherever we go"],['☮️',"protects my peace instead of being the reason i lose it"],['👸',"treats me well because he wants to, not because i pushed him to"],['📋',"does what he says he's going to do, every time"],['🔍',"is exactly who he presents himself as, even when i'm not watching"],['❤️',"picks me every day, without me having to fight for his attention"]]},
+  {n:7,pct:47,text:'where do things <span class="hl">actually stand</span> between you right now?',opts:[['💍',"something serious, married, kids, or years of real history"],['💑',"we're dating, but the energy lately just feels different"],['🌱',"we're new and i genuinely can't tell where i fit yet"],['⚡',"we're in a rough patch and i really need to understand why"]]},
+  {n:8,pct:53,text:'is there something about his <span class="hl">past or habits</span> that keeps you up?',opts:[['💔',"he's cheated before, on me or someone before me"],['👀',"he's not a cheater but he loves female attention a little too much"],['🕵️',"he has a whole friend group i basically know nothing about"],['📱',"i've seen him following and liking girls online"],['🤔',"nothing specific, just that feeling in my gut i can't explain"]]},
+  {n:9,pct:60,text:'when he starts acting <span class="hl">off</span>, what do you usually do?',opts:[['😐',"stay cool on the surface while replaying everything in my head"],['🚪',"quietly pull back and see if he notices i've gone cold"],['🔍',"go through his socials looking for anything that confirms what i feel"],['💥',"pick a small fight just to watch how he reacts"],['💬',"try to bring it up directly, but somehow it always ends up being my fault"]]},
+  {n:10,pct:67,text:'how long has this <span class="hl">feeling</span> been sitting with you?',opts:[['⚡',"it's brand new, something literally just shifted"],['⏰',"a few months, it started small and now it's all i think about"],['📅',"over a year, just one thing after another that stopped adding up"],['😔',"honestly, from the start, i think i've just been covering for him"]]}
+];
 
 let currentQ=0;
 function showScreen(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');window.scrollTo(0,0)}
-function startQuiz(){currentQ=0;loadQuestion(0);showScreen('s-quiz')}
-function loadQuestion(idx){const q=QUESTIONS[idx];document.getElementById('q-label').textContent='QUESTION '+q.n;document.getElementById('q-num-label').textContent=q.n+' of 15';document.getElementById('q-watermark').textContent=q.n.toString().padStart(2,'0');document.getElementById('q-title').innerHTML=q.text;document.getElementById('q-prog-fill').style.width=q.pct+'%';const opts=document.getElementById('q-opts');opts.innerHTML=q.opts.map((o,i)=>`<div class="opt" onclick="answerQ(${i})"><div class="opt-radio"></div><span class="opt-tx">${o[1]}</span></div>`).join('')}
-function answerQ(){if(currentQ===5){showScreen('s-t1');startTimer();return}if(currentQ===9){showScreen('s-t2');startTimer2();return}if(currentQ===14){showScreen('s-t3');return}currentQ++;loadQuestion(currentQ);showScreen('s-quiz')}
+function trackStep(step){fetch(`${API_BASE}/track/step`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:getUserId(),step})}).catch(()=>{})}
+function startQuiz(){currentQ=0;trackStep('quiz_start');loadQuestion(0);showScreen('s-quiz')}
+function loadQuestion(idx){
+  const q=QUESTIONS[idx];
+  document.getElementById('q-label').textContent='QUESTION '+q.n;
+  document.getElementById('q-watermark').textContent=q.n.toString().padStart(2,'0');
+  document.getElementById('q-title').innerHTML=q.text;
+  const fill=document.getElementById('q-prog-fill');
+  const bubble=document.getElementById('q-prog-bubble');
+  fill.style.width=q.pct+'%';
+  bubble.style.left=q.pct+'%';
+  bubble.textContent=q.pct+'%';
+  const opts=document.getElementById('q-opts');
+  opts.innerHTML=q.opts.map((o,i)=>`<div class="opt" onclick="answerQ(${i})"><span class="opt-emoji">${o[0]}</span><span class="opt-tx">${o[1]}</span></div>`).join('')
+}
+function answerQ(i){
+  trackStep('q'+(currentQ+1));
+  if(currentQ===5){trackStep('t1');showScreen('s-t1');startTimer();return}
+  if(currentQ===9){showScreen('s-t2');startTimer2();return}
+  currentQ++;
+  loadQuestion(currentQ);
+  showScreen('s-quiz')
+}
 
 let timerDone=false,t1Used=false;
 function startTimer(){timerDone=false;t1Used=false;const ring=document.getElementById('timer-ring');const total=132,duration=5000,start=Date.now();ring.style.strokeDashoffset=total;function tick(){const p=Math.min((Date.now()-start)/duration,1);ring.style.strokeDashoffset=total*(1-p);if(p<1){requestAnimationFrame(tick)}else{timerDone=true;setTimeout(()=>{if(!t1Used)nextFromT1()},800)}}requestAnimationFrame(tick)}
 function nextFromT1(){if(t1Used)return;t1Used=true;currentQ=6;loadQuestion(currentQ);showScreen('s-quiz')}
 let timer2Done=false,t2Used=false;
 function startTimer2(){timer2Done=false;t2Used=false;const ring=document.getElementById('timer-ring-2');const total=132,duration=5000,start=Date.now();ring.style.strokeDashoffset=total;function tick(){const p=Math.min((Date.now()-start)/duration,1);ring.style.strokeDashoffset=total*(1-p);if(p<1){requestAnimationFrame(tick)}else{timer2Done=true;setTimeout(()=>{if(!t2Used)nextFromT2()},800)}}requestAnimationFrame(tick)}
-function nextFromT2(){if(t2Used)return;t2Used=true;currentQ=10;loadQuestion(currentQ);showScreen('s-quiz')}
-function nextFromT3(){showScreen('s-chat');startChat()}
+function nextFromT2(){if(t2Used)return;t2Used=true;trackStep('t2');showScreen('s-t3')}
+function nextFromT3(){trackStep('t3');showScreen('s-collect');window.scrollTo(0,0)}
 
 const CHAT_MSGS=[{delay:700,text:'going through your answers now...'},{delay:2000,text:'okay. i see exactly what is happening here.'},{delay:3600,text:'give me one second. i do not want to rush this part.'},{delay:5000,text:'alright.'}];
 function startChat(){const c=document.getElementById('chat-msgs');c.innerHTML='';CHAT_MSGS.forEach(m=>{setTimeout(()=>{const el=document.createElement('div');el.className='chat-msg-row';el.innerHTML=`<div class="chat-av-sm">T</div><div class="chat-bubble-notif">${m.text}</div>`;c.appendChild(el);requestAnimationFrame(()=>requestAnimationFrame(()=>el.classList.add('in')))},m.delay)});setTimeout(()=>showScreen('s-collect'),7000)}
@@ -862,13 +900,14 @@ function completeOrder(){
   if(wrap){
     wrap.innerHTML='<div id="whop-checkout" data-whop-checkout-plan-id="plan_pVRWzALypyeBH" data-whop-checkout-return-url="'+returnUrl+'" data-whop-checkout-theme="dark" data-whop-checkout-theme-accent-color="pink" data-whop-checkout-hide-price="true" data-whop-checkout-hide-tos="true"'+(email?' data-whop-checkout-prefill-email="'+email+'"':'')+' style="width:100%"></div>';
   }
+  trackStep('offer');
   showScreen('s-offer');
   window.scrollTo(0,0);
 }
 function skipToChat(){currentQ=11;showScreen('s-collect');}
 async function devSimulatePayment(){const uid=getUserId();const ref=localStorage.getItem('tellher_ref')||'';try{const r=await fetch(`${API_BASE}/test/payment-success`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:uid,refCode:ref})});const d=await r.json();if(d.success){window.location.href='https://www.tellher.co/chat?uid='+uid;}else{alert('Error: '+JSON.stringify(d));}}catch(e){alert('Error: '+e.message);}}
 function isValidEmail(email){const re=/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;if(!re.test(email))return false;const domain=email.split('@')[1];if(domain.split('.').some(part=>part.length<2))return false;return true}
-async function submitCollect(){const name=document.getElementById('collect-name').value.trim();const email=document.getElementById('collect-email').value.trim();const errEl=document.getElementById('collect-email-err');if(!isValidEmail(email)){errEl.style.display='block';return}errEl.style.display='none';localStorage.setItem('tellher_name',name);localStorage.setItem('tellher_email',email);const userId=getUserId();await fetch(`${API_BASE}/user/profile`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId,userName:name,email})}).catch(()=>{});showScreen('s-results');window.scrollTo(0,0)}
+async function submitCollect(){const name=document.getElementById('collect-name').value.trim();const email=document.getElementById('collect-email').value.trim();const errEl=document.getElementById('collect-email-err');if(!isValidEmail(email)){errEl.style.display='block';return}errEl.style.display='none';localStorage.setItem('tellher_name',name);localStorage.setItem('tellher_email',email);const userId=getUserId();await fetch(`${API_BASE}/user/profile`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId,userName:name,email})}).catch(()=>{});trackStep('collect');completeOrder()}
 async function submitMagicLink(){const email=document.getElementById('login-email').value.trim();const errEl=document.getElementById('login-err');errEl.style.display='none';if(!email)return;try{const res=await fetch(`${API_BASE}/magic-link`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email})});if(!res.ok){const data=await res.json();errEl.innerHTML=(data.error||'Something went wrong.')+' <a href="#" onclick="startQuiz();return false;" style="color:#f72585;text-decoration:underline">Take the quiz</a>';errEl.style.display='block';setTimeout(()=>startQuiz(),2800);return}document.getElementById('login-form').style.display='none';document.getElementById('login-confirm').style.display='block'}catch(_){errEl.textContent='Could not reach server. Try again.';errEl.style.display='block'}}
 
 const DEFAULT_TESTER={id:'emily',emoji:'🌸',name:'Emily',desc:'Your Tell Her agent'};
@@ -917,6 +956,7 @@ function backToResults(){clearInterval(chatPollTimer);showScreen('s-results')}
 
 document.addEventListener('DOMContentLoaded',()=>{
   fetch(`${API_BASE}/track/visit`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({userId:getUserId()})}).catch(()=>{});
+  startQuiz();
   lucide.createIcons();
   updateStatusTime();
   document.querySelectorAll('.f-input').forEach(inp=>{
