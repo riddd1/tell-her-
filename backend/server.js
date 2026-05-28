@@ -622,7 +622,7 @@ app.post('/admin/stats', async (req, res) => {
   try {
     const totalUsers = await pool.query('SELECT COUNT(*) FROM user_profiles WHERE email IS NOT NULL AND email != \'\'');
     const paidUsers = await pool.query('SELECT COUNT(*) FROM user_profiles WHERE paid = true');
-    const totalVisits = await pool.query('SELECT COUNT(*) FROM site_visits').catch(() => ({ rows: [{ count: 0 }] }));
+    const totalVisits = await pool.query('SELECT COUNT(DISTINCT user_id) FROM site_visits WHERE user_id IS NOT NULL').catch(() => ({ rows: [{ count: 0 }] }));
     const totalSales = await pool.query('SELECT COUNT(*) FROM affiliate_sales');
     const totalRevenue = parseInt(paidUsers.rows[0].count) * 25;
     const affiliates = await pool.query('SELECT * FROM affiliates ORDER BY created_at DESC');
