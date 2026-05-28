@@ -45,44 +45,44 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
 .land-footer{font-size:10.5px;color:#2a2a35;text-align:center;line-height:2;margin-top:auto}
 .land-footer a{color:#2a2a35;text-decoration:underline}
 
-/* QUIZ — light cream theme */
-#s-quiz,#s-t1,#s-t2,#s-t3{background:#f0ece4}
+/* QUIZ — dark premium Tell Her style */
+#s-quiz,#s-t1,#s-t2,#s-t3{background:var(--bg)}
 .q-progress-wrap{position:relative;width:100%;padding-top:12px}
-.q-progress-bubble{position:absolute;top:0;transform:translateX(-50%);background:#7a1a2e;color:#fff;font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap;transition:left .5s ease;pointer-events:none;z-index:1}
-.q-progress-track{height:4px;background:rgba(0,0,0,.1);border-radius:4px;width:100%;margin-top:14px}
-.q-progress-line{height:4px;background:#7a1a2e;border-radius:4px;transition:width .5s ease}
+.q-progress-bubble{position:absolute;top:0;transform:translateX(-50%);background:var(--pink);color:#fff;font-size:.68rem;font-weight:700;padding:3px 10px;border-radius:20px;white-space:nowrap;transition:left .5s ease;pointer-events:none;z-index:1;box-shadow:0 0 12px rgba(247,37,133,.5)}
+.q-progress-track{height:3px;background:rgba(255,255,255,.07);border-radius:4px;width:100%;margin-top:14px}
+.q-progress-line{height:3px;background:linear-gradient(to right,var(--pink),#ff8cc8);border-radius:4px;transition:width .5s ease}
 .q-top{display:flex;align-items:center;justify-content:space-between;padding:16px 24px 0;max-width:520px;margin:0 auto}
-.q-logo{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.4rem;color:#1a1a1a}
-.quiz-login-link{font-size:.72rem;color:#999}
-.quiz-login-link span{color:#7a1a2e;cursor:pointer;text-decoration:underline}
+.q-logo{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.4rem;color:var(--txt)}
+.quiz-login-link{font-size:.72rem;color:var(--sub)}
+.quiz-login-link span{color:var(--pink);cursor:pointer;text-decoration:underline}
 .opt-emoji{font-size:1.2rem;width:30px;text-align:center;flex-shrink:0;line-height:1}
 .q-body{padding:24px 24px 80px;position:relative;min-height:80svh;display:flex;flex-direction:column;justify-content:center}
-.q-watermark{font-family:'Cormorant Garamond',serif;font-size:9rem;font-weight:700;color:rgba(0,0,0,.04);position:absolute;top:0;left:16px;line-height:1;pointer-events:none;user-select:none}
-.q-cat{font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#7a1a2e;margin-bottom:10px;position:relative}
-.q-title{font-family:'Cormorant Garamond',serif;font-size:1.6rem;font-weight:700;line-height:1.35;margin-bottom:24px;color:#1a1a1a;position:relative}
-.q-title .hl{color:#7a1a2e;font-style:italic}
+.q-watermark{font-family:'Cormorant Garamond',serif;font-size:9rem;font-weight:700;color:rgba(247,37,133,.03);position:absolute;top:0;left:16px;line-height:1;pointer-events:none;user-select:none}
+.q-cat{font-size:.62rem;font-weight:700;text-transform:uppercase;letter-spacing:2.5px;color:var(--pink);margin-bottom:10px;position:relative}
+.q-title{font-family:'Cormorant Garamond',serif;font-size:1.65rem;font-weight:700;line-height:1.35;margin-bottom:28px;color:var(--txt);position:relative}
+.q-title .hl{color:var(--pink);font-style:italic}
 .opts{display:flex;flex-direction:column;gap:10px;position:relative}
-.opt{display:flex;align-items:center;gap:14px;padding:15px 16px;cursor:pointer;background:#fff;border-radius:14px;border:1.5px solid transparent;box-shadow:0 1px 4px rgba(0,0,0,.07);transition:all .15s}
-.opt:hover{border-color:#7a1a2e;box-shadow:0 2px 8px rgba(122,26,46,.12)}
-.opt:active{transform:scale(.98)}
-.opt-tx{font-size:.9rem;line-height:1.45;color:#2a2a2a;flex:1}
+.opt{display:flex;align-items:center;gap:14px;padding:15px 16px;cursor:pointer;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:14px;transition:all .18s}
+.opt:hover{background:rgba(247,37,133,.07);border-color:rgba(247,37,133,.35);transform:translateX(3px)}
+.opt:active{transform:scale(.98) translateX(0)}
+.opt-tx{font-size:.92rem;line-height:1.5;color:#e8e8f0;flex:1}
 
-/* TRANSITIONS — light */
+/* TRANSITIONS */
 .t-screen{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 32px;text-align:center;position:relative}
-.t-icon-wrap{width:80px;height:80px;border-radius:24px;background:rgba(122,26,46,.08);border:1px solid rgba(122,26,46,.18);display:flex;align-items:center;justify-content:center;margin-bottom:28px}
-.t-line{width:1px;height:40px;background:linear-gradient(to bottom,#7a1a2e,transparent);margin-bottom:28px}
-.t-quote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.35rem;line-height:1.6;color:#1a1a1a;max-width:300px;margin-bottom:12px}
-.t-sub{font-size:.85rem;color:#666;max-width:280px;line-height:1.6;margin-bottom:32px}
-.t-btn{background:#7a1a2e;color:#fff;border:none;border-radius:100px;padding:14px 36px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:8px;transition:all .2s}
-.t-btn:hover{background:#6a1526;transform:translateY(-1px)}
+.t-icon-wrap{width:80px;height:80px;border-radius:24px;background:rgba(247,37,133,.08);border:1px solid rgba(247,37,133,.2);display:flex;align-items:center;justify-content:center;margin-bottom:28px;color:var(--pink)}
+.t-line{width:1px;height:40px;background:linear-gradient(to bottom,var(--pink),transparent);margin-bottom:28px}
+.t-quote{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.35rem;line-height:1.6;color:var(--txt);max-width:300px;margin-bottom:12px}
+.t-sub{font-size:.85rem;color:var(--sub);max-width:280px;line-height:1.6;margin-bottom:32px}
+.t-btn{background:var(--pink);color:#fff;border:none;border-radius:100px;padding:14px 36px;font-size:.85rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;display:flex;align-items:center;gap:8px;transition:all .2s;box-shadow:0 8px 24px rgba(247,37,133,.3)}
+.t-btn:hover{background:var(--pinkl);transform:translateY(-1px)}
 .t-btn:active{transform:scale(.97)}
 .timer-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;cursor:pointer}
 .timer-svg-w{position:relative;width:52px;height:52px}
 .timer-svg{width:52px;height:52px;transform:rotate(-90deg)}
-.t-ring-bg{fill:none;stroke:rgba(0,0,0,.1);stroke-width:3}
-.t-ring-fg{fill:none;stroke:#7a1a2e;stroke-width:3;stroke-linecap:round;stroke-dasharray:132;stroke-dashoffset:132}
-.timer-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:#7a1a2e;font-size:.9rem}
-.timer-lbl{font-size:.78rem;color:#7a1a2e;font-weight:500}
+.t-ring-bg{fill:none;stroke:#1a1a1f;stroke-width:3}
+.t-ring-fg{fill:none;stroke:var(--pink);stroke-width:3;stroke-linecap:round;stroke-dasharray:132;stroke-dashoffset:132}
+.timer-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--pink);font-size:.9rem}
+.timer-lbl{font-size:.78rem;color:var(--pink);font-weight:500}
 
 /* CHAT ANALYSIS */
 .chat-screen-bg{min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:var(--bg);position:relative;overflow:hidden}
@@ -396,9 +396,9 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
 <div id="s-t3" class="screen">
   <div style="min-height:100svh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 32px;max-width:440px;margin:0 auto;text-align:center">
     <span style="font-size:3rem;margin-bottom:20px">🔥</span>
-    <div style="width:48px;height:1px;background:#7a1a2e;margin:0 auto 24px"></div>
-    <p style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;line-height:1.7;color:#1a1a1a">most people close out right here. but you didn't. you're here because you're done lying to yourself. let's get you your answer.</p>
-    <div style="width:48px;height:1px;background:#7a1a2e;margin:24px auto"></div>
+    <div style="width:48px;height:1px;background:var(--pink);margin:0 auto 24px"></div>
+    <p style="font-family:'Cormorant Garamond',serif;font-size:1.3rem;line-height:1.7;color:var(--txt)">most people close out right here. but you didn't. you're here because you're done lying to yourself. let's get you your answer.</p>
+    <div style="width:48px;height:1px;background:var(--pink);margin:24px auto"></div>
     <button class="t-btn" onclick="nextFromT3()">continue <i data-lucide="arrow-right" style="width:15px;height:15px"></i></button>
   </div>
 </div>
