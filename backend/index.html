@@ -65,6 +65,8 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
 .opt{display:flex;align-items:center;gap:14px;padding:18px 18px;cursor:pointer;background:#1e1e28;border:1.5px solid rgba(255,255,255,.16);border-radius:16px;transition:all .18s}
 .opt:hover{background:#252532;border-color:rgba(247,37,133,.6);transform:translateX(4px);box-shadow:0 4px 20px rgba(247,37,133,.1)}
 .opt:active{transform:scale(.98)}
+.opt.opt-sel{background:#252532;border-color:var(--pink);box-shadow:0 4px 20px rgba(247,37,133,.18);transform:translateX(4px)}
+.opts.no-pointer{pointer-events:none}
 .opt-tx{font-size:1.02rem;line-height:1.5;color:#fff;flex:1;font-weight:400;letter-spacing:.01em}
 
 /* TRANSITIONS */
@@ -618,140 +620,141 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
 </div>
 
 <!-- OFFER / PRE-CHECKOUT -->
-<div id="s-offer" class="screen">
-  <div class="co-wrap">
-    <div class="co-logo">Tell Her<span>.</span></div>
+<div id="s-offer" class="screen" style="background:#faf7f4">
+  <div class="co-wrap" style="max-width:480px;margin:0 auto;padding:max(28px,env(safe-area-inset-top)) 22px 60px">
+
+    <div style="font-family:'Cormorant Garamond',serif;font-style:italic;font-size:1.5rem;color:#1a1a1a;margin-bottom:20px">Tell Her<span style="color:var(--pink)">.</span></div>
 
     <!-- scarcity -->
-    <div style="display:inline-flex;align-items:center;gap:6px;background:rgba(247,37,133,.08);border:1px solid rgba(247,37,133,.2);border-radius:100px;padding:6px 14px;font-size:.72rem;color:var(--sub);font-weight:600;margin-bottom:20px">
-      <span style="width:6px;height:6px;border-radius:50%;background:var(--pink);display:inline-block;animation:blink 1.8s ease-in-out infinite"></span>
-      i can only take <strong id="spots-count" style="color:var(--txt);margin:0 4px">3</strong> more girls today
+    <div style="display:inline-flex;align-items:center;gap:7px;background:#fff;border:1px solid rgba(247,37,133,.25);border-radius:100px;padding:7px 16px;font-size:.78rem;color:#444;font-weight:600;margin-bottom:22px;box-shadow:0 1px 4px rgba(0,0,0,.06)">
+      <span style="width:7px;height:7px;border-radius:50%;background:var(--pink);display:inline-block;animation:blink 1.8s ease-in-out infinite;flex-shrink:0"></span>
+      i can only take <strong id="spots-count" style="color:#1a1a1a;margin:0 4px">3</strong> more girls today
     </div>
 
-    <h2 style="font-family:'Cormorant Garamond',serif;font-size:1.9rem;font-weight:700;line-height:1.2;color:var(--txt);margin-bottom:16px">i've got you, girl. let's get your <em style="color:var(--pink)">peace back.</em></h2>
-    <p style="font-size:.88rem;color:var(--sub);line-height:1.7;margin-bottom:6px">i know your heart is racing right now.</p>
-    <p style="font-size:.88rem;color:var(--sub);line-height:1.7;margin-bottom:6px">taking this step doesn't make you toxic or crazy.</p>
-    <p style="font-size:.88rem;color:var(--sub);line-height:1.7;margin-bottom:24px">it makes you <span style="color:var(--pink);font-weight:600">someone who refuses to be lied to.</span></p>
+    <h2 style="font-family:'Cormorant Garamond',serif;font-size:2.2rem;font-weight:700;line-height:1.2;color:#1a1a1a;margin-bottom:16px">i've got you, girl. let's get your <em style="color:var(--pink)">peace back.</em></h2>
+    <p style="font-size:.95rem;color:#444;line-height:1.75;margin-bottom:5px">i know your heart is racing right now.</p>
+    <p style="font-size:.95rem;color:#444;line-height:1.75;margin-bottom:5px">taking this step doesn't make you toxic or crazy.</p>
+    <p style="font-size:.95rem;color:#444;line-height:1.75;margin-bottom:28px">it makes you <span style="color:var(--pink);font-weight:700">someone who refuses to be lied to.</span></p>
 
     <!-- features -->
-    <p style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--sub);margin-bottom:10px">here's what i'm going to do:</p>
-    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:28px">
-      <div style="background:var(--card);border:1px solid rgba(247,37,133,.12);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px">
-        <i data-lucide="user-check" style="width:16px;height:16px;color:var(--pink);flex-shrink:0"></i>
-        <span style="font-size:.83rem;color:var(--txt);line-height:1.4">real profile, built for him specifically. his exact type.</span>
+    <p style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#999;margin-bottom:12px">here's what i'm going to do:</p>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:32px">
+      <div style="background:#fff;border:1.5px solid rgba(247,37,133,.2);border-left:4px solid var(--pink);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.05)">
+        <i data-lucide="user-check" style="width:18px;height:18px;color:var(--pink);flex-shrink:0"></i>
+        <span style="font-size:.95rem;color:#1a1a1a;line-height:1.5;font-weight:500">real profile, built for him specifically. his exact type.</span>
       </div>
-      <div style="background:var(--card);border:1px solid rgba(247,37,133,.12);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px">
-        <i data-lucide="image" style="width:16px;height:16px;color:var(--pink);flex-shrink:0"></i>
-        <span style="font-size:.83rem;color:var(--txt);line-height:1.4">every screenshot in your hands as it happens. you see what i see.</span>
+      <div style="background:#fff;border:1.5px solid rgba(247,37,133,.2);border-left:4px solid var(--pink);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.05)">
+        <i data-lucide="image" style="width:18px;height:18px;color:var(--pink);flex-shrink:0"></i>
+        <span style="font-size:.95rem;color:#1a1a1a;line-height:1.5;font-weight:500">every screenshot in your hands as it happens. you see what i see.</span>
       </div>
-      <div style="background:var(--card);border:1px solid rgba(247,37,133,.12);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px">
-        <i data-lucide="heart" style="width:16px;height:16px;color:var(--pink);flex-shrink:0"></i>
-        <span style="font-size:.83rem;color:var(--txt);line-height:1.4">me in your corner the whole time. you call the shots.</span>
+      <div style="background:#fff;border:1.5px solid rgba(247,37,133,.2);border-left:4px solid var(--pink);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.05)">
+        <i data-lucide="heart" style="width:18px;height:18px;color:var(--pink);flex-shrink:0"></i>
+        <span style="font-size:.95rem;color:#1a1a1a;line-height:1.5;font-weight:500">me in your corner the whole time. you call the shots.</span>
       </div>
-      <div style="background:var(--card);border:1px solid rgba(255,255,255,.05);border-radius:12px;padding:12px 14px;display:flex;align-items:center;gap:10px">
-        <i data-lucide="check-circle" style="width:16px;height:16px;color:var(--sub);flex-shrink:0"></i>
-        <span style="font-size:.83rem;color:var(--sub);line-height:1.4">your answer, either way it goes.</span>
+      <div style="background:#fff;border:1.5px solid rgba(0,0,0,.08);border-radius:12px;padding:14px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 1px 4px rgba(0,0,0,.05)">
+        <i data-lucide="check-circle" style="width:18px;height:18px;color:#888;flex-shrink:0"></i>
+        <span style="font-size:.95rem;color:#555;line-height:1.5">your answer, either way it goes.</span>
       </div>
     </div>
 
     <!-- comparison -->
-    <p style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--sub);margin-bottom:10px">what most women do instead:</p>
-    <div style="background:var(--card);border:1px solid rgba(255,255,255,.05);border-radius:14px;overflow:hidden;margin-bottom:20px">
-      <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.04)">
-        <span style="font-size:.83rem;color:var(--sub)">hire a private investigator</span>
-        <span style="font-size:.83rem;color:rgba(255,255,255,.35);font-weight:600">$1,500–$3,000</span>
+    <p style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#999;margin-bottom:12px">what most women do instead:</p>
+    <div style="background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:14px;overflow:hidden;margin-bottom:28px;box-shadow:0 1px 6px rgba(0,0,0,.06)">
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid #f0ece8">
+        <span style="font-size:.92rem;color:#444">hire a private investigator</span>
+        <span style="font-size:.92rem;color:#c0392b;font-weight:700">$1,500–$3,000</span>
       </div>
-      <div style="display:flex;justify-content:space-between;padding:12px 16px;border-bottom:1px solid rgba(255,255,255,.04)">
-        <span style="font-size:.83rem;color:var(--sub)">see a therapist</span>
-        <span style="font-size:.83rem;color:rgba(255,255,255,.35);font-weight:600">$200/hr</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px;border-bottom:1px solid #f0ece8">
+        <span style="font-size:.92rem;color:#444">see a therapist</span>
+        <span style="font-size:.92rem;color:#c0392b;font-weight:700">$200/hr</span>
       </div>
-      <div style="display:flex;justify-content:space-between;padding:12px 16px">
-        <span style="font-size:.83rem;color:var(--sub)">stalk his phone</span>
-        <span style="font-size:.83rem;color:rgba(255,255,255,.35);font-weight:600">costs your sleep</span>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding:14px 18px">
+        <span style="font-size:.92rem;color:#444">stalk his phone</span>
+        <span style="font-size:.92rem;color:#c0392b;font-weight:700">costs your sleep</span>
       </div>
     </div>
 
     <!-- price -->
-    <div style="text-align:center;margin-bottom:8px">
-      <p style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--sub);margin-bottom:8px">what i charge:</p>
-      <div style="font-family:'Cormorant Garamond',serif;font-size:3.2rem;font-weight:700;color:var(--pink);line-height:1">$25</div>
-      <div style="font-size:.78rem;color:var(--sub);margin-top:4px">one time</div>
+    <div style="text-align:center;background:#fff;border-radius:16px;padding:24px 20px;margin-bottom:20px;box-shadow:0 1px 6px rgba(0,0,0,.06);border:1px solid rgba(0,0,0,.07)">
+      <p style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#999;margin-bottom:10px">what i charge:</p>
+      <div style="font-family:'Cormorant Garamond',serif;font-size:3.8rem;font-weight:700;color:var(--pink);line-height:1">$25</div>
+      <div style="font-size:.85rem;color:#777;margin-top:6px;font-weight:500">one time · no subscription</div>
     </div>
-    <p style="font-size:.83rem;color:var(--sub);line-height:1.7;text-align:center;margin-bottom:6px">covers a full 2 week test, start to finish.</p>
-    <p style="font-size:.83rem;color:var(--sub);line-height:1.7;text-align:center;margin-bottom:24px">that's less than $3 a day to stop wondering.<br>less than what you'll spend on coffee this week to know if the man sleeping next to you is who he says he is.</p>
+    <p style="font-size:.92rem;color:#555;line-height:1.75;text-align:center;margin-bottom:5px">covers a full 2 week test, start to finish.</p>
+    <p style="font-size:.92rem;color:#555;line-height:1.75;text-align:center;margin-bottom:28px">that's less than $3 a day to stop wondering — less than your morning coffee to find out if the man sleeping next to you is who he says he is.</p>
 
     <!-- reviews -->
-    <p style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--sub);margin-bottom:12px">Reviews (1,392)</p>
-    <div style="display:flex;flex-direction:column;gap:10px;margin-bottom:28px">
-      <div style="background:var(--card);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:14px 16px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <div style="width:28px;height:28px;border-radius:50%;background:var(--pink);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff;flex-shrink:0">M</div>
+    <p style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#999;margin-bottom:14px">Reviews (1,392)</p>
+    <div style="display:flex;flex-direction:column;gap:12px;margin-bottom:32px">
+      <div style="background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.05)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--pink);display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;color:#fff;flex-shrink:0">M</div>
           <div>
-            <div style="font-size:.78rem;font-weight:600;color:var(--txt)">MiaSunrise22</div>
-            <div style="font-size:.65rem;color:var(--sub)">May 2026 · ❤️❤️❤️❤️❤️</div>
+            <div style="font-size:.85rem;font-weight:700;color:#1a1a1a">MiaSunrise22</div>
+            <div style="font-size:.72rem;color:#999">May 2026 · ❤️❤️❤️❤️❤️</div>
           </div>
         </div>
-        <p style="font-size:.82rem;color:var(--sub);line-height:1.6;margin-bottom:6px">Tell Her was so gentle and understanding. I was shaking when I first messaged her and she made me feel completely safe.</p>
-        <div style="font-size:.72rem;color:var(--pink);font-weight:600">📱 found 2 dating apps</div>
+        <p style="font-size:.9rem;color:#444;line-height:1.65;margin-bottom:8px">Tell Her was so gentle and understanding. I was shaking when I first messaged her and she made me feel completely safe.</p>
+        <div style="font-size:.78rem;color:var(--pink);font-weight:700">📱 found 2 dating apps</div>
       </div>
-      <div style="background:var(--card);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:14px 16px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <div style="width:28px;height:28px;border-radius:50%;background:rgba(247,37,133,.3);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff;flex-shrink:0">J</div>
+      <div style="background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.05)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--pink);display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;color:#fff;flex-shrink:0">J</div>
           <div>
-            <div style="font-size:.78rem;font-weight:600;color:var(--txt)">JessBee_xo</div>
-            <div style="font-size:.65rem;color:var(--sub)">May 2026 · ❤️❤️❤️❤️❤️</div>
+            <div style="font-size:.85rem;font-weight:700;color:#1a1a1a">JessBee_xo</div>
+            <div style="font-size:.72rem;color:#999">May 2026 · ❤️❤️❤️❤️❤️</div>
           </div>
         </div>
-        <p style="font-size:.82rem;color:var(--sub);line-height:1.6;margin-bottom:6px">Worth every penny. I finally stopped guessing and Tell Her handled everything so carefully.</p>
-        <div style="font-size:.72rem;color:var(--sub);font-weight:600">✓ he passed clean</div>
+        <p style="font-size:.9rem;color:#444;line-height:1.65;margin-bottom:8px">Worth every penny. I finally stopped guessing and Tell Her handled everything so carefully.</p>
+        <div style="font-size:.78rem;color:#22c55e;font-weight:700">✓ he passed clean</div>
       </div>
-      <div style="background:var(--card);border:1px solid rgba(255,255,255,.05);border-radius:14px;padding:14px 16px">
-        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-          <div style="width:28px;height:28px;border-radius:50%;background:rgba(247,37,133,.2);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff;flex-shrink:0">R</div>
+      <div style="background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:16px 18px;box-shadow:0 1px 4px rgba(0,0,0,.05)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+          <div style="width:32px;height:32px;border-radius:50%;background:var(--pink);display:flex;align-items:center;justify-content:center;font-size:.82rem;font-weight:700;color:#fff;flex-shrink:0">R</div>
           <div>
-            <div style="font-size:.78rem;font-weight:600;color:var(--txt)">RaquelNova</div>
-            <div style="font-size:.65rem;color:var(--sub)">April 2026 · ❤️❤️❤️❤️❤️</div>
+            <div style="font-size:.85rem;font-weight:700;color:#1a1a1a">RaquelNova</div>
+            <div style="font-size:.72rem;color:#999">April 2026 · ❤️❤️❤️❤️❤️</div>
           </div>
         </div>
-        <p style="font-size:.82rem;color:var(--sub);line-height:1.6;margin-bottom:6px">I was terrified to do this but Tell Her walked me through everything. Now I have my answer and I can finally breathe.</p>
-        <div style="font-size:.72rem;color:var(--pink);font-weight:600">🚩 caught texting another girl</div>
+        <p style="font-size:.9rem;color:#444;line-height:1.65;margin-bottom:8px">I was terrified to do this but Tell Her walked me through everything. Now I have my answer and I can finally breathe.</p>
+        <div style="font-size:.78rem;color:var(--pink);font-weight:700">🚩 caught texting another girl</div>
       </div>
     </div>
 
     <!-- steps -->
-    <p style="font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--sub);margin-bottom:12px">what happens next:</p>
-    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:28px">
-      <div style="display:flex;align-items:center;gap:12px">
-        <div style="width:26px;height:26px;border-radius:50%;background:var(--pink);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff;flex-shrink:0">1</div>
-        <span style="font-size:.85rem;color:var(--txt)">you check out</span>
+    <p style="font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#999;margin-bottom:14px">what happens next:</p>
+    <div style="background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:6px 18px;margin-bottom:28px;box-shadow:0 1px 4px rgba(0,0,0,.05)">
+      <div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #f0ece8">
+        <div style="width:28px;height:28px;border-radius:50%;background:var(--pink);display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#fff;flex-shrink:0">1</div>
+        <span style="font-size:.95rem;color:#1a1a1a;font-weight:500">you check out</span>
       </div>
-      <div style="display:flex;align-items:center;gap:12px">
-        <div style="width:26px;height:26px;border-radius:50%;background:var(--card);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:var(--sub);flex-shrink:0">2</div>
-        <span style="font-size:.85rem;color:var(--sub)">you tell me about him</span>
+      <div style="display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid #f0ece8">
+        <div style="width:28px;height:28px;border-radius:50%;background:#f0ece8;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#888;flex-shrink:0">2</div>
+        <span style="font-size:.95rem;color:#555">you tell me about him</span>
       </div>
-      <div style="display:flex;align-items:center;gap:12px">
-        <div style="width:26px;height:26px;border-radius:50%;background:var(--card);border:1px solid rgba(255,255,255,.1);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:var(--sub);flex-shrink:0">3</div>
-        <span style="font-size:.85rem;color:var(--sub)">your test starts within 24h</span>
+      <div style="display:flex;align-items:center;gap:14px;padding:14px 0">
+        <div style="width:28px;height:28px;border-radius:50%;background:#f0ece8;display:flex;align-items:center;justify-content:center;font-size:.8rem;font-weight:700;color:#888;flex-shrink:0">3</div>
+        <span style="font-size:.95rem;color:#555">your test starts within 24h</span>
       </div>
     </div>
 
     <!-- upsell -->
-    <div class="upsell-card">
-      <div class="up-lbl">ONE QUICK THING</div>
-      <p class="up-body" style="margin-bottom:10px">during the test, you can slip me the <strong>questions you've always wanted answered</strong> but could never ask directly.</p>
-      <p style="font-size:.8rem;color:rgba(255,255,255,.45);font-style:italic;margin-bottom:10px;line-height:1.7">"have you cheated?"<br>"do you still think about your ex?"</p>
-      <p class="up-body" style="margin-bottom:14px">he won't know they came from you. to him, i'm just a girl he's flirting with. this is the closest you'll ever get to inside his head.</p>
-      <div class="up-check" onclick="toggleUpsell()">
-        <div class="up-radio" id="up-radio"></div>
+    <div style="background:#fff;border:1.5px solid rgba(247,37,133,.25);border-radius:16px;padding:18px;margin-bottom:20px;box-shadow:0 1px 6px rgba(247,37,133,.08)">
+      <div style="font-size:.65rem;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--pink);margin-bottom:10px">one quick thing</div>
+      <p style="font-size:.92rem;color:#333;line-height:1.7;margin-bottom:8px">during the test, you can slip me the <strong style="color:#1a1a1a">questions you've always wanted answered</strong> but could never ask directly.</p>
+      <p style="font-size:.85rem;color:#888;font-style:italic;margin-bottom:10px;line-height:1.7">"have you cheated?"<br>"do you still think about your ex?"</p>
+      <p style="font-size:.92rem;color:#333;line-height:1.7;margin-bottom:14px">he won't know they came from you. to him, i'm just a girl he's flirting with.</p>
+      <div onclick="toggleUpsell()" style="display:flex;align-items:center;gap:10px;padding:12px 14px;background:#faf7f4;border:1px solid rgba(247,37,133,.2);border-radius:10px;cursor:pointer">
+        <div class="up-radio" id="up-radio" style="width:20px;height:20px;border-radius:50%;border:2px solid rgba(247,37,133,.4);flex-shrink:0;transition:all .2s"></div>
         <div>
-          <div class="up-l1">yes, ask him my own questions</div>
-          <div class="up-l2">add +$10 to my order</div>
+          <div style="font-size:.88rem;color:#1a1a1a;font-weight:600">yes, ask him my own questions</div>
+          <div style="font-size:.75rem;color:#999">add +$10 to my order</div>
         </div>
       </div>
     </div>
 
-    <p id="checkout-price" style="text-align:center;font-size:1.1rem;font-weight:700;color:var(--txt);margin-bottom:4px">$25 one time</p>
-    <p id="checkout-price-sub" style="text-align:center;font-size:.75rem;color:var(--sub);margin-bottom:16px">less than $3 a day</p>
+    <p id="checkout-price" style="text-align:center;font-size:1.2rem;font-weight:700;color:#1a1a1a;margin-bottom:4px">$25 one time</p>
+    <p id="checkout-price-sub" style="text-align:center;font-size:.8rem;color:#888;margin-bottom:16px">less than $3 a day</p>
     <div id="whop-checkout-wrap">
       <div
         id="whop-checkout"
@@ -764,11 +767,11 @@ html,body{min-height:100%;background:var(--bg);font-family:'DM Sans',system-ui,s
         style="width:100%"
       ></div>
     </div>
-    <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:12px">
-      <i data-lucide="lock" style="width:12px;height:12px;color:var(--sub)"></i>
-      <span style="font-size:.7rem;color:var(--sub)">secure payment · results sent privately</span>
+    <div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:14px">
+      <i data-lucide="lock" style="width:13px;height:13px;color:#aaa"></i>
+      <span style="font-size:.75rem;color:#aaa">secure payment · results sent privately</span>
     </div>
-    <p style="text-align:center;font-size:.65rem;color:#2a2a35;margin-top:6px">your bank statement says TELL HER SERVICES, nothing else</p>
+    <p style="text-align:center;font-size:.7rem;color:#bbb;margin-top:6px">your bank statement says TELL HER SERVICES, nothing else</p>
   </div>
 </div>
 
@@ -838,15 +841,21 @@ function loadQuestion(idx){
   bubble.style.left=q.pct+'%';
   bubble.textContent=q.pct+'%';
   const opts=document.getElementById('q-opts');
-  opts.innerHTML=q.opts.map((o,i)=>`<div class="opt" onclick="answerQ(${i})"><span class="opt-emoji">${o[0]}</span><span class="opt-tx">${o[1]}</span></div>`).join('')
+  opts.innerHTML=q.opts.map((o,i)=>`<div class="opt" onclick="answerQ(${i})"><span class="opt-emoji">${o[0]}</span><span class="opt-tx">${o[1]}</span></div>`).join('');
+  opts.classList.add('no-pointer');
+  setTimeout(()=>opts.classList.remove('no-pointer'),350)
 }
 function answerQ(i){
-  trackStep('q'+(currentQ+1));
-  if(currentQ===5){trackStep('t1');showScreen('s-t1');startTimer();return}
-  if(currentQ===9){showScreen('s-t2');startTimer2();return}
-  currentQ++;
-  loadQuestion(currentQ);
-  showScreen('s-quiz')
+  const container=document.getElementById('q-opts');
+  const clicked=container.querySelectorAll('.opt')[i];
+  if(clicked)clicked.classList.add('opt-sel');
+  container.classList.add('no-pointer');
+  setTimeout(()=>{
+    trackStep('q'+(currentQ+1));
+    if(currentQ===5){trackStep('t1');showScreen('s-t1');startTimer();return}
+    if(currentQ===9){showScreen('s-t2');startTimer2();return}
+    currentQ++;loadQuestion(currentQ);showScreen('s-quiz')
+  },200)
 }
 
 let timerDone=false,t1Used=false;
