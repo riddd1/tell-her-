@@ -36,6 +36,7 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
 .nav-badge{font-size:.62rem;font-weight:700;padding:4px 10px;border-radius:100px;letter-spacing:1px;text-transform:uppercase;border:1px solid var(--bdr);color:var(--pink);background:rgba(247,37,133,.08)}
 .btn-ghost{background:none;border:1px solid rgba(255,255,255,.1);color:var(--sub);font-size:.72rem;font-weight:600;padding:7px 14px;border-radius:100px;cursor:pointer;font-family:'DM Sans',sans-serif;transition:all .15s}
 .btn-ghost:hover{border-color:var(--pink);color:var(--pink)}
+.active-filter{border-color:var(--pink)!important;color:var(--pink)!important}
 
 /* ── SHARED BODY ── */
 .dash-body{max-width:780px;margin:0 auto;padding:28px 20px 80px}
@@ -256,6 +257,12 @@ html,body{height:100%;background:var(--bg);font-family:'DM Sans',system-ui,sans-
     </div>
   </div>
   <div class="dash-body">
+    <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+      <button class="btn-ghost stat-filter active-filter" onclick="setStatFilter(this,null)">All time</button>
+      <button class="btn-ghost stat-filter" onclick="setStatFilter(this,1)">Today</button>
+      <button class="btn-ghost stat-filter" onclick="setStatFilter(this,7)">7 days</button>
+      <button class="btn-ghost stat-filter" onclick="setStatFilter(this,30)">30 days</button>
+    </div>
     <div class="stats-row">
       <div class="stat-card"><div class="stat-num" id="a-visits">—</div><div class="stat-lbl">Total Clicks</div></div>
       <div class="stat-card"><div class="stat-num" id="a-total">—</div><div class="stat-lbl">Total Users</div></div>
@@ -457,9 +464,18 @@ function doLogout(){
 }
 
 /* ══ ADMIN ══════════════════════════════════════════ */
+let currentStatDays=null;
+function setStatFilter(btn,days){
+  document.querySelectorAll('.stat-filter').forEach(b=>b.classList.remove('active-filter'));
+  btn.classList.add('active-filter');
+  currentStatDays=days;
+  loadAdminStats();
+}
 async function loadAdminStats(){
   try{
-    const r=await fetch(`${API}/admin/stats`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password:adminPassword})});
+    const body={password:adminPassword};
+    if(currentStatDays) body.days=currentStatDays;
+    const r=await fetch(`${API}/admin/stats`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});
     const d=await r.json();
     document.getElementById('a-visits').textContent=d.totalVisits??'—';
     document.getElementById('a-total').textContent=d.totalUsers??'—';
