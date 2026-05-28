@@ -599,7 +599,7 @@ app.post('/admin/stats', async (req, res) => {
   const { password } = req.body;
   if (password !== process.env.ADMIN_PASSWORD) return res.status(401).json({ error: 'Unauthorized' });
   try {
-    const totalUsers = await pool.query('SELECT COUNT(*) FROM user_profiles');
+    const totalUsers = await pool.query('SELECT COUNT(*) FROM user_profiles WHERE email IS NOT NULL AND email != \'\'');
     const paidUsers = await pool.query('SELECT COUNT(*) FROM user_profiles WHERE paid = true');
     const totalVisits = await pool.query('SELECT COUNT(*) FROM site_visits').catch(() => ({ rows: [{ count: 0 }] }));
     const totalSales = await pool.query('SELECT COUNT(*) FROM affiliate_sales');
