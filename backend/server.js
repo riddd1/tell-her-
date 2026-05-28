@@ -549,6 +549,101 @@ app.post('/track/step', async (req, res) => {
   res.json({ ok: true });
 });
 
+// ── Affiliate redirect (escapes IG/TikTok IAB) ────────
+app.get('/go/:code', async (req, res) => {
+  const code = req.params.code;
+  const destination = `https://www.tellher.co/?ref=${encodeURIComponent(code)}`;
+
+  // Silently record the click (fire-and-forget, don't block redirect)
+  pool.query('SELECT id FROM affiliates WHERE code = $1', [code]).then(check => {
+    if (check.rows.length > 0) {
+      const id = Date.now().toString();
+      pool.query(
+        'INSERT INTO affiliate_clicks (id, affiliate_code, user_id, clicked_at) VALUES ($1, $2, $3, NOW())',
+        [id, code, null]
+      ).catch(() => {});
+    }
+  }).catch(() => {});
+
+  const ua = req.headers['user-agent'] || '';
+  const isIOS = /iPhone|iPad|iPod/i.test(ua);
+  const isAndroid = /Android/i.test(ua);
+  const isIAB = /Instagram|FBAN|FBAV|TikTok|BytedanceWebview/i.test(ua);
+
+  if (!isIAB) {
+    return res.redirect(302, destination);
+  }
+
+  // iOS: x-safari-https:// scheme hands off to Safari automatically
+  if (isIOS) {
+    const safariUrl = destination.replace('https://', 'x-safari-https://');
+    return res.send(`<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tell Her.</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#08080a;font-family:-apple-system,system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{text-align:center;max-width:320px;width:100%}
+  .logo{font-family:Georgia,serif;font-style:italic;font-size:1.6rem;color:#f5f5f7;margin-bottom:8px}
+  .logo span{color:#f72585}
+  p{color:#888;font-size:.9rem;line-height:1.6;margin-bottom:28px}
+  a.btn{display:block;background:#f72585;color:#fff;font-weight:600;font-size:1rem;padding:16px;border-radius:14px;text-decoration:none;margin-bottom:12px}
+  a.alt{color:#f72585;font-size:.85rem;text-decoration:none}
+</style>
+<script>window.location.href="${safariUrl}";</script>
+</head>
+<body>
+<div class="card">
+  <p class="logo">Tell Her<span>.</span></p>
+  <p>Opening in Safari&hellip;</p>
+  <a class="btn" href="${safariUrl}">Open in Safari</a>
+  <a class="alt" href="${destination}">Continue here instead</a>
+</div>
+</body>
+</html>`);
+  }
+
+  // Android: intent:// opens in Chrome
+  if (isAndroid) {
+    const host = new URL(destination).host;
+    const path = new URL(destination).pathname + new URL(destination).search;
+    const intentUrl = `intent://${host}${path}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${encodeURIComponent(destination)};end`;
+    return res.send(`<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tell Her.</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#08080a;font-family:-apple-system,system-ui,sans-serif;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px}
+  .card{text-align:center;max-width:320px;width:100%}
+  .logo{font-family:Georgia,serif;font-style:italic;font-size:1.6rem;color:#f5f5f7;margin-bottom:8px}
+  .logo span{color:#f72585}
+  p{color:#888;font-size:.9rem;line-height:1.6;margin-bottom:28px}
+  a.btn{display:block;background:#f72585;color:#fff;font-weight:600;font-size:1rem;padding:16px;border-radius:14px;text-decoration:none;margin-bottom:12px}
+  a.alt{color:#f72585;font-size:.85rem;text-decoration:none}
+</style>
+<script>window.location.href="${intentUrl}";</script>
+</head>
+<body>
+<div class="card">
+  <p class="logo">Tell Her<span>.</span></p>
+  <p>Opening in your browser&hellip;</p>
+  <a class="btn" href="${intentUrl}">Open in Chrome</a>
+  <a class="alt" href="${destination}">Continue here instead</a>
+</div>
+</body>
+</html>`);
+  }
+
+  // Unknown IAB fallback
+  return res.redirect(302, destination);
+});
+
 // ── Affiliate ─────────────────────────────────────────
 app.post('/affiliate/click', async (req, res) => {
   const { affiliateCode, userId } = req.body;
