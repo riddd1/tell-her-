@@ -161,7 +161,7 @@ document.getElementById('login-pass').addEventListener('keydown', e => {
 });
 
 function loadDash(d) {
-  affLink = `https://www.tellher.co/go/${d.code}`;
+  affLink = `https://www.tellher.co/?ref=${d.code}`;
   document.getElementById('nav-name').innerHTML = `${d.name}<span style="color:var(--pink)">.</span>`;
   document.getElementById('link-display').innerHTML = `<strong>${affLink}</strong>`;
   document.getElementById('stat-clicks').textContent = d.clicks;
