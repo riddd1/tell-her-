@@ -620,19 +620,26 @@ app.post('/admin/stats', async (req, res) => {
   const { password, days } = req.body;
   if (password !== process.env.ADMIN_PASSWORD) return res.status(401).json({ error: 'Unauthorized' });
   try {
-    const dateFilter = days ? `AND created_at >= NOW() - INTERVAL '${parseInt(days)} days'` : '';
-    const visitFilter = days ? `AND visited_at >= NOW() - INTERVAL '${parseInt(days)} days'` : '';
-    const clickFilter = days ? `AND clicked_at >= NOW() - INTERVAL '${parseInt(days)} days'` : '';
+    // days=1 → since midnight today; days=N → last N days; null → all time
+    const since = parseInt(days) === 1
+      ? `CURRENT_DATE`
+      : days ? `NOW() - INTERVAL '${parseInt(days)} days'` : null;
 
-    const totalUsers = await pool.query(`SELECT COUNT(*) FROM user_profiles WHERE email IS NOT NULL AND email != '' ${dateFilter}`);
-    const paidUsers = await pool.query(`SELECT COUNT(*) FROM user_profiles WHERE paid = true ${dateFilter}`);
+    const userFilter    = since ? `AND updated_at  >= ${since}` : '';
+    const visitFilter   = since ? `AND visited_at  >= ${since}` : '';
+    const clickFilter   = since ? `AND clicked_at  >= ${since}` : '';
+    const salesFilter   = since ? `AND created_at  >= ${since}` : '';
+    const funnelFilter  = since ? `WHERE tracked_at >= ${since}` : '';
+
+    const totalUsers = await pool.query(`SELECT COUNT(*) FROM user_profiles WHERE email IS NOT NULL AND email != '' ${userFilter}`);
+    const paidUsers = await pool.query(`SELECT COUNT(*) FROM user_profiles WHERE paid = true ${userFilter}`);
     const totalVisits = await pool.query(`SELECT COUNT(DISTINCT user_id) FROM site_visits WHERE user_id IS NOT NULL ${visitFilter}`).catch(() => ({ rows: [{ count: 0 }] }));
-    const totalSales = await pool.query(`SELECT COUNT(*) FROM affiliate_sales ${days ? `WHERE created_at >= NOW() - INTERVAL '${parseInt(days)} days'` : ''}`);
+    const totalSales = await pool.query(`SELECT COUNT(*) FROM affiliate_sales WHERE 1=1 ${salesFilter}`);
     const totalRevenue = parseInt(paidUsers.rows[0].count) * 25;
     const affiliates = await pool.query('SELECT * FROM affiliates ORDER BY created_at DESC');
     const affiliateStats = await Promise.all(affiliates.rows.map(async (a) => {
       const clicks = await pool.query(`SELECT COUNT(*) FROM affiliate_clicks WHERE affiliate_code = $1 ${clickFilter}`, [a.code]);
-      const sales = await pool.query(`SELECT COUNT(*) FROM affiliate_sales WHERE affiliate_code = $1 ${days ? `AND created_at >= NOW() - INTERVAL '${parseInt(days)} days'` : ''}`, [a.code]);
+      const sales = await pool.query(`SELECT COUNT(*) FROM affiliate_sales WHERE affiliate_code = $1 ${salesFilter}`, [a.code]);
       const earnings = parseInt(sales.rows[0].count) * a.commission_per_sale;
       const videoPosts = await pool.query('SELECT COUNT(*) FROM affiliate_video_posts WHERE LOWER(affiliate_code) = LOWER($1)', [a.code]);
       const videoPosts30 = await pool.query(
@@ -640,7 +647,7 @@ app.post('/admin/stats', async (req, res) => {
         [a.code]
       );
       const usedToday = await pool.query(
-        `SELECT COUNT(*) FROM script_generations WHERE LOWER(affiliate_code) = LOWER($1) AND generated_at >= NOW() AT TIME ZONE 'UTC' - INTERVAL '1 day'`,
+        `SELECT COUNT(*) FROM script_generations WHERE LOWER(affiliate_code) = LOWER($1) AND generated_at >= CURRENT_DATE`,
         [a.code]
       );
       return {
@@ -660,6 +667,7 @@ app.post('/admin/stats', async (req, res) => {
     const funnelRaw = await pool.query(`
       SELECT step, COUNT(DISTINCT user_id) as cnt
       FROM onboarding_steps
+      ${funnelFilter}
       GROUP BY step
     `).catch(() => ({ rows: [] }));
     const funnel = {};
