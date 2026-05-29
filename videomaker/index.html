@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DM Studio — IG Conversation Creator</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="auddio.js" defer></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 @keyframes spin{to{transform:rotate(360deg)}}
@@ -2253,41 +2252,26 @@ let audioStash = [
 ];
 let _sid = 42; // stash item id counter
 
-// Pre-load stash audio files as File objects at startup.
-// Path A (preferred): use bundled base64 from auddio.js — works on file:// and http://.
-// Path B (fallback): fetch from auddio/ folder — only works when served over http(s).
-(async () => {
-  if (window.AUDDIO_DATA && Array.isArray(window.AUDDIO_DATA)) {
-    for (const data of window.AUDDIO_DATA) {
-      const matches = audioStash.filter(a => a.name === data.name);
-      if (!matches.length) continue;
-      try {
-        const bin = atob(data.b64);
-        const bytes = new Uint8Array(bin.length);
-        for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-        const blob = new Blob([bytes], { type: 'audio/mpeg' });
-        const file = new File([blob], data.name, { type: 'audio/mpeg' });
-        const url  = URL.createObjectURL(blob);
-        matches.forEach(a => { a.file = file; a.blobUrl = url; });
-      } catch(e) { console.warn('Failed to decode bundled audio:', data.name, e); }
+// Fetch a single audio item on demand and cache as a blob URL.
+async function loadAudioItem(item) {
+  if (!item.blobUrl || item.blobUrl.startsWith('blob:')) return;
+  try {
+    const resp = await fetch(item.blobUrl);
+    if (resp.ok) {
+      const blob = await resp.blob();
+      item.file = new File([blob], item.name, { type: blob.type || 'audio/mpeg' });
+      item.blobUrl = URL.createObjectURL(blob);
     }
-    const btn  = document.getElementById('unlock-audio-btn');
-    const hint = document.getElementById('audio-unlock-hint');
-    if (btn)  btn.style.display  = 'none';
-    if (hint) hint.style.display = 'none';
-    return;
-  }
-  for (const item of audioStash) {
-    if (item.file !== null) continue;
-    try {
-      const resp = await fetch(item.blobUrl);
-      if (resp.ok) {
-        const blob = await resp.blob();
-        item.file = new File([blob], item.name, { type: blob.type || 'audio/mpeg' });
-      }
-    } catch(e) { /* file:// blocks fetch — captureStream fallback will be used */ }
-  }
-})();
+  } catch(e) { console.warn('Failed to load audio:', item.name, e); }
+}
+
+// Over HTTP the unlock button is unnecessary — lazy loading handles everything.
+if (location.protocol !== 'file:') {
+  const btn  = document.getElementById('unlock-audio-btn');
+  const hint = document.getElementById('audio-unlock-hint');
+  if (btn)  btn.style.display = 'none';
+  if (hint) hint.style.display = 'none';
+}
 
 // ── Stash sub-tab switch ──
 function switchStashTab(sub) {
@@ -2404,7 +2388,7 @@ function removeAudioFromStash(id) {
   renderAudioStash();
 }
 
-function toggleStashAudio(id) {
+async function toggleStashAudio(id) {
   if (!_stashAudio) {
     _stashAudio = new Audio();
     _stashAudio.onended = () => { _stashPlayId = null; renderAudioStash(); };
@@ -2414,6 +2398,7 @@ function toggleStashAudio(id) {
   } else {
     const item = audioStash.find(a => a.id === id);
     if (!item) return;
+    await loadAudioItem(item);
     _stashAudio.src = item.blobUrl;
     _stashAudio.currentTime = 0;
     _stashAudio.play();
@@ -2522,7 +2507,7 @@ function renderAudioStashModal() {
   }).join('');
 }
 
-function toggleAsmAudio(id) {
+async function toggleAsmAudio(id) {
   if (!_asmAudio) {
     _asmAudio = new Audio();
     _asmAudio.onended = () => { _asmPlayId = null; renderAudioStashModal(); };
@@ -2532,6 +2517,7 @@ function toggleAsmAudio(id) {
   } else {
     const item = audioStash.find(a => a.id === id);
     if (!item) return;
+    await loadAudioItem(item);
     _asmAudio.src = item.blobUrl;
     _asmAudio.currentTime = 0;
     _asmAudio.play();
@@ -2545,34 +2531,7 @@ async function selectAudioFromStash(id) {
   if (!item) { closeAudioStashModal(); return; }
   stopAsmAudio();
 
-  // Eagerly upgrade the URL into a real File object so the reliable
-  // BufferSource path is used during video generation. The startup preloader
-  // may not have completed yet, or fetch may be blocked (file://).
-  if (!item.file && item.blobUrl) {
-    try {
-      const resp = await fetch(item.blobUrl);
-      if (resp.ok) {
-        const blob = await resp.blob();
-        item.file = new File([blob], item.name, { type: blob.type || 'audio/mpeg' });
-      }
-    } catch(e) {
-      try {
-        const blob = await new Promise((res, rej) => {
-          const xhr = new XMLHttpRequest();
-          xhr.open('GET', item.blobUrl, true);
-          xhr.responseType = 'blob';
-          xhr.onload = () => {
-            if ((xhr.status === 200 || xhr.status === 0) && xhr.response && xhr.response.size > 0) {
-              res(xhr.response);
-            } else rej(new Error('xhr ' + xhr.status));
-          };
-          xhr.onerror = () => rej(new Error('xhr error'));
-          xhr.send();
-        });
-        item.file = new File([blob], item.name, { type: blob.type || 'audio/mpeg' });
-      } catch(e2) { /* both failed — see warning below */ }
-    }
-  }
+  await loadAudioItem(item);
 
   // If we still don't have a File and we're on file://, the recording will
   // most likely be silent due to Chrome's CORS isolation on captureStream
