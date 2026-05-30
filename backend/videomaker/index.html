@@ -1434,7 +1434,7 @@ function renderMsgList() {
           oninput="messages[${i}].text=this.value;render();syncBuilderToCode()"
           ${m.type!=='text'?'disabled style="opacity:.3"':''}
           placeholder="Message...">
-        <button class="delbtn" onclick="insertMsgAt(${i+1},'${m.side}')" style="color:#a78bfa">+</button><button class="delbtn" onclick="messages.splice(${i},1);renderMsgList();render();syncBuilderToCode()">✕</button>
+        <button class="delbtn" onclick="insertMsgAt(${i+1})" style="color:#a78bfa">+</button><button class="delbtn" onclick="messages.splice(${i},1);renderMsgList();render();syncBuilderToCode()">✕</button>
       </div>
       <div class="react-row">
         <span class="react-lbl">React:</span>
@@ -1447,11 +1447,10 @@ function renderMsgList() {
   });
 }
 
-function insertMsgAt(idx, side) {
-  messages.splice(idx, 0, {side: side||'right', type:'image', text:'', img:null, reaction:null});
+function insertMsgAt(idx) {
+  messages.splice(idx, 0, {side:'none', type:'batch_meme', text:'', img:null, reaction:null});
   renderMsgList(); render(); syncBuilderToCode();
-  pendingMsgIdx = idx;
-  document.getElementById('msg-file').click();
+  showMemeSourcePicker(idx);
 }
 
 function addMsg(side, type) {
