@@ -1387,6 +1387,7 @@ function renderMsgList() {
       row.style.cssText='display:flex;align-items:center;gap:6px;margin:4px 0';
       row.innerHTML=`<div style="flex:1;height:1px;background:rgba(232,168,124,0.3)"></div><span style="font-size:9px;color:rgba(232,168,124,0.7);font-weight:700;white-space:nowrap">-b-</span><div style="flex:1;height:1px;background:rgba(232,168,124,0.3)"></div><button class="delbtn" onclick="messages.splice(${i},1);renderMsgList();render();syncBuilderToCode()">✕</button>`;
       list.appendChild(row);
+      if (i < messages.length - 1) list.appendChild(_makeInsertStrip(i + 1));
       return;
     }
     if (m.type==='batch_meme') {
@@ -1398,6 +1399,7 @@ function renderMsgList() {
       const textBtn = m.img ? `<button onclick="openImgEditorForMsg(${i})" style="background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.3);color:#c4b5fd;border-radius:4px;padding:2px 8px;font-size:9px;font-weight:600;cursor:pointer;flex-shrink:0">${m.caption ? '✏ Edit' : '+ Text'}</button>` : '';
       row.innerHTML=`<div style="width:12px;height:1px;background:rgba(139,92,246,0.35);flex-shrink:0"></div><span style="font-size:9px;color:#c4b5fd;font-weight:700;white-space:nowrap;flex-shrink:0">-m-</span>${imgPart}<div style="flex:1"></div>${textBtn}<button class="delbtn" onclick="messages.splice(${i},1);renderMsgList();render();syncBuilderToCode()">✕</button>`;
       list.appendChild(row);
+      if (i < messages.length - 1) list.appendChild(_makeInsertStrip(i + 1));
       return;
     }
     const row=document.createElement('div');
@@ -1444,7 +1446,22 @@ function renderMsgList() {
       </div>
       ${imgHtml}`;
     list.appendChild(row);
+    if (i < messages.length - 1) list.appendChild(_makeInsertStrip(i + 1));
   });
+}
+
+function insertMsgAt(idx) {
+  messages.splice(idx, 0, {side:'right', type:'image', text:'', img:null, reaction:null});
+  renderMsgList(); render(); syncBuilderToCode();
+}
+
+function _makeInsertStrip(idx) {
+  const d = document.createElement('div');
+  d.style.cssText = 'display:flex;align-items:center;gap:4px;margin:1px 0;opacity:0;transition:opacity .15s';
+  d.onmouseenter = () => d.style.opacity = '1';
+  d.onmouseleave = () => d.style.opacity = '0';
+  d.innerHTML = `<div style="flex:1;height:1px;background:rgba(139,92,246,0.3)"></div><button onclick="insertMsgAt(${idx})" title="Insert image here" style="background:rgba(139,92,246,0.15);border:1px solid rgba(139,92,246,0.4);color:#c4b5fd;border-radius:10px;padding:0 7px;height:15px;font-size:9px;font-weight:600;cursor:pointer;line-height:1;white-space:nowrap">+ img</button><div style="flex:1;height:1px;background:rgba(139,92,246,0.3)"></div>`;
+  return d;
 }
 
 function addMsg(side, type) {
