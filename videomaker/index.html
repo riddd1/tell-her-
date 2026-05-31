@@ -581,6 +581,7 @@ button,input,select,textarea{transition-property:background,border-color,color,b
 }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/twemoji.min.js" crossorigin="anonymous"></script>
+<script src="lib/emoji-pack.js"></script>
 </head>
 <body>
 
@@ -832,6 +833,33 @@ button,input,select,textarea{transition-property:background,border-color,color,b
 <input type="file" id="stash-audio-unlock-input" accept="audio/*" multiple style="display:none" onchange="handleAudioUnlockFiles(event)">
 
 <script>
+// ── EMOJI PACK ──
+function _lookupEmoji(char) {
+  if (typeof EMOJI_PACK === 'undefined') return null;
+  return EMOJI_PACK[char]
+      || EMOJI_PACK[char.replace(/️/g, '')]
+      || EMOJI_PACK[char + '️']
+      || null;
+}
+function captureWithAppleEmoji(root, options) {
+  const swapped = [];
+  root.querySelectorAll('img.emoji').forEach(img => {
+    const src = _lookupEmoji(img.alt);
+    if (!src) return;
+    const rep = new Image();
+    rep.src = src;
+    rep.className = img.className;
+    rep.style.cssText = img.style.cssText;
+    img.parentNode.replaceChild(rep, img);
+    swapped.push({ rep, img });
+  });
+  return html2canvas(root, options).finally(() => {
+    swapped.forEach(({ rep, img }) => {
+      if (rep.parentNode) rep.parentNode.replaceChild(img, rep);
+    });
+  });
+}
+
 let storyPos = 'left';
 let storySrc = null;
 let avatarSrc = null;
@@ -1353,7 +1381,7 @@ function confirmCrop() {
   const cropX=x-offX, cropY=y-offY;
 
   document.getElementById('loading').classList.add('show');
-  html2canvas(root,{scale:3,useCORS:true,allowTaint:true,backgroundColor:null,logging:false})
+  captureWithAppleEmoji(root,{scale:3,useCORS:true,allowTaint:true,backgroundColor:null,logging:false})
   .then(canvas=>{
     const scale=3;
     const out=document.createElement('canvas');
@@ -1484,7 +1512,7 @@ function doRangeDownload() {
   if (cropH <= 0) return;
 
   document.getElementById('loading').classList.add('show');
-  html2canvas(root, {scale:3, useCORS:true, allowTaint:true, backgroundColor:null, logging:false})
+  captureWithAppleEmoji(root, {scale:3, useCORS:true, allowTaint:true, backgroundColor:null, logging:false})
   .then(canvas => {
     const scale = 3;
     const sy = Math.round(topPx * scale);
@@ -1790,7 +1818,7 @@ async function generateSlideshow() {
         domMap[item.id].el.style.display = domMap[item.id].nat;
         batchVisible.push(item.id);
         await new Promise(r => setTimeout(r, 150));
-        const canvas = await html2canvas(root, {scale:captureScale, useCORS:true, allowTaint:true, backgroundColor:bgColor, logging:false});
+        const canvas = await captureWithAppleEmoji(root, {scale:captureScale, useCORS:true, allowTaint:true, backgroundColor:bgColor, logging:false});
         frames.push(canvas); durations.push(item.timing || 0.8);
       }
     }
