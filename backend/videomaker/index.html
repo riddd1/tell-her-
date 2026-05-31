@@ -696,7 +696,7 @@ button,input,select,textarea{transition-property:background,border-color,color,b
 .cv2-fail-btn:hover,.cv2-fail-btn.cv2-active{border-color:rgba(239,68,68,0.5)!important;background:rgba(239,68,68,0.1)!important;color:#fca5a5!important}
 #cv2-options{overflow-y:visible}
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/twemoji.min.js" crossorigin="anonymous"></script>
+<script src="lib/twemoji.min.js"></script>
 <script src="lib/emoji-pack.js"></script>
 </head>
 <body>
@@ -1169,40 +1169,16 @@ button,input,select,textarea{transition-property:background,border-color,color,b
 
 <script>
 // ── EMOJI PACK ──
-// EMOJI_PACK is loaded from lib/emoji-pack.js — 3511 Apple Color Emoji PNGs
-// extracted directly from Apple Color Emoji.ttc, stored as base64 data-URLs.
-// Before every html2canvas capture we swap each Twemoji CDN <img> for an <img>
-// pointing to the hardcoded data-URL from the pack. After capture the original
-// Twemoji preview images are restored. No CDN, no runtime font, no downloads.
-function _lookupEmoji(char) {
-  if (typeof EMOJI_PACK === 'undefined') return null;
-  // try exact, then without variation selector (U+FE0F), then with it
+// Twemoji (local, no CDN) detects emoji sequences; callback serves Apple PNG
+// data-URLs from EMOJI_PACK instead of remote CDN images. Both preview and
+// html2canvas capture see the same data: URL <img> tags — no swap needed.
+function _emojiSrc(icon) {
+  if (typeof EMOJI_PACK === 'undefined') return false;
+  const char = icon.split('-').map(c => String.fromCodePoint(parseInt(c, 16))).join('');
   return EMOJI_PACK[char]
       || EMOJI_PACK[char.replace(/️/g, '')]
       || EMOJI_PACK[char + '️']
-      || null;
-}
-
-function captureWithAppleEmoji(root, options) {
-  const swapped = [];
-  const loads = [];
-  root.querySelectorAll('img.emoji').forEach(img => {
-    const src = _lookupEmoji(img.alt);
-    if (!src) return;
-    const rep = new Image();
-    loads.push(new Promise(res => { rep.onload = res; rep.onerror = res; }));
-    rep.src = src;
-    rep.className = img.className;
-    rep.style.cssText = img.style.cssText;
-    img.parentNode.replaceChild(rep, img);
-    swapped.push({ rep, img });
-  });
-  // Wait for every replacement image to fully decode before html2canvas reads the DOM
-  return Promise.all(loads).then(() => html2canvas(root, options)).finally(() => {
-    swapped.forEach(({ rep, img }) => {
-      if (rep.parentNode) rep.parentNode.replaceChild(img, rep);
-    });
-  });
+      || false;
 }
 
 let storyPos = 'left';
@@ -1656,12 +1632,9 @@ function render() {
     container.appendChild(seenDiv);
   }
 
-  // Apply Twemoji
+  // Apply emoji pack — local Twemoji detects sequences, callback serves Apple data-URLs
   if (typeof twemoji !== 'undefined') {
-    twemoji.parse(document.getElementById('capture-root'), {
-      folder:'svg', ext:'.svg',
-      base:'https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/'
-    });
+    twemoji.parse(document.getElementById('capture-root'), { callback: _emojiSrc });
   }
 }
 
@@ -1756,7 +1729,7 @@ function confirmCrop() {
   const cropX=x-offX, cropY=y-offY;
 
   document.getElementById('loading').classList.add('show');
-  captureWithAppleEmoji(root,{scale:3,useCORS:true,allowTaint:true,backgroundColor:null,logging:false})
+  html2canvas(root,{scale:3,useCORS:true,allowTaint:true,backgroundColor:null,logging:false})
   .then(canvas=>{
     const scale=3;
     const out=document.createElement('canvas');
@@ -1887,7 +1860,7 @@ function doRangeDownload() {
   if (cropH <= 0) return;
 
   document.getElementById('loading').classList.add('show');
-  captureWithAppleEmoji(root, {scale:3, useCORS:true, allowTaint:true, backgroundColor:null, logging:false})
+  html2canvas(root, {scale:3, useCORS:true, allowTaint:true, backgroundColor:null, logging:false})
   .then(canvas => {
     const scale = 3;
     const sy = Math.round(topPx * scale);
@@ -2200,7 +2173,7 @@ async function generateSlideshow() {
         frameCount++;
         document.getElementById('loading-progress').textContent = `Capturing frame ${frameCount} / ${totalFrames}…`;
         await new Promise(r => setTimeout(r, 150));
-        const canvas = await captureWithAppleEmoji(root, {scale:captureScale, useCORS:true, allowTaint:true, backgroundColor:bgColor, logging:false});
+        const canvas = await html2canvas(root, {scale:captureScale, useCORS:true, allowTaint:true, backgroundColor:bgColor, logging:false});
         frames.push(canvas); durations.push(item.timing || 1.3);
 
         // Hide time after first frame captured — only appears on frame 1
