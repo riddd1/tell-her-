@@ -172,8 +172,6 @@ select option{background:#1a1a1e}
 /* Twemoji */
 img.emoji{height:1.3em;width:1.3em;margin:0 .04em 0 .06em;vertical-align:-0.18em;display:inline}
 .ig-reaction img.emoji{height:1.6em;width:1.6em;vertical-align:middle;margin:0}
-/* Outsourced emoji pack — served from server, used during frame capture */
-@font-face{font-family:'Apple Color Emoji';src:url('/videomaker/Apple%20Color%20Emoji.ttc') format('truetype')}
 
 /* ── RANGE PICKER MODAL ── */
 #range-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:200;align-items:center;justify-content:center}
@@ -1170,21 +1168,27 @@ button,input,select,textarea{transition-property:background,border-color,color,b
 
 <script>
 // ── EMOJI PACK ──
-// Replaces Twemoji CDN <img> tags with the locally-served Apple Color Emoji font
-// Called as html2canvas onclone so the preview stays as-is; only captured frames use this pack
-function applyEmojiFontInClone(cloneDoc) {
-  const s = cloneDoc.createElement('style');
-  s.textContent = "@font-face{font-family:'Apple Color Emoji';src:url('/videomaker/Apple%20Color%20Emoji.ttc') format('truetype')}";
-  cloneDoc.head.appendChild(s);
-  cloneDoc.querySelectorAll('img.emoji').forEach(img => {
-    const span = cloneDoc.createElement('span');
+// Temporarily swaps Twemoji CDN <img> tags with spans using the Apple Color Emoji
+// system font before html2canvas captures, then restores the preview after.
+// 'Apple Color Emoji' is a macOS/iOS system font — no download needed on those platforms.
+function captureWithAppleEmoji(root, options) {
+  const swapped = [];
+  root.querySelectorAll('img.emoji').forEach(img => {
+    const span = document.createElement('span');
     span.textContent = img.alt;
-    span.style.cssText = "font-family:'Apple Color Emoji',sans-serif;font-size:inherit;line-height:1";
+    const inReaction = !!img.closest('.ig-reaction');
+    span.style.cssText = inReaction
+      ? "font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;font-size:1.6em;line-height:1;vertical-align:middle;display:inline"
+      : "font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;font-size:1.3em;line-height:1;vertical-align:-0.18em;display:inline";
     img.parentNode.replaceChild(span, img);
+    swapped.push({ span, img });
+  });
+  return html2canvas(root, options).finally(() => {
+    swapped.forEach(({ span, img }) => {
+      if (span.parentNode) span.parentNode.replaceChild(img, span);
+    });
   });
 }
-// Start loading the font in the background so it's ready when the user exports
-document.fonts.load("1em 'Apple Color Emoji'").catch(() => {});
 
 let storyPos = 'left';
 let storySrc = null;
@@ -1737,7 +1741,7 @@ function confirmCrop() {
   const cropX=x-offX, cropY=y-offY;
 
   document.getElementById('loading').classList.add('show');
-  html2canvas(root,{scale:3,useCORS:true,allowTaint:true,backgroundColor:null,logging:false,onclone:applyEmojiFontInClone})
+  captureWithAppleEmoji(root,{scale:3,useCORS:true,allowTaint:true,backgroundColor:null,logging:false})
   .then(canvas=>{
     const scale=3;
     const out=document.createElement('canvas');
@@ -1868,7 +1872,7 @@ function doRangeDownload() {
   if (cropH <= 0) return;
 
   document.getElementById('loading').classList.add('show');
-  html2canvas(root, {scale:3, useCORS:true, allowTaint:true, backgroundColor:null, logging:false, onclone:applyEmojiFontInClone})
+  captureWithAppleEmoji(root, {scale:3, useCORS:true, allowTaint:true, backgroundColor:null, logging:false})
   .then(canvas => {
     const scale = 3;
     const sy = Math.round(topPx * scale);
@@ -2181,7 +2185,7 @@ async function generateSlideshow() {
         frameCount++;
         document.getElementById('loading-progress').textContent = `Capturing frame ${frameCount} / ${totalFrames}…`;
         await new Promise(r => setTimeout(r, 150));
-        const canvas = await html2canvas(root, {scale:captureScale, useCORS:true, allowTaint:true, backgroundColor:bgColor, logging:false, onclone:applyEmojiFontInClone});
+        const canvas = await captureWithAppleEmoji(root, {scale:captureScale, useCORS:true, allowTaint:true, backgroundColor:bgColor, logging:false});
         frames.push(canvas); durations.push(item.timing || 1.3);
 
         // Hide time after first frame captured — only appears on frame 1
