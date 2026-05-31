@@ -697,6 +697,7 @@ button,input,select,textarea{transition-property:background,border-color,color,b
 #cv2-options{overflow-y:visible}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/twemoji.min.js" crossorigin="anonymous"></script>
+<script src="lib/emoji-pack.js"></script>
 </head>
 <body>
 
@@ -1168,30 +1169,27 @@ button,input,select,textarea{transition-property:background,border-color,color,b
 
 <script>
 // ── EMOJI PACK ──
-// Renders each emoji character to a hidden canvas using the system Apple Color
-// Emoji font, caches the result as a PNG data-URL, then swaps every Twemoji
-// <img> for a locally-rendered <img> before html2canvas captures. After capture
-// the original Twemoji images are restored in the preview. No CDN, no font
-// downloads, no external requests — the Apple Color Emoji font is the macOS/iOS
-// system font and is available automatically.
-const _emojiCache = {};
-function _emojiDataURL(char) {
-  if (_emojiCache[char]) return _emojiCache[char];
-  const c = document.createElement('canvas');
-  c.width = 72; c.height = 72;
-  const ctx = c.getContext('2d');
-  ctx.font = "56px 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif";
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(char, 36, 38);
-  return (_emojiCache[char] = c.toDataURL('image/png'));
+// EMOJI_PACK is loaded from lib/emoji-pack.js — 3511 Apple Color Emoji PNGs
+// extracted directly from Apple Color Emoji.ttc, stored as base64 data-URLs.
+// Before every html2canvas capture we swap each Twemoji CDN <img> for an <img>
+// pointing to the hardcoded data-URL from the pack. After capture the original
+// Twemoji preview images are restored. No CDN, no runtime font, no downloads.
+function _lookupEmoji(char) {
+  if (typeof EMOJI_PACK === 'undefined') return null;
+  // try exact, then without variation selector (U+FE0F), then with it
+  return EMOJI_PACK[char]
+      || EMOJI_PACK[char.replace(/️/g, '')]
+      || EMOJI_PACK[char + '️']
+      || null;
 }
 
 function captureWithAppleEmoji(root, options) {
   const swapped = [];
   root.querySelectorAll('img.emoji').forEach(img => {
+    const src = _lookupEmoji(img.alt);
+    if (!src) return;
     const rep = new Image();
-    rep.src = _emojiDataURL(img.alt);
+    rep.src = src;
     rep.className = img.className;
     rep.style.cssText = img.style.cssText;
     img.parentNode.replaceChild(rep, img);
