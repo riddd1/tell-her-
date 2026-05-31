@@ -1185,17 +1185,20 @@ function _lookupEmoji(char) {
 
 function captureWithAppleEmoji(root, options) {
   const swapped = [];
+  const loads = [];
   root.querySelectorAll('img.emoji').forEach(img => {
     const src = _lookupEmoji(img.alt);
     if (!src) return;
     const rep = new Image();
+    loads.push(new Promise(res => { rep.onload = res; rep.onerror = res; }));
     rep.src = src;
     rep.className = img.className;
     rep.style.cssText = img.style.cssText;
     img.parentNode.replaceChild(rep, img);
     swapped.push({ rep, img });
   });
-  return html2canvas(root, options).finally(() => {
+  // Wait for every replacement image to fully decode before html2canvas reads the DOM
+  return Promise.all(loads).then(() => html2canvas(root, options)).finally(() => {
     swapped.forEach(({ rep, img }) => {
       if (rep.parentNode) rep.parentNode.replaceChild(img, rep);
     });
