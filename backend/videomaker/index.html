@@ -1168,24 +1168,38 @@ button,input,select,textarea{transition-property:background,border-color,color,b
 
 <script>
 // ── EMOJI PACK ──
-// Temporarily swaps Twemoji CDN <img> tags with spans using the Apple Color Emoji
-// system font before html2canvas captures, then restores the preview after.
-// 'Apple Color Emoji' is a macOS/iOS system font — no download needed on those platforms.
+// Renders each emoji character to a hidden canvas using the system Apple Color
+// Emoji font, caches the result as a PNG data-URL, then swaps every Twemoji
+// <img> for a locally-rendered <img> before html2canvas captures. After capture
+// the original Twemoji images are restored in the preview. No CDN, no font
+// downloads, no external requests — the Apple Color Emoji font is the macOS/iOS
+// system font and is available automatically.
+const _emojiCache = {};
+function _emojiDataURL(char) {
+  if (_emojiCache[char]) return _emojiCache[char];
+  const c = document.createElement('canvas');
+  c.width = 72; c.height = 72;
+  const ctx = c.getContext('2d');
+  ctx.font = "56px 'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif";
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(char, 36, 38);
+  return (_emojiCache[char] = c.toDataURL('image/png'));
+}
+
 function captureWithAppleEmoji(root, options) {
   const swapped = [];
   root.querySelectorAll('img.emoji').forEach(img => {
-    const span = document.createElement('span');
-    span.textContent = img.alt;
-    const inReaction = !!img.closest('.ig-reaction');
-    span.style.cssText = inReaction
-      ? "font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;font-size:1.6em;line-height:1;vertical-align:middle;display:inline"
-      : "font-family:'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif;font-size:1.3em;line-height:1;vertical-align:-0.18em;display:inline";
-    img.parentNode.replaceChild(span, img);
-    swapped.push({ span, img });
+    const rep = new Image();
+    rep.src = _emojiDataURL(img.alt);
+    rep.className = img.className;
+    rep.style.cssText = img.style.cssText;
+    img.parentNode.replaceChild(rep, img);
+    swapped.push({ rep, img });
   });
   return html2canvas(root, options).finally(() => {
-    swapped.forEach(({ span, img }) => {
-      if (span.parentNode) span.parentNode.replaceChild(img, span);
+    swapped.forEach(({ rep, img }) => {
+      if (rep.parentNode) rep.parentNode.replaceChild(img, rep);
     });
   });
 }
